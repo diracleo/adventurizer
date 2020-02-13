@@ -1,0 +1,407 @@
+@mixin makeTheme(
+  $themeBackgroundColor,
+  $themeColor,
+  $themeBackgroundImage,
+  $themeBoxShadow,
+  $themeAuthorBorderTop,
+  $themeBackDrop,
+  $themeTextColor,
+  $themeButtonTextColor,
+  $themeButtonBackTextColor,
+  $themeButtonBackground,
+  $themeButtonBackBackground,
+  $themeButtonBackBackgroundHover,
+  $themeButtonHoverBackground,
+  $themeTitleText,
+  $themeTitleBackground,
+  $themeContentBackground,
+  $themeAdventurizerBackground,
+  $themeAdventurizerBackgroundHover,
+  $themeFont
+) {
+  .view {
+    background-color: $themeBackgroundColor;
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0; 
+      left: 0;
+      width: 100%; 
+      height: 100%;
+      background-image: $themeBackgroundImage;
+      background-size:cover;
+      background-repeat:no-repeat;
+      background-position: center center;
+      z-index:0;
+      opacity:0.5;
+    }
+    .item {
+      position:relative;
+      .question {
+        color: $themeTextColor;
+        background-color:transparent;
+        position:relative;
+        font-family: unquote($themeFont);
+        > div {
+          > span {
+            position:relative;
+            display:inline-block;
+            min-width:100%;
+            &::first-letter {
+              font-size:250%;
+              color: $themeColor;
+              vertical-align: bottom;
+              line-height: .9em;
+            }
+            &:before {
+              content: "";
+              position:absolute;
+              top: 0px; 
+              left: -20px;
+              width: calc(100% + 40px); 
+              height: 100%;
+              background-color:$themeContentBackground;
+              box-shadow: $themeBoxShadow;
+              z-index:0;
+              backdrop-filter: $themeBackDrop;
+            }
+            > span {
+              position:relative;
+            }
+          }
+        }
+        .title {
+          color: $themeTitleText;
+          position:relative;
+          &:before {
+            content: "";
+            width:calc(100% + 40px);
+            position:absolute;
+            left:-20px;
+            background-color:$themeTitleBackground;
+            backdrop-filter: $themeBackDrop;
+            height:calc(100% - 10px);
+            box-shadow: $themeBoxShadow;
+            top:0px;
+          }
+          > span {
+            position:relative;
+            &:nth-child(2) {
+              border-top:$themeAuthorBorderTop;
+              margin-top:10px;
+              padding-top:10px;
+              display:block;
+            }
+          }
+        }
+        .answers {
+          .answer {
+            display:block;
+            text-decoration:none;
+            color: $themeButtonTextColor;
+            background-color: $themeButtonBackground;
+            width:calc(100% + 40px);
+            position:relative;
+            left:-20px;
+            box-shadow: $themeBoxShadow;
+            backdrop-filter: $themeBackDrop;
+            &:hover {
+              background-color: $themeButtonHoverBackground;
+            }
+            &.back {
+              color:$themeButtonBackTextColor;
+              background-color: $themeButtonBackBackground;
+              &:hover {
+                background-color: $themeButtonBackBackgroundHover;
+              }
+            }
+            &.todo {
+              color:$themeButtonTextColor;
+              background-color: $themeButtonBackBackground;
+              &:hover {
+                background-color: $themeButtonBackBackgroundHover;
+              }
+            }
+            > span {
+
+            }
+          }
+        }
+      }
+    }
+    .navbar {
+      background-color: $themeAdventurizerBackground;
+      backdrop-filter: $themeBackDrop;
+      color:#fff;
+      .poweredBy {
+        color:#fff;
+      }
+      .moreLink {
+        color:#fff;
+        text-decoration:none;
+        display:inline-block;
+        padding-top:15px;
+        font-size:14px;
+        &:hover {
+          color:#ccc;
+        }
+      }
+      &:hover {
+        background-color: $themeAdventurizerBackgroundHover;
+      }
+    }
+    .loader {
+      background-color: $themeBackgroundColor;
+      &:before {                
+        content: "";
+        position: absolute;
+        top: 0; 
+        left: 0;
+        width: 100%; 
+        height: 100%;
+        background-image: $themeBackgroundImage;
+        background-size:cover;
+        background-repeat:no-repeat;
+        background-position: center center;
+        z-index:0;
+        opacity:0.2;
+      }
+      > div {
+        position:absolute;
+        top:50%;
+        left:50%;
+        margin-left:-20px;
+        margin-top:-20px;
+        color:$themeTextColor;
+      }
+    }
+  }
+  .preview {
+    position:relative;
+    width:100%;
+    padding-left:20px;
+    padding-right:20px;
+    padding-top:0px;
+    padding-bottom:0px;
+    background-color: $themeBackgroundColor;
+    &:before {
+      content: "";
+      background-image: $themeBackgroundImage;
+      background-size:cover;
+      background-repeat:no-repeat;
+      background-position: center center;
+      width:100%;
+      height:100%;
+      position:absolute;
+      top:0px;
+      left:0px;
+      opacity:0.5;
+      backdrop-filter: $themeBackDrop;
+    }
+    > span{
+      background-color:$themeButtonBackground;
+      color:$themeButtonTextColor;
+      padding-left:6px;
+      padding-right:6px;
+      padding-top:4px;
+      padding-bottom:4px;
+      font-family: unquote($themeFont);
+      display:block;
+      position:relative;
+      font-size:22px;
+      text-align:center;
+      transition: transform 0.2s;
+    }
+    &:hover {
+      > span {
+        transform: translateX(20px);
+      }
+    }
+  }
+  .MuiPaper-root {
+    position:relative;
+    color:$themeButtonTextColor;
+    background-color: $themeBackgroundColor;
+    &:before {
+      content: "";
+      border-radius:4px;
+      background-image: $themeBackgroundImage;
+      background-size:cover;
+      background-repeat:no-repeat;
+      background-position: center center;
+      backdrop-filter: $themeBackDrop;
+      opacity:0.5;
+      width:100%;
+      height:100%;
+      position:absolute;
+      top:0px;
+      left:0px;
+      z-index:0;
+      backdrop-filter: $themeBackDrop;
+    }
+    &:after {
+      content: "";
+      border-radius:4px;
+      background-color:$themeContentBackground;
+      backdrop-filter: $themeBackDrop;
+      width:100%;
+      height:100%;
+      position:absolute;
+      top:0px;
+      left:0px;
+      z-index:1;
+      opacity:0.7;
+      backdrop-filter: $themeBackDrop;
+    }
+    > div {
+      position:relative;
+      z-index:2;
+      padding:15px;
+      h2 {
+        font-size:24px;
+        color: $themeTextColor;
+        font-family: unquote($themeFont);
+        margin-bottom:0px;
+        margin-top:0px;
+      }
+      h3 {
+        font-size:24px;
+        color: $themeTextColor;
+        font-family: unquote($themeFont);
+        margin-bottom:0px;
+        margin-top:0px;
+        opacity:0.7;
+      }
+      p {
+        font-size:18px;
+        color: $themeTextColor;
+        font-family: unquote($themeFont);
+        opacity:0.7;
+        white-space: pre-wrap;
+      }
+    }
+    .actions {
+      button {
+        margin-right:10px;
+        margin-top:10px;
+      }
+    }
+  }
+  .editMetaBtn {
+    position:relative;
+    color:$themeButtonTextColor;
+    background-color: $themeBackgroundColor;
+    &:before {
+      content: "";
+      border-radius:4px;
+      background-image: $themeBackgroundImage;
+      background-size:cover;
+      background-repeat:no-repeat;
+      background-position: center center;
+      backdrop-filter: $themeBackDrop;
+      opacity:0.5;
+      width:100%;
+      height:100%;
+      position:absolute;
+      top:0px;
+      left:0px;
+      z-index:0;
+      backdrop-filter: $themeBackDrop;
+    }
+    &:after {
+      content: "";
+      border-radius:4px;
+      background-color:$themeContentBackground;
+      backdrop-filter: $themeBackDrop;
+      width:100%;
+      height:100%;
+      position:absolute;
+      top:0px;
+      left:0px;
+      z-index:1;
+      opacity:0.5;
+      backdrop-filter: $themeBackDrop;
+    }
+    > span {
+      color:$themeButtonTextColor;
+      position:relative;
+      z-index:2;
+    }
+    &:hover {
+      &:before {
+        opacity:0.7;
+      }
+    }
+  }
+  &.MuiMenuItem-root {
+    padding:0px;
+    &.Mui-selected {
+      
+    }
+    &:first-child {
+      margin-top:-8px;
+    }
+    &:last-child {
+      margin-bottom:-8px;
+    }
+  }
+  &.searchItem {
+    height:100%;
+    .MuiPaper-root {
+      height:100%;
+      &:hover {
+        
+      }
+      margin-bottom:90px;
+    }
+    .actions {
+      position:absolute;
+      bottom:0px;
+      left:0px;
+    }
+    &.clickable {
+      position:relative;
+
+      border-radius:4px;
+      &:after {
+        content: "Begin";
+        position:absolute;
+        height:60px;
+        line-height:60px;
+        text-align:center;
+        color:#fff;
+        background:rgba(0, 0, 0, 0.6);
+        width:100%;
+        bottom:0px;
+        opacity:0;
+        left:0px;
+        pointer-events:none;
+        z-index:100;
+        font-size:30px;
+        font-family: unquote($themeFont);
+        transition: opacity 0.4s;
+        border-bottom-left-radius:4px;
+        border-bottom-right-radius:4px;
+      }
+      &:hover {
+        &:after {
+          opacity:1;
+        }
+      }
+      &.continue {
+        &:after {
+          content: "Continue";
+        }
+      }
+    }
+  }
+}
+
+@import "themes/default";
+@import "themes/swashbuckler";
+@import "themes/navigator";
+@import "themes/poseidon";
+@import "themes/autumn";
+@import "themes/spring";
+@import "themes/thicket";
+@import "themes/love";

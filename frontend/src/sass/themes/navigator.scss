@@ -1,0 +1,46 @@
+@import url("https://fonts.googleapis.com/css?family=Pirata+One&display=swap");
+
+/*
+$themeBackgroundColor,
+$themeColor,
+$themeBackgroundImage,
+$themeBoxShadow,
+$themeAuthorBorderTop,
+$themeBackDrop,
+$themeTextColor,
+$themeButtonTextColor,
+$themeButtonBackTextColor,
+$themeButtonBackground,
+$themeButtonBackBackground,
+$themeButtonBackBackgroundHover,
+$themeButtonHoverBackground,
+$themeTitleText,
+$themeTitleBackground,
+$themeContentBackground,
+$themeAdventurizerBackground,
+$themeAdventurizerBackgroundHover
+*/
+
+.theme.navigator {
+  @include makeTheme(
+    #ffffff,
+    #780505,
+    url("/themes/pirate/bg.jpg"),
+    0 3px 5px rgba(0,0,0,0.2),
+    1px solid #780505,
+    blur(6px),
+    #333333,
+    #780505,
+    rgba(#000000, 0.3),
+    rgba(#ffffff, 0.5),
+    rgba(#ffffff, 0.2),
+    rgba(#ffffff, 1),
+    rgba(#ffffff, 1),
+    #780505,
+    rgba(#ffffff, 0.5),
+    rgba(#ffffff, 0.5),
+    rgba(#333333, 0.5),
+    rgba(#333333, 1),
+    "'Pirata One', cursive"
+  );
+}

@@ -1,0 +1,98 @@
+.view {
+  .item {
+    padding:0px;
+    .question {
+      display: flex;
+      flex-direction: column;
+      height:100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-left:10%;
+      padding-right:10%;
+      white-space: pre-wrap;
+      background-color:#ccc;
+      .title {
+        font-size:inherit;
+        padding-bottom:50px;
+        padding-top:30px;
+        color:$colorSecondary;
+        display:block;
+      }
+      .text {
+        display: flex;
+        flex-direction: column;
+        white-space: pre-wrap;
+      }
+      .answers {
+        padding-bottom:70px;
+        padding-top:20px;
+        .answer {
+          font-size:inherit;
+          text-align:center;
+          cursor:pointer;
+          padding-top:10px;
+          padding-bottom:10px;
+          margin-bottom:10px;
+          padding-left:10px;
+          padding-right:10px;
+          color:$colorSecondary;
+          background-color:rgba(#ffffff, 0.6);
+          transition:background-color 0.4s;
+          svg {
+            font-size:inherit;
+            position:relative;
+            top:0.15em;
+          }
+          &:hover {
+            background-color:rgba(#ffffff, 1);
+          }
+          &.back {
+            color:#999;
+          }
+        }
+        &.metaAnswers {
+          padding-top:50px;
+        }
+      }
+    }
+  }
+  .navbar {
+    background-color:rgba($colorPrimary, 0.9);
+    backdrop-filter: blur(2px);
+    height:50px;
+    position:fixed;
+    left:0px;
+    bottom:0px;
+    width:100%;
+    color:#fff;
+    padding-left:10%;
+    padding-right:10%;
+    transition:background-color 0.4s;
+    .poweredBy {
+      text-align:right;
+      color:#fff;
+      width:100%;
+      padding-top:12px;
+      font-size:18px;
+      .logoLink {
+        display:inline-block;
+        color:#fff;
+        text-decoration:none;
+        .logo {
+          display:inline-block;
+          flex-grow: 1;
+          margin-left:10px;
+          font-size:18px;
+          font-family: 'Fontdiner Swanky';
+          svg {
+            position:relative;
+            top:4px;
+          }
+          &:hover {
+            opacity:0.7;
+          }
+        }
+      }
+    }
+  }
+}

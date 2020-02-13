@@ -1,0 +1,385 @@
+$colorPrimary: #673ab7;
+$colorSecondary: #673ab7;
+$colorDark: #000000;
+$colorBack: #f1f1f1;
+
+html, body, #root {
+  height:100%;
+  margin:0px;
+}
+.mainMenu {
+  min-width:300px;
+}
+.link {
+  color:inherit;
+  text-decoration:none;
+  &.highlight {
+    color:$colorPrimary;
+    &:hover {
+      text-decoration:underline;
+    }
+  }
+}
+.app {
+  min-height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: $colorBack;
+  position:relative;
+  .footer {
+    margin-top:50px;
+    margin-bottom:50px;
+    > div {
+      padding:20px;
+      font-size:16px;
+    }
+  }
+  a {
+    color:$colorPrimary;
+    text-decoration:none;
+    &:hover {
+      
+    }
+  }
+  .sameHeightGridItem {
+    height:100%;
+  }
+  .searchActionBar {
+    button {
+      margin-right:10px;
+    }
+  }
+  .paginationHolder {
+    position:fixed;
+    bottom:0px;
+    left:0px;
+    width:100%;
+    background-color:rgba(255, 255, 255, 1);
+    padding-top:15px;
+    padding-bottom:15px;
+    z-index:50;
+    text-align:right;
+    box-shadow:0px -5px 15px rgba(0, 0, 0, 0.1);
+  }
+  .widget {
+    position:relative;
+    margin-top:30px;
+    border-radius: 8px;
+    box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.2);
+    overflow:hidden;
+    .header {
+      padding:15px;
+      /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#ffffff+0,ffffff+100&1+0,0+100;White+to+Transparent */
+      background: -moz-linear-gradient(45deg,  rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%); /* FF3.6-15 */
+      background: -webkit-linear-gradient(45deg,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* Chrome10-25,Safari5.1-6 */
+      background: linear-gradient(45deg,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
+      h2 {
+        font-size:22px;
+        margin-top:0px;
+        margin-bottom:0px;
+        > a {
+          color: #666;
+          &:hover {
+            color: $colorPrimary;
+          }
+        }
+      }
+      .actions {
+        text-align:right;
+        display:block;
+        padding-bottom:10px;
+        button {
+          font-weight:bold;
+        }
+      }
+      padding-bottom:0px;
+    }
+    .area {
+      border-top:1px solid #ccc;
+      padding:15px;
+    }
+    &:first-of-type {
+      border-top-style:none;
+      margin-top:0px;
+    }
+    &.widgetEdge {
+      .promo {
+        padding-bottom:30%;
+        position:relative;
+        background-color:#ffffff;
+        &:before {
+          content: "";
+          background-image:url("/themes/poseidon/bg.jpg");
+          background-size:cover;
+          background-position:center center;
+          background-repeat:no-repeat;
+          position:absolute;
+          top:0px;
+          left:0px;
+          width:100%;
+          height:100%;
+          opacity:0.7;
+          filter:hue-rotate(50deg);
+        }
+        > div {
+          position:relative;
+        }
+      }
+    }
+  }
+  .or {
+    position:relative;
+    text-align:center;
+    margin-top:30px;
+    margin-bottom:0px;
+    &:before {
+      content: "";
+      position:absolute;
+      width:100%;
+      height:50%;
+      left:0px;
+      top:0px;
+      border-bottom:1px solid #ccc;
+    }
+    > span {
+      display:inline-block;
+      background-color:#ffffff;
+      color:#999;
+      font-size:18px;
+      position:relative;
+      padding-left:20px;
+      padding-right:20px;
+    }
+  }
+  .facebookBtnHolder {
+    text-align:center;
+    .facebookBtn {
+      background-color:#4267B2;
+      &:hover {
+        background-color:#3B5998;
+      }
+    }
+  }
+  .mainTitle {
+    background-color:#fff;
+    border-bottom:1px solid #ccc;
+    margin-top:65px;
+    padding-top:10px;
+    padding-bottom:10px;
+    padding-left:20px;
+    h1 {
+      font-size:24px;
+      color:#666;
+      margin-top:0px;
+      margin-bottom:0px;
+    }
+    p {
+      color:#666;
+      font-size:16px;
+    }
+  }
+  .loader {
+    opacity:0;
+    position:absolute;
+    top:0px;
+    left:0px;
+    width:100%;
+    height:100%;
+    background:rgba(#ffffff, 0.7);
+    z-index:-2;
+    transition:all 0.4s;
+    &.loading {
+      opacity:1;
+      z-index:1111;
+    }
+    > div {
+      position:absolute;
+      top:50%;
+      left:50%;
+      margin-left:-20px;
+      margin-top:-20px;
+    }
+  }
+  .editMetaBtn {
+    .editMetaBtnLabel {
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  .content {
+    margin-top:64px;
+    &.contentPrimary {
+      
+    }
+    &.contentFilled {
+      padding:20px;
+    }
+    &.contentFullScreen {
+      margin-top:0px;
+      padding:0px;
+    }
+    &.contentSmall {
+      max-width:600px;
+      margin-top:180px;
+      margin-left:auto;
+      margin-right:auto;
+    }
+    &.contentWithTitle {
+      margin-top:0px;
+      &.contentSmall {
+        margin-top:40px;
+      }
+    }
+  }
+  .loginSignupPromo {
+    text-align:right;
+  }
+  .signupLoginPromo {
+    text-align:right;
+  }
+  .logo {
+    flex-grow: 1;
+    margin-left:10px;
+    font-size:24px;
+    svg {
+      position:relative;
+      top:4px;
+    }
+  }
+  .secondaryToolbar {
+    background-color: rgba(#ffffff, 0.6);
+    backdrop-filter: blur(2px);
+    margin-top:64px;
+  }
+  .pane {
+    flex: 1;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    position:relative;
+    background-color: $colorBack;
+    cursor:move;
+    .questions {
+      width:calc(100vw - 30px);
+      height:calc(100vh - 97px);
+      .question {
+        width:400px;
+        position:absolute;
+        background-color:rgba(#ffffff, 0.3);
+        .questionPoint {
+          position:relative;
+          left:-12px;
+          top:-22px;
+        }
+        .answerPoint {
+          position: absolute;
+          height: 100%;
+          width:100%;
+          left: 0px;
+          top: 0px;
+        }
+        .linkingOverlay {
+          display:none;
+          position:absolute;
+          top:0px;
+          left:0px;
+          width:100%;
+          height:100%;
+          font-size:20px;
+          color:rgba($colorPrimary, 1);
+          background-color:rgba($colorPrimary, 0.4);
+          cursor:pointer;
+          > svg {
+            position:absolute;
+            left:50%;
+            top:50%;
+            margin-left:-50px;
+            margin-top:-50px;
+            text-align:center;
+            width:100px;
+            height:100px;
+          }
+          &:hover {
+            background-color:rgba($colorPrimary, 1);
+            color:#fff;
+          }
+        }
+        &.linked {
+          background-color:#ffffff;
+        }
+        &.linking {
+          background-color:#ffffff;
+          .linkingOverlay {
+            display:block;
+          }
+        }
+        &.start {
+          background-color:#ffffff;
+        }
+      }
+    }
+  }
+  .react-transform-component {
+    width:100% !important;
+    height:100% !important;
+  }
+  .answerItems {
+    list-style-type:none;
+    padding-left:0px;
+  }
+  .answerItem {
+    list-style-type:none;
+    margin-bottom:10px;
+  }
+  .handle {
+    cursor:grab !important;
+  }
+  #visualizations {
+    position:absolute;
+    left:0px;
+    top:0px;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+  }
+  .answerInput {
+    &.linked {
+      .MuiInput-underline:before {
+        border-right: 2px solid $colorSecondary;
+        border-bottom: 2px solid $colorSecondary;
+        height: 30px;
+        margin-right: -16px;
+      }
+    }
+  }
+  .answerInput {
+    .MuiFab-sizeSmall {
+      margin-left:10px;
+      width: 26px;
+      /* width: 30px; */
+      height: 5px;
+      min-height: 26px;
+      box-shadow: none;
+      font-size: 11px;
+      line-height: 15px;
+      .MuiSvgIcon-root {
+        width:20px;
+        height:20px;
+      }
+    }
+  }
+  .hidden {
+    display:none !important;
+  }
+}
+
+.themeSelector {
+
+}
+@import "view";
+@import "themes";

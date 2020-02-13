@@ -1,0 +1,25 @@
+@import url("https://fonts.googleapis.com/css?family=Quattrocento&display=swap");
+
+.theme.thicket {
+  @include makeTheme(
+    #000000, //themeBackGroundColor
+    #cccccc, //themeColor
+    url("/themes/thicket/bg.jpg"), //themeBackgroundImage
+    0 3px 5px rgba(0,0,0,0.8), //themeBoxShadow
+    1px solid rgba(#ffffff, 0.2), //themeAuthorBorderTop
+    blur(16px) opacity(0.8) grayscale(0.4), //themeBackDrop
+    #ffffff, //themeTextColor
+    #ffffff, //themeButtonTextColor
+    rgba(#ffffff, 0.3), //themeButtonBackTextColor
+    rgba(#333333, 0.5), //themeButtonBackground
+    rgba(#333333, 0.2), //themeButtonBackBackground
+    rgba(#333333, 1), //themeButtonBackBackgroundHover
+    rgba(#333333, 1), //themeButtonHoverBackground
+    #ffffff, //themeTitleText
+    rgba(#333333, 0.5), //themeTitleBackground
+    rgba(#333333, 0.5), //themeContentBackground
+    rgba(#333333, 0.5), //themeAdventurizerBackground
+    rgba(#333333, 1), //themeAdventurizerBackgroundHover
+    "'Quattrocento', serif" //themeFont
+  );
+}
