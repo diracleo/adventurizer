@@ -20,21 +20,24 @@ import Progress from './../containers/Progress.js';
 import Settings from './../containers/Settings.js';
 import ConfirmRouter from './../routers/ConfirmRouter.js';
 import SearchRouter from './../routers/SearchRouter.js';
-
+import TermsOfUse from './../containers/TermsOfUse.js';
+import PrivacyPolicy from './../containers/PrivacyPolicy.js';
+import SignoutBtn from './../modules/SignoutBtn.js';
 import Util from './../../Util.js';
 import config from 'react-global-configuration';
 import './../../sass/app.scss';
 
-const SignoutBtn = withRouter(({ history }) => (
-  <Link to="/logout" className="link" key="mainMenuSignoutLink" onClick={() => {
-    Util.Auth.signout(this, {}, () => history.push('/'))
-  }}>
-    <ListItem button key="mainMenuSignoutBtn">
-      <ListItemIcon><LockOpen /></ListItemIcon>
-      <ListItemText primary="Sign Out" />
-    </ListItem>
-  </Link>
-));
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+  config.set({ 
+    apiHost: "http://127.0.0.1:5000",
+    webHost: "http://localhost:3000"
+  });
+} else {
+  config.set({ 
+    apiHost: "https://api.adventurizer.net",
+    webHost: "https://adventurizer.net"
+  });
+}
 
 class Adventurizer extends React.Component {
   constructor(props) {
@@ -193,6 +196,8 @@ class Adventurizer extends React.Component {
             <Switch>
               <Route path="/a/:adventureId" component={AdventureViewRouter} />
               <Route path="/search" component={SearchRouter} />
+              <Route path="/terms" component={TermsOfUse} />
+              <Route path="/privacy" component={PrivacyPolicy} />
               <Route path="/login" component={Login} />
               <Route path="/signup" component={Signup} />
               <Route path="/confirm/:confirmToken" component={ConfirmRouter} />

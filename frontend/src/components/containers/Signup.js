@@ -11,6 +11,10 @@ import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props
 import Util from './../../Util.js';
 import config from 'react-global-configuration';
 
+import store from './../../store'
+import { connect } from "react-redux";
+import { setConfirmDialog, setQuietAlertDialog } from "./../../action";
+
 import LoadingOverlay from './../modules/LoadingOverlay.js';
 
 class Signup extends React.Component {
@@ -56,45 +60,68 @@ class Signup extends React.Component {
     });
   }
   responseFacebook(response) {
-    let params = {};
-    params['externalType'] = "facebook";
-    params['externalId'] = response['id'];
-    params['email'] = response['email'];
-    params['accessToken'] = response['accessToken'];
-    params['signedRequest'] = response['signedRequest'];
-    Util.Auth.authenticate(this, params, () => {
-      this.setState(() => ({
-        redirectToReferrer: true
-      }))
-    })
+    if(typeof(response['id']) == 'undefined' || typeof(response['email']) == 'undefined' || typeof(response['accessToken']) == 'undefined' || typeof(response['signedRequest']) == 'undefined') {
+      store.dispatch(setQuietAlertDialog({
+        open: true,
+        severity: "error",
+        description: "You must allow Adventurizer to access your information in order to sign in using Facebook"
+      }));
+    } else {
+      if(!this.state.tos.value) {
+        store.dispatch(setQuietAlertDialog({
+          open: true,
+          severity: "error",
+          description: "You must agree to the terms of use and privacy policy before signing up"
+        }));
+      } else {
+        let params = {};
+        params['externalType'] = "facebook";
+        params['externalId'] = response['id'];
+        params['email'] = response['email'];
+        params['accessToken'] = response['accessToken'];
+        params['signedRequest'] = response['signedRequest'];
+        Util.Auth.authenticate(this, params, () => {
+          this.setState(() => ({
+            redirectToReferrer: true
+          }))
+        })
+      }
+    }
   }
   signup() {
     let o = this;
-    o.setState({
-      status: {
-        loading: true
-      }
-    });
-    let params = {};
-    params['penName'] = this.state.penName.value;
-    params['email'] = this.state.email.value;
-    params['emailConfirm'] = this.state.emailConfirm.value;
-    params['password'] = this.state.password.value;
-    params['passwordConfirm'] = this.state.passwordConfirm.value;
-
-    axios.post(`${config.get("apiHost")}/api/user`, params)
-      .then(res => {
-        Util.processRequestReturn(res, o, "SuccAccountCreated");
-        if(res['data']['status'] == "success") {
-          o.setState(() => ({
-            emailSent: true,
-            confirmToken: res['data']['data']['confirmToken'],
-            status: {
-              loading: false
-            }
-          }))
+    if(!this.state.tos.value) {
+      store.dispatch(setQuietAlertDialog({
+        open: true,
+        severity: "error",
+        description: "You must agree to the terms of use and privacy policy before signing up"
+      }));
+    } else {
+      o.setState({
+        status: {
+          loading: true
         }
       });
+      let params = {};
+      params['penName'] = this.state.penName.value;
+      params['email'] = this.state.email.value;
+      params['emailConfirm'] = this.state.emailConfirm.value;
+      params['password'] = this.state.password.value;
+      params['passwordConfirm'] = this.state.passwordConfirm.value;
+
+      axios.post(`${config.get("apiHost")}/api/user`, params)
+        .then(res => {
+          Util.processRequestReturn(res, o, "SuccAccountCreated");
+          if(res['data']['status'] == "success") {
+            o.setState(() => ({
+              emailSent: true,
+              status: {
+                loading: false
+              }
+            }))
+          }
+        });
+    }
   }
   toggleTos(event) {
     let v = false;
@@ -110,7 +137,7 @@ class Signup extends React.Component {
   }
   render() {
     const { from } = this.props.location.state || { from: { pathname: '/' } }
-    const { redirectToReferrer, emailSent, confirmToken } = this.state
+    const { redirectToReferrer, emailSent, penName } = this.state
 
     if (redirectToReferrer === true) {
       return <Redirect to={from} />
@@ -122,11 +149,8 @@ class Signup extends React.Component {
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Box>
-                    <Link to={`/confirm/${confirmToken}`} className="link">
-                      <Button variant="contained" color="primary">
-                        Confirm Your Account
-                      </Button>
-                    </Link>
+                    <h1>Thanks for signing up, {penName.value}!</h1>
+                    Please click the link in the email to confirm your account.
                   </Box>
                 </Grid>
               </Grid>
@@ -141,6 +165,7 @@ class Signup extends React.Component {
         <Paper>
           <Box p={5}>
             <Grid container spacing={3}>
+              {/* 
               <Grid item xs={12}>
                 <div className="facebookBtnHolder">
                   <FacebookLogin
@@ -160,6 +185,7 @@ class Signup extends React.Component {
                   <span>OR</span>
                 </div>
               </Grid>
+              */}
               <Grid item xs={12}>
                 <Box>
                   <TextField id="fieldSignupPenName" label="Pen Name" required type="text" fullWidth
@@ -219,9 +245,9 @@ class Signup extends React.Component {
                     label={
                       <div>
                         <span>I accept the </span>
-                        <Link to={'/terms'}>terms of use</Link>
+                        <Link target={"_blank"} to={'/terms'}>terms of use</Link>
                         <span> and </span>
-                        <Link to={'/privacy'}>privacy policy</Link>
+                        <Link target={"_blank"} to={'/privacy'}>privacy policy</Link>
                       </div>
                     }
                   />

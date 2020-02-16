@@ -3,7 +3,7 @@ import axios from 'axios';
 import { AxiosProvider, Request, Get, Delete, Head, Post, Put, Patch, withAxios } from 'react-axios';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import { Paper, Box, Grid, TextField, Button } from '@material-ui/core';
+import { FormGroup, FormControlLabel, Checkbox, Paper, Box, Grid, TextField, Button } from '@material-ui/core';
 import { Facebook as FacebookIcon } from '@material-ui/icons';
 import { Link, Redirect } from "react-router-dom";
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
@@ -33,6 +33,10 @@ class Settings extends React.Component {
         value: "",
         error: null
       },
+      subscribed: {
+        value: true,
+        error: null
+      },
       status: {
         loading: true
       }
@@ -45,10 +49,23 @@ class Settings extends React.Component {
       }
     });
   }
+  toggleSubscribed(event) {
+    let v = false;
+    if(event.target.checked == "1") {
+      v = true;
+    }
+    this.setState({
+      subscribed: {
+        value: event.target.checked,
+        error: null
+      }
+    });
+  }
   save() {
     let params = {};
     params['penName'] = this.state.penName.value;
     params['email'] = this.state.email.value;
+    params['subscribed'] = this.state.subscribed.value;
     let o = this;
     o.setState({
       status: {
@@ -96,6 +113,10 @@ class Settings extends React.Component {
           email: {
             value: data['user']['email']['value'],
             error: null
+          },
+          subscribed: {
+            value: data['user']['subscribed']['value'],
+            error: null
           }
         });
       });
@@ -130,6 +151,16 @@ class Settings extends React.Component {
                       onChange={e => this.set("email", e.target.value)} 
                     />
                   </Box>
+                </Grid>
+                <Grid item xs={12}>
+                  <FormGroup row>
+                    <FormControlLabel
+                      control={
+                        <Checkbox checked={this.state.subscribed.value} onChange={(event) => this.toggleSubscribed(event)} value="1" />
+                      }
+                      label="I want to receive emails from Adventurizer"
+                    />
+                  </FormGroup>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Box>

@@ -3,6 +3,8 @@ $colorSecondary: #673ab7;
 $colorDark: #000000;
 $colorBack: #f1f1f1;
 
+$smBreak: 600px;
+
 html, body, #root {
   height:100%;
   margin:0px;
@@ -107,7 +109,6 @@ html, body, #root {
     }
     &.widgetEdge {
       .promo {
-        padding-bottom:30%;
         position:relative;
         background-color:#ffffff;
         &:before {
@@ -126,6 +127,20 @@ html, body, #root {
         }
         > div {
           position:relative;
+          max-width:100%;
+          width:100%;
+          /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#ffffff+0,ffffff+100&1+0,0+100;White+to+Transparent */
+background: -moz-linear-gradient(45deg,  rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(45deg,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(45deg,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
+          padding:50px;
+          h1 {
+            margin-top:0px;
+            margin-bottom:0px;
+            padding-bottom:30px;
+          }
         }
       }
     }
@@ -383,3 +398,29 @@ html, body, #root {
 }
 @import "view";
 @import "themes";
+
+@media (max-width: $smBreak) {
+  .app {
+    .content {
+      margin-top:56px;
+      &.contentSmall {
+        margin-top:56px;
+      }
+      &.contentFilled {
+        margin-top:56px;
+      }
+      &.contentWithTitle {
+        margin-top:0px;
+        &.contentSmall {
+          margin-top:0px;
+        }
+      }
+    }
+    .secondaryToolbar {
+      margin-top:56px;
+    }
+    .mainTitle {
+      margin-top:56px;
+    }
+  }
+}

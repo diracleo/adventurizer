@@ -9,6 +9,10 @@ import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props
 import Util from './../../Util.js';
 import config from 'react-global-configuration';
 
+import store from './../../store'
+import { connect } from "react-redux";
+import { setConfirmDialog, setQuietAlertDialog } from "./../../action";
+
 import LoadingOverlay from './../modules/LoadingOverlay.js';
 
 class Login extends React.Component {
@@ -59,16 +63,24 @@ class Login extends React.Component {
   }
   responseFacebook(response) {
     let params = {};
-    params['externalType'] = "facebook";
-    params['externalId'] = response['id'];
-    params['email'] = response['email'];
-    params['accessToken'] = response['accessToken'];
-    params['signedRequest'] = response['signedRequest'];
-    Util.Auth.authenticate(this, params, () => {
-      this.setState(() => ({
-        redirectToReferrer: true
-      }))
-    })
+    if(typeof(response['id']) == 'undefined' || typeof(response['email']) == 'undefined' || typeof(response['accessToken']) == 'undefined' || typeof(response['signedRequest']) == 'undefined') {
+      store.dispatch(setQuietAlertDialog({
+        open: true,
+        severity: "error",
+        description: "You must allow Adventurizer to access your information in order to sign in using Facebook"
+      }));
+    } else {
+      params['externalType'] = "facebook";
+      params['externalId'] = response['id'];
+      params['email'] = response['email'];
+      params['accessToken'] = response['accessToken'];
+      params['signedRequest'] = response['signedRequest'];
+      Util.Auth.authenticate(this, params, () => {
+        this.setState(() => ({
+          redirectToReferrer: true
+        }))
+      });
+    }
   }
   render() {
     const { from } = this.props.location.state || { from: { pathname: '/' } }
@@ -84,6 +96,7 @@ class Login extends React.Component {
         <Paper>
           <Box p={5}>
             <Grid container spacing={3}>
+              {/*
               <Grid item xs={12}>
                 <div className="facebookBtnHolder">
                   <FacebookLogin
@@ -103,6 +116,7 @@ class Login extends React.Component {
                   <span>OR</span>
                 </div>
               </Grid>
+              */}
               <Grid item xs={12}>
                 <Box>
                   <TextField id="fieldLoginEmail" label="Email" required type="email" fullWidth

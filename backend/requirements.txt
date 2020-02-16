@@ -1,0 +1,10 @@
+Flask
+PyJWT
+facepy
+datetime
+Flask_cors
+pymongo
+bson
+dnspython
+werkzeug
+boto3

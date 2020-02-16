@@ -1,92 +1,37 @@
+# Dane Iracleous
+# daneiracleous@gmail.com
+
 import logging
 import re
 import hashlib
 import os
-import jwt
 import base64
 import random
 import string
 import pymongo
 import math
+import jwt
+import boto3
+from botocore.exceptions import ClientError
 from flask import Flask
-from flask_mail import Mail, Message
 from facepy import SignedRequest
 from facepy import GraphAPI
 from datetime import datetime, timedelta
 from flask import Flask, json, g, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
-from bson.objectid import ObjectId
-
+from bson import ObjectId
 from werkzeug.security import safe_str_cmp
+from config import *
+from util import *
 
-app = Flask(__name__)
-mongo = MongoClient("mongodb://127.0.0.1:27017/")
+application = Flask(__name__)
+
+mongo = MongoClient(DB_PATH)
 db = mongo["adventurizer"]
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(application, resources={r"/api/*": {"origins": "*"}})
 
-JWT_SECRET = 'PandarenPoodlePantamime'
-JWT_ALGORITHM = 'HS256'
-JWT_EXP_DELTA_SECONDS = 60 * 60 * 24 * 30
-
-FACEBOOK_APP = {
-  "id": "187870645609943",
-  "secret": "e5c868d7e9ef24adf6ecedcc1464b374"
-}
-
-mail_settings = {
-  "MAIL_SERVER": 'smtp.gmail.com',
-  "MAIL_PORT": 465,
-  "MAIL_USE_TLS": False,
-  "MAIL_USE_SSL": True,
-  "MAIL_USERNAME": "adventurizerapp@gmail.com",
-  "MAIL_PASSWORD": "DrumbleAnswerCallamity"
-}
-
-app.config.update(mail_settings)
-mail = Mail(app)
-
-def randomString(stringLength=10):
-  letters = string.ascii_lowercase
-  return ''.join(random.choice(letters) for i in range(stringLength))
-
-def getClientIdentifier():
-  parts = []
-  if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
-    parts.append(request.environ['REMOTE_ADDR'])
-  else:
-    parts.append(request.environ['HTTP_X_FORWARDED_FOR'])
-
-  # to-do: add more than just IP
-  s = "_"
-  s = s.join(parts)
-  return s
-
-
-def encryptPassword(password, salt):
-  return hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, 100000)
-
-
-def authorize(accessToken):
-  try:
-    payload = jwt.decode(accessToken, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-    if not payload['_id']:
-      return False
-    return payload['_id']
-  except (jwt.DecodeError, jwt.ExpiredSignatureError):
-    return False
-
-def identity(payload):
-  userId = payload['identity']
-  user = db["user"].find_one({"_id": ObjectId(userId)})
-  return user["_id"]
-
-
-def jsonifySafe(json):
-  return jsonify(json)
-
-
-@app.route("/api/login", methods=["POST"])
+@application.route("/api/login", methods=["POST"])
 def login():
   ret = {}
   ret["status"] = "error"
@@ -194,6 +139,7 @@ def login():
           "externalId": externalId,
           "confirmed": True,
           "confirmDate": datetime.utcnow(),
+          "subscribed": True,
           "insertDate": datetime.utcnow()
         }
 
@@ -304,13 +250,13 @@ def login():
   return jsonifySafe(ret)
 
 
-@app.route("/api/logout", methods=["GET", "POST"])
+@application.route("/api/logout", methods=["GET", "POST"])
 def logout():
   ret = {}
   ret["status"] = "success"
   return jsonifySafe(ret)
 
-@app.route("/api/confirm/<confirmToken>", methods=["POST"])
+@application.route("/api/confirm/<confirmToken>", methods=["POST"])
 def confirmUser(confirmToken):
   ret = {}
   ret["status"] = "error"
@@ -347,7 +293,7 @@ def confirmUser(confirmToken):
 
   return jsonifySafe(ret)
 
-@app.route("/api/user", methods=["GET", "POST", "PUT"])
+@application.route("/api/user", methods=["GET", "POST", "PUT"])
 def user():
   ret = {}
   ret["status"] = "error"
@@ -355,6 +301,7 @@ def user():
   users = db['user']
   if request.method == "GET":
     # getting logged in user
+    userId = None
     if request.headers.get('Authorization'):
       userId = authorize(request.headers.get('Authorization'))
     
@@ -387,11 +334,16 @@ def user():
         "email": {
           "value": user["email"],
           "error": None
+        },
+        "subscribed": {
+          "value": user["subscribed"],
+          "error": None
         }
       }
     }
   elif request.method == "PUT":
     # updating logged in user
+    userId = None
     if request.headers.get('Authorization'):
       userId = authorize(request.headers.get('Authorization'))
     
@@ -416,6 +368,7 @@ def user():
     
     penName = request.json.get("penName")
     email = request.json.get("email")
+    subscribed = request.json.get("subscribed")
 
     if user["email"] != email:
       if "externalType" in user:
@@ -441,6 +394,7 @@ def user():
     del userNew['_id']
     userNew['email'] = email
     userNew['penName'] = penName
+    userNew['subscribed'] = subscribed
 
     updateRet = users.replace_one({"_id": ObjectId(userId)}, userNew, False)
 
@@ -528,6 +482,7 @@ def user():
       "key": key,
       "confirmed": False,
       "confirmToken": confirmToken,
+      "subscribed": True,
       "insertDate": datetime.utcnow()
     }
     userId = users.insert_one(user).inserted_id
@@ -540,16 +495,40 @@ def user():
     if ret["errors"]:
       return jsonifySafe(ret)
 
-    # to-do: remove token from page and send in email
-    ret["data"] = {
-      "confirmToken": confirmToken
-    }
+    recipient = email
+    subject = "Confirm your Adventurizer account"
+
+    contentText = """
+      To confirm your account, please click the following link:\r\n
+      https://adventurizer.net/confirm/{confirmToken}
+      """
+
+    contentHTML = """
+      <h1>Thank you for signing up with Adventurizer, {penName}!</h1>
+      <p>
+        To confirm your account, please click the following link:
+        <br/><br/>
+        <a href="https://adventurizer.net/confirm/{confirmToken}">https://adventurizer.net/confirm/{confirmToken}</a>
+      </p>
+      """.format(confirmToken = confirmToken, penName = penName)
+
+    sendRet = sendEmail(db, recipient, subject, contentText, contentHTML)
+
+    if not sendRet:
+      ret["errors"].append({
+        "code": "ErrEmailSending",
+        "target": False
+      })
+
+    if ret["errors"]:
+      return jsonifySafe(ret)
+
     ret["status"] = "success"
 
   return jsonifySafe(ret)
 
 
-@app.route("/api/adventure/<adventureId>/progress/<progressId>", methods=["GET", "PUT"])
+@application.route("/api/adventure/<adventureId>/progress/<progressId>", methods=["GET", "PUT"])
 def adventureProgress(adventureId, progressId):
   ret = {}
   ret["status"] = "error"
@@ -625,7 +604,7 @@ def adventureProgress(adventureId, progressId):
   return jsonifySafe(ret)
 
 
-@app.route("/api/adventure/<adventureId>/progress", methods=["GET", "POST"])
+@application.route("/api/adventure/<adventureId>/progress", methods=["GET", "POST"])
 def adventureProgressNew(adventureId):
   ret = {}
   ret["status"] = "error"
@@ -742,7 +721,7 @@ def adventureProgressNew(adventureId):
   return jsonifySafe(ret)
 
 
-@app.route("/api/adventure/<adventureId>", methods=["GET", "PUT", "DELETE"])
+@application.route("/api/adventure/<adventureId>", methods=["GET", "PUT", "DELETE"])
 def adventureKnown(adventureId):
   ret = {}
   ret["status"] = "error"
@@ -937,11 +916,13 @@ def adventureKnown(adventureId):
   return jsonifySafe(ret)
 
 
-@app.route("/api/adventure", methods=["GET", "POST"])
+@application.route("/api/adventure", methods=["GET", "POST"])
 def adventureNew():
   ret = {}
   ret["status"] = "error"
   ret["errors"] = []
+
+  userId = None
 
   if request.headers.get('Authorization'):
     userId = authorize(request.headers.get('Authorization'))
@@ -1033,11 +1014,13 @@ def adventureNew():
 
   return jsonifySafe(ret)
 
-@app.route("/api/adventure/search", methods=["GET"])
+@application.route("/api/adventure/search", methods=["GET"])
 def adventureSearch():
   ret = {}
   ret["status"] = "error"
   ret["errors"] = []
+
+  userId = None
 
   if request.headers.get('Authorization'):
     userId = authorize(request.headers.get('Authorization'))
@@ -1112,12 +1095,13 @@ def adventureSearch():
 
   return jsonifySafe(ret)
 
-@app.route("/api/progress", methods=["GET"])
+@application.route("/api/progress", methods=["GET"])
 def progressRoute():
   ret = {}
   ret["status"] = "error"
   ret["errors"] = []
 
+  userId = None
   if request.headers.get('Authorization'):
     userId = authorize(request.headers.get('Authorization'))
 
@@ -1227,16 +1211,42 @@ def progressRoute():
   }
 
   return jsonifySafe(ret)
-
-
-@app.route("/api/test", methods=["GET", "POST"])
+  
+@application.route("/api/test", methods=["GET"])
 def test():
-  msg = Message(subject="Hello",
-                sender=app.config.get("MAIL_USERNAME"),
-                recipients=["daneiracleous@gmail.com"],
-                body="This is a test email I sent with Gmail and Python!")
-  mail.send(msg)
+  ret = {}
+  ret["status"] = "error"
+  ret["errors"] = []
 
+  recipient = "daneiracleous@gmail.com"
+  subject = "Testing email sending"
+
+  contentText = """
+    Amazon SES Test (Python)\r\n
+    This email was sent with Amazon SES using the
+    AWS SDK for Python (Boto)."""
+
+  contentHTML = """
+    <h1>Amazon SES Test (SDK for Python)</h1>
+    <p>This email was sent with
+      <a href='https://aws.amazon.com/ses/'>Amazon SES</a> using the
+      <a href='https://aws.amazon.com/sdk-for-python/'>AWS SDK for Python (Boto)</a>.
+    </p>
+    """
+
+  sendRet = sendEmail(db, recipient, subject, contentText, contentHTML)
+
+  if not sendRet:
+    ret["errors"].append({
+      "code": "ErrEmailSending",
+      "target": False
+    })
+
+  if ret["errors"]:
+    return jsonifySafe(ret)
+
+  ret["status"] = "success"
+  return jsonifySafe(ret)
 
 if __name__ == "__main__":
-  app.run(debug=True)
+  application.run(host='0.0.0.0')

@@ -35,7 +35,20 @@ class Dashboard extends React.Component {
         <div className="content contentFilled">
           { !Util.Auth.isAuthenticated && 
             <div className="widget widgetEdge">
-              <div className="promo"></div>
+              <div className="promo">
+                <div>
+                  <h1>
+                    Build your own adventures
+                    <br/>
+                    Discover new adventures
+                  </h1>
+                  <Link to={`/signup`} className="link">
+                    <Button color="primary" variant="contained" size="large">
+                      Create Free Account
+                    </Button>
+                  </Link>
+                </div>
+              </div>
             </div>
           }
           { Util.Auth.isAuthenticated && 

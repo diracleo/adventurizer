@@ -25,12 +25,12 @@ import { setConfirmDialog, setQuietAlertDialog } from "./action";
 CanvasRenderingContext2D.prototype.roundRect = function (x, y, width, height, radius, fill, stroke) {
   var cornerRadius = { upperLeft: 0, upperRight: 0, lowerLeft: 0, lowerRight: 0 };
   if (typeof stroke == "undefined") {
-      stroke = true;
+    stroke = true;
   }
   if (typeof radius === "object") {
-      for (var side in radius) {
-          cornerRadius[side] = radius[side];
-      }
+    for (var side in radius) {
+      cornerRadius[side] = radius[side];
+    }
   }
 
   this.beginPath();
@@ -45,10 +45,10 @@ CanvasRenderingContext2D.prototype.roundRect = function (x, y, width, height, ra
   this.quadraticCurveTo(x, y, x + cornerRadius.upperLeft, y);
   this.closePath();
   if (stroke) {
-      this.stroke();
+    this.stroke();
   }
   if (fill) {
-      this.fill();
+    this.fill();
   }
 } 
 
@@ -98,9 +98,9 @@ function reverseObject(object) {
 }
 
 String.prototype.trunc = 
-      function(n){
-          return this.substr(0,n-1)+(this.length>n?'...':'');
-      };
+  function(n){
+    return this.substr(0,n-1)+(this.length>n?'...':'');
+  };
 
 const translation = {
   ErrAccountNotConfirmed: "Account has not been confirmed yet.",
@@ -515,11 +515,6 @@ function generateListBreakpoints(l, override) {
     mapping: layoutMap
   }
 }
-
-config.set({ 
-  apiHost: "http://127.0.0.1:5000",
-  webHost: "http://localhost:3000"
-});
 
 axios.interceptors.request.use(function (config) {
   let accessToken = Auth.accessToken;
