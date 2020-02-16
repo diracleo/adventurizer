@@ -53,7 +53,7 @@ class AdventuresList extends React.Component {
             loading: true
           }
         });
-        axios.delete(`${config.get("apiHost")}/api/adventure/${adventureId}`, params)
+        axios.delete(`${config.get("apiHost")}/adventure/${adventureId}`, params)
           .then(res => {
             let ret = Util.processRequestReturnSilent(res);
             if(!ret) {
@@ -65,7 +65,7 @@ class AdventuresList extends React.Component {
               return;
             }
             params = {};
-            axios.get(`${config.get("apiHost")}/api/adventure`, params)
+            axios.get(`${config.get("apiHost")}/adventure`, params)
               .then(res => {
                 let ret = Util.processRequestReturnSilent(res);
                 if(!ret) {
@@ -109,7 +109,7 @@ class AdventuresList extends React.Component {
     st['status']['loading'] = true;
     o.setState(st);
     let queryString = "?limit=" + params['limit'] + "&page=" + params['page'];
-    axios.get(`${config.get("apiHost")}/api/adventure${queryString}`, {})
+    axios.get(`${config.get("apiHost")}/adventure${queryString}`, {})
       .then(res => {
         let ret = Util.processRequestReturnSilent(res);
         if(!ret) {

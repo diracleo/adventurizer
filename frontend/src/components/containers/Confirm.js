@@ -34,7 +34,7 @@ class Confirm extends React.Component {
     let confirmToken = this.state.confirmToken;
     let params = {};
     let o = this;
-    axios.post(`${config.get("apiHost")}/api/confirm/${confirmToken}`, params)
+    axios.post(`${config.get("apiHost")}/confirm/${confirmToken}`, params)
       .then(res => {
         let ret = Util.processRequestReturnSilent(res);
         if(!ret) {

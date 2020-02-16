@@ -245,7 +245,7 @@ const Auth = {
   },
   authenticate(o, params, cb) {
     let authRef = this;
-    axios.post(`${config.get("apiHost")}/api/login`, params)
+    axios.post(`${config.get("apiHost")}/login`, params)
       .then(res => {
         if(processRequestReturn(res, o, "SuccLoggedIn")) {
           authRef.isAuthenticated = true;
@@ -257,7 +257,7 @@ const Auth = {
   },
   signout(o, params, cb) {
     let authRef = this;
-    axios.post(`${config.get("apiHost")}/api/logout`)
+    axios.post(`${config.get("apiHost")}/logout`)
       .then(res => {
         if(processRequestReturn(res, o, "SuccLoggedOut")) {
           authRef.isAuthenticated = false;

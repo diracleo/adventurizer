@@ -195,9 +195,9 @@ class AdventureBuilder extends React.Component {
     });
 
     //are we creating a new adventure or updating an existing one?
-    let url = `${config.get("apiHost")}/api/adventure`;
+    let url = `${config.get("apiHost")}/adventure`;
     if(this.state.adventureId == null) {
-      axios.post(`${config.get("apiHost")}/api/adventure`, params)
+      axios.post(`${config.get("apiHost")}/adventure`, params)
         .then(res => {
           let saved = o.processSave(res);
           let adventureId = null;
@@ -218,7 +218,7 @@ class AdventureBuilder extends React.Component {
           });
         });
     } else {
-      axios.put(`${config.get("apiHost")}/api/adventure/${this.state.adventureId}`, params)
+      axios.put(`${config.get("apiHost")}/adventure/${this.state.adventureId}`, params)
         .then(res => {
           let saved = o.processSave(res);
           let redirectRet = false;
@@ -657,7 +657,7 @@ class AdventureBuilder extends React.Component {
       let adventureId = this.state.adventureId;
       let params = {};
       let o = this;
-      axios.get(`${config.get("apiHost")}/api/adventure/${adventureId}`, params)
+      axios.get(`${config.get("apiHost")}/adventure/${adventureId}`, params)
         .then(res => {
           let ret = Util.processRequestReturnSilent(res);
           if(!ret) {

@@ -29,9 +29,10 @@ application = Flask(__name__)
 
 mongo = MongoClient(DB_PATH)
 db = mongo["adventurizer"]
-CORS(application, resources={r"/api/*": {"origins": "*"}})
 
-@application.route("/api/login", methods=["POST"])
+CORS(application, resources={r"/*": {"origins": ACCEPTED_ORIGINS}})
+
+@application.route("/login", methods=["POST"])
 def login():
   ret = {}
   ret["status"] = "error"
@@ -250,13 +251,13 @@ def login():
   return jsonifySafe(ret)
 
 
-@application.route("/api/logout", methods=["GET", "POST"])
+@application.route("/logout", methods=["GET", "POST"])
 def logout():
   ret = {}
   ret["status"] = "success"
   return jsonifySafe(ret)
 
-@application.route("/api/confirm/<confirmToken>", methods=["POST"])
+@application.route("/confirm/<confirmToken>", methods=["POST"])
 def confirmUser(confirmToken):
   ret = {}
   ret["status"] = "error"
@@ -293,7 +294,7 @@ def confirmUser(confirmToken):
 
   return jsonifySafe(ret)
 
-@application.route("/api/user", methods=["GET", "POST", "PUT"])
+@application.route("/user", methods=["GET", "POST", "PUT"])
 def user():
   ret = {}
   ret["status"] = "error"
@@ -528,7 +529,7 @@ def user():
   return jsonifySafe(ret)
 
 
-@application.route("/api/adventure/<adventureId>/progress/<progressId>", methods=["GET", "PUT"])
+@application.route("/adventure/<adventureId>/progress/<progressId>", methods=["GET", "PUT"])
 def adventureProgress(adventureId, progressId):
   ret = {}
   ret["status"] = "error"
@@ -604,7 +605,7 @@ def adventureProgress(adventureId, progressId):
   return jsonifySafe(ret)
 
 
-@application.route("/api/adventure/<adventureId>/progress", methods=["GET", "POST"])
+@application.route("/adventure/<adventureId>/progress", methods=["GET", "POST"])
 def adventureProgressNew(adventureId):
   ret = {}
   ret["status"] = "error"
@@ -721,7 +722,7 @@ def adventureProgressNew(adventureId):
   return jsonifySafe(ret)
 
 
-@application.route("/api/adventure/<adventureId>", methods=["GET", "PUT", "DELETE"])
+@application.route("/adventure/<adventureId>", methods=["GET", "PUT", "DELETE"])
 def adventureKnown(adventureId):
   ret = {}
   ret["status"] = "error"
@@ -916,7 +917,7 @@ def adventureKnown(adventureId):
   return jsonifySafe(ret)
 
 
-@application.route("/api/adventure", methods=["GET", "POST"])
+@application.route("/adventure", methods=["GET", "POST"])
 def adventureNew():
   ret = {}
   ret["status"] = "error"
@@ -1014,7 +1015,7 @@ def adventureNew():
 
   return jsonifySafe(ret)
 
-@application.route("/api/adventure/search", methods=["GET"])
+@application.route("/adventure/search", methods=["GET"])
 def adventureSearch():
   ret = {}
   ret["status"] = "error"
@@ -1095,7 +1096,7 @@ def adventureSearch():
 
   return jsonifySafe(ret)
 
-@application.route("/api/progress", methods=["GET"])
+@application.route("/progress", methods=["GET"])
 def progressRoute():
   ret = {}
   ret["status"] = "error"
@@ -1212,7 +1213,7 @@ def progressRoute():
 
   return jsonifySafe(ret)
   
-@application.route("/api/test", methods=["GET"])
+@application.route("/test", methods=["GET"])
 def test():
   ret = {}
   ret["status"] = "error"
@@ -1246,6 +1247,26 @@ def test():
     return jsonifySafe(ret)
 
   ret["status"] = "success"
+  return jsonifySafe(ret)
+
+@application.errorhandler(404) 
+def not_found(e):
+  ret = {}
+  ret["status"] = "error"
+  ret["errors"] = []
+  ret["errors"].append({
+    "code": "Err404"
+  })
+  return jsonifySafe(ret)
+
+@application.errorhandler(500) 
+def not_found(e):
+  ret = {}
+  ret["status"] = "error"
+  ret["errors"] = []
+  ret["errors"].append({
+    "code": "Err500"
+  })
   return jsonifySafe(ret)
 
 if __name__ == "__main__":

@@ -54,7 +54,7 @@ class ProgressList extends React.Component {
     st['status']['loading'] = true;
     o.setState(st);
     let queryString = "?limit=" + params['limit'] + "&page=" + params['page'];
-    axios.get(`${config.get("apiHost")}/api/progress${queryString}`, {})
+    axios.get(`${config.get("apiHost")}/progress${queryString}`, {})
       .then(res => {
         let ret = Util.processRequestReturnSilent(res);
         if(!ret) {

@@ -61,7 +61,7 @@ class AdventureView extends React.Component {
     let adventureId = this.state.adventureId;
     let params = {};
     let o = this;
-    axios.get(`${config.get("apiHost")}/api/adventure/${adventureId}`, params)
+    axios.get(`${config.get("apiHost")}/adventure/${adventureId}`, params)
       .then(res => {
         let ret = Util.processRequestReturnSilent(res);
         if(!ret) {
@@ -144,7 +144,7 @@ class AdventureView extends React.Component {
       "progress": progress
     };
     
-    axios.put(`${config.get("apiHost")}/api/adventure/${adventureId}/progress/${progressId}`, params)
+    axios.put(`${config.get("apiHost")}/adventure/${adventureId}/progress/${progressId}`, params)
       .then(res => {
         let ret = Util.processRequestReturnSilent(res);
         if(!ret) {
@@ -180,7 +180,7 @@ class AdventureView extends React.Component {
       "progress": progress
     };
     
-    axios.put(`${config.get("apiHost")}/api/adventure/${adventureId}/progress/${progressId}`, params)
+    axios.put(`${config.get("apiHost")}/adventure/${adventureId}/progress/${progressId}`, params)
       .then(res => {
         let ret = Util.processRequestReturnSilent(res);
         if(!ret) {
@@ -210,7 +210,7 @@ class AdventureView extends React.Component {
     let adventureId = this.state.adventureId;
     let params = {};
     
-    axios.post(`${config.get("apiHost")}/api/adventure/${adventureId}/progress`, params)
+    axios.post(`${config.get("apiHost")}/adventure/${adventureId}/progress`, params)
       .then(res => {
         let ret = Util.processRequestReturnSilent(res);
         if(!ret) {
