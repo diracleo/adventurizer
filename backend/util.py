@@ -234,3 +234,26 @@ def sendChangeAccountEmail(db, email, penName, actionToken):
   sendRet = sendEmail(db, recipient, subject, contentText, contentHTML)
 
   return sendRet
+
+def processSNSMessage(db, msg):
+  if not "notificationType" in msg:
+    return
+
+  emails = []
+  if msg["notificationType"] == "Bounce" and "bounce" in msg and "bouncedRecipients" in msg["bounce"]:
+    for recip in msg["bounce"]["bouncedRecipients"]:
+      if "emailAddress" in recip:
+        emails.append(recip["emailAddress"])
+  
+  if msg["notificationType"] == "Complaint" and "complaint" in msg and "complainedRecipients" in msg["complaint"]:
+    for recip in msg["bounce"]["complainedRecipients"]:
+      if "emailAddress" in recip:
+        emails.append(recip["emailAddress"])
+
+  nosends = db['nosend']
+
+  for i in emails:
+    nosend = nosends.find_one({"email": i})
+    if not nosend:
+      insertRet = nosends.insert_one({"email": i})
+  

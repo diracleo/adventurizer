@@ -12,6 +12,7 @@ import pymongo
 import math
 import jwt
 import boto3
+import requests
 from botocore.exceptions import ClientError
 from flask import Flask
 from facepy import SignedRequest
@@ -32,12 +33,21 @@ db = mongo["adventurizer"]
 
 CORS(application, resources={r"/*": {"origins": ACCEPTED_ORIGINS}})
 
-@application.route("/emailReport", methods=["POST"])
+@application.route("/emailReport", methods=["GET", "POST"])
 def emailReport():
-  multi_dict = request.args
-    for key in multi_dict:
-      print multi_dict.get(key)
-      print multi_dict.getlist(key)
+  try:
+    js = json.loads(request.data)
+  except:
+    pass
+
+  hdr = request.headers.get('X-Amz-Sns-Message-Type')
+  if hdr == 'SubscriptionConfirmation' and 'SubscribeURL' in js:
+    r = requests.get(js['SubscribeURL'])
+
+  if hdr == 'Notification':
+    processSNSMessage(db, js)
+
+  return 'OK\n'
 
 @application.route("/login", methods=["POST"])
 def login():
