@@ -101,6 +101,13 @@ class AdventureView extends React.Component {
           progress: progress,
           progressId: progressId
         });
+      }).catch(error => {
+        Util.displayError("ErrServerResponse");
+        o.setState({
+          status: {
+            loading: false
+          }
+        });
       });
     
     window.addEventListener('resize', () => {
@@ -158,6 +165,13 @@ class AdventureView extends React.Component {
             loading: false
           }
         });
+      }).catch(error => {
+        Util.displayError("ErrServerResponse");
+        o.setState({
+          status: {
+            loading: false
+          }
+        });
       });
   }
 
@@ -190,6 +204,13 @@ class AdventureView extends React.Component {
           progress: progress,
           progressId: progressId,
           answersShow: false,
+          status: {
+            loading: false
+          }
+        });
+      }).catch(error => {
+        Util.displayError("ErrServerResponse");
+        o.setState({
           status: {
             loading: false
           }
@@ -228,6 +249,13 @@ class AdventureView extends React.Component {
           progressId: progressId,
           progress: progress,
           answersShow: false
+        });
+      }).catch(error => {
+        Util.displayError("ErrServerResponse");
+        o.setState({
+          status: {
+            loading: false
+          }
         });
       });
   }

@@ -15,6 +15,7 @@ import store from './../../store'
 import { connect } from "react-redux";
 import { setConfirmDialog, setQuietAlertDialog } from "./../../action";
 
+import AccountStatus from './../modules/AccountStatus.js';
 import LoadingOverlay from './../modules/LoadingOverlay.js';
 
 class Signup extends React.Component {
@@ -126,6 +127,13 @@ class Signup extends React.Component {
               }
             }))
           }
+        }).catch(error => {
+          Util.displayError("ErrServerResponse");
+          o.setState({
+            status: {
+              loading: false
+            }
+          });
         });
     }
   }
@@ -143,7 +151,7 @@ class Signup extends React.Component {
   }
   render() {
     const { from } = this.props.location.state || { from: { pathname: '/' } }
-    const { redirectToReferrer, emailSent, penName } = this.state
+    const { redirectToReferrer, emailSent, penName, email } = this.state
 
     if (redirectToReferrer === true) {
       return <Redirect to={from} />
@@ -154,10 +162,7 @@ class Signup extends React.Component {
             <Box p={5}>
               <Grid container spacing={3}>
                 <Grid item xs={12}>
-                  <Box>
-                    <h1>Thanks for signing up, {penName.value}!</h1>
-                    Please click the link in the email to confirm your account.
-                  </Box>
+                  <AccountStatus type="unconfirmed" email={email.value} />
                 </Grid>
               </Grid>
             </Box>

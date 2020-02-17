@@ -216,6 +216,13 @@ class AdventureBuilder extends React.Component {
             redirect: redirectRet,
             adventureId: adventureId
           });
+        }).catch(error => {
+          Util.displayError("ErrServerResponse");
+          o.setState({
+            status: {
+              loading: false
+            }
+          });
         });
     } else {
       axios.put(`${config.get("apiHost")}/adventure/${this.state.adventureId}`, params)
@@ -231,6 +238,13 @@ class AdventureBuilder extends React.Component {
               loading: false
             },
             redirect: redirectRet
+          });
+        }).catch(error => {
+          Util.displayError("ErrServerResponse");
+          o.setState({
+            status: {
+              loading: false
+            }
           });
         });
     }
@@ -687,9 +701,9 @@ class AdventureBuilder extends React.Component {
           }
           */
 
-         this.positionX = adventure['view']['x'];
-         this.positionY = adventure['view']['y'];
-         this.scale = adventure['view']['scale'];
+          this.positionX = adventure['view']['x'];
+          this.positionY = adventure['view']['y'];
+          this.scale = adventure['view']['scale'];
           
           //console.log(this.state.questions);
           o.setState({
@@ -722,6 +736,13 @@ class AdventureBuilder extends React.Component {
               }
             })(o), o.autoSaveSeconds * 1000);
           }
+        }).catch(error => {
+          Util.displayError("ErrServerResponse");
+          o.setState({
+            status: {
+              loading: false
+            }
+          });
         });
     } else {
       this.setState({

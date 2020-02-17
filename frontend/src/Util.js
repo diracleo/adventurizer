@@ -105,6 +105,7 @@ String.prototype.trunc =
 const translation = {
   ErrAccountNotConfirmed: "Account has not been confirmed yet.",
   ErrDeleteFailed: "Unable to delete record.",
+  ErrEmailFailed: "Unable to send email.",
   ErrEmailLockedIn: "Unable to change email because your account is tied to Facebook",
   ErrEmptyAdventureTheme: "Adventure theme cannot be empty",
   ErrEmptyAdventureTitle: "Adventure name cannot be empty",
@@ -149,6 +150,14 @@ function loadFacebookAPI() {
     js.src = "//connect.facebook.net/en_US/sdk.js";
     fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));
+}
+
+function displayError(err) {
+  store.dispatch(setQuietAlertDialog({
+    open: true,
+    severity: "error",
+    description: translation[err]
+  }));
 }
 
 function processRequestReturnSilent(res) {
@@ -252,10 +261,13 @@ const Auth = {
           authRef.isAuthenticated = true;
           authRef.accessToken = res['data']['data']['accessToken'];
           setCookie("accessToken", res['data']['data']['accessToken'], 30);
-          cb(true);
+          cb(res);
         } else {
-          cb(false);
+          cb(res);
         }
+      }).catch(error => {
+        displayError("ErrServerResponse");
+        cb({});
       });
   },
   signout(o, params, cb) {
@@ -538,6 +550,7 @@ export default {
   translation,
   processRequestReturnSilent,
   processRequestReturn,
+  displayError,
   ui,
   generateListBreakpoints,
   loadFacebookAPI,

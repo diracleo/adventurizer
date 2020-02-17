@@ -54,18 +54,18 @@ def authorize(accessToken):
   except (jwt.DecodeError, jwt.ExpiredSignatureError):
     return False
 
-def generateActionToken(userId, token, action):
+def generateActionToken(userId, token, action, value = None):
   payload = {
     '_id': userId,
     'token': token,
     'action': action,
     'exp': datetime.utcnow() + timedelta(seconds=JWT_EXP_DELTA_SECONDS)
   }
+
+  if value:
+    payload['value'] = value
+
   actionToken = jwt.encode(payload, JWT_SECRET, JWT_ALGORITHM).decode('utf-8')
-  print("info: ")
-  print(payload)
-  print(JWT_SECRET)
-  print(JWT_ALGORITHM)
   return actionToken
 
 def parseActionToken(actionToken):
@@ -83,7 +83,7 @@ def jsonifySafe(json):
 def sendEmail(db, recipient, subject, contentText, contentHTML):
   users = db["user"]
   user = users.find_one({"email": recipient})
-  if not user['subscribed']:
+  if user and not user['subscribed']:
     return False
 
   SENDER = "Adventurizer <dane@adventurizer.net>"
@@ -148,3 +148,47 @@ def sendEmail(db, recipient, subject, contentText, contentHTML):
     return False
   else:
     return True
+
+def sendConfirmAccountEmail(db, email, penName, actionToken):
+  recipient = email
+  subject = "Confirm your account"
+
+  contentText = """
+    To confirm your account, please click the following link:\r\n
+    https://adventurizer.net/action/{actionToken}
+    """.format(actionToken = actionToken, penName = penName)
+
+  contentHTML = """
+    <h1>Thank you for signing up with Adventurizer, {penName}!</h1>
+    <p>
+      To confirm your account, please click the following link:
+      <br/><br/>
+      <a href="https://adventurizer.net/action/{actionToken}">https://adventurizer.net/action/{actionToken}</a>
+    </p>
+    """.format(actionToken = actionToken, penName = penName)
+
+  sendRet = sendEmail(db, recipient, subject, contentText, contentHTML)
+
+  return sendRet
+
+def sendChangeAccountEmail(db, email, penName, actionToken):
+  recipient = email
+  subject = "Confirm your email address"
+
+  contentText = """
+    To confirm this email address, please click the following link:\r\n
+    https://adventurizer.net/action/{actionToken}
+    """.format(actionToken = actionToken, penName = penName)
+
+  contentHTML = """
+    <h1>You have changed your email address, {penName}!</h1>
+    <p>
+      To confirm this email address, please click the following link:
+      <br/><br/>
+      <a href="https://adventurizer.net/action/{actionToken}">https://adventurizer.net/action/{actionToken}</a>
+    </p>
+    """.format(actionToken = actionToken, penName = penName)
+
+  sendRet = sendEmail(db, recipient, subject, contentText, contentHTML)
+
+  return sendRet

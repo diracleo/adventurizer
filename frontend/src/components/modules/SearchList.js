@@ -83,6 +83,13 @@ class SearchList extends React.Component {
         st['adventures'] = adventures;
         st['status']['loading'] = false;
         o.setState(st);
+      }).catch(error => {
+        Util.displayError("ErrServerResponse");
+        o.setState({
+          status: {
+            loading: false
+          }
+        });
       });
   }
   componentDidMount() {

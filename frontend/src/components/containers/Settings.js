@@ -3,8 +3,8 @@ import axios from 'axios';
 import { AxiosProvider, Request, Get, Delete, Head, Post, Put, Patch, withAxios } from 'react-axios';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import { FormGroup, FormControlLabel, Checkbox, Paper, Box, Grid, TextField, Button } from '@material-ui/core';
-import { Facebook as FacebookIcon } from '@material-ui/icons';
+import { FormGroup, FormControlLabel, Checkbox, Paper, Box, Grid, TextField, Button, IconButton } from '@material-ui/core';
+import { Edit, Facebook as FacebookIcon } from '@material-ui/icons';
 import { Link, Redirect } from "react-router-dom";
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 
@@ -64,7 +64,6 @@ class Settings extends React.Component {
   save() {
     let params = {};
     params['penName'] = this.state.penName.value;
-    params['email'] = this.state.email.value;
     params['subscribed'] = this.state.subscribed.value;
     let o = this;
     o.setState({
@@ -87,6 +86,13 @@ class Settings extends React.Component {
           passwordConfirm: {
             value: "",
             error: null
+          }
+        });
+      }).catch(error => {
+        Util.displayError("ErrServerResponse");
+        o.setState({
+          status: {
+            loading: false
           }
         });
       });
@@ -119,6 +125,13 @@ class Settings extends React.Component {
             error: null
           }
         });
+      }).catch(error => {
+        Util.displayError("ErrServerResponse");
+        o.setState({
+          status: {
+            loading: false
+          }
+        });
       });
   }
   render() {
@@ -134,21 +147,44 @@ class Settings extends React.Component {
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Box>
-                    <TextField id="fieldSettingsPenName" label="Pen Name" required type="text" fullWidth 
-                      value={this.state.penName.value}
-                      error={this.state.penName.error != null}
-                      helperText={this.state.penName.error}
-                      onChange={e => this.set("penName", e.target.value)} 
+                    <TextField id="fieldSettingsEmail" label="Email" type="email" fullWidth disabled={true}
+                      value={this.state.email.value}
+                      error={this.state.email.error != null}
+                      helperText={this.state.email.error}
+                      onChange={e => this.set("email", e.target.value)} 
+                      InputProps={{
+                        endAdornment: 
+                        <Link to="/changeEmail" className="link">
+                          <IconButton color="primary">
+                            <Edit />
+                          </IconButton>
+                        </Link>
+                      }}
                     />
                   </Box>
                 </Grid>
                 <Grid item xs={12}>
                   <Box>
-                    <TextField id="fieldSettingsEmail" label="Email" required type="email" fullWidth 
-                      value={this.state.email.value}
-                      error={this.state.email.error != null}
-                      helperText={this.state.email.error}
-                      onChange={e => this.set("email", e.target.value)} 
+                    <TextField id="fieldSettingsPassword" label="Password" type="password" fullWidth disabled={true}
+                      value="******"
+                      InputProps={{
+                        endAdornment: 
+                        <Link to="/changePassword" className="link">
+                          <IconButton color="primary">
+                            <Edit />
+                          </IconButton>
+                        </Link>
+                      }}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={12}>
+                  <Box>
+                    <TextField id="fieldSettingsPenName" label="Pen Name" required type="text" fullWidth 
+                      value={this.state.penName.value}
+                      error={this.state.penName.error != null}
+                      helperText={this.state.penName.error}
+                      onChange={e => this.set("penName", e.target.value)} 
                     />
                   </Box>
                 </Grid>
@@ -162,7 +198,7 @@ class Settings extends React.Component {
                     />
                   </FormGroup>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12}>
                   <Box>
                     <Button variant="contained" color="primary" onClick={() => this.save()}>
                       Save

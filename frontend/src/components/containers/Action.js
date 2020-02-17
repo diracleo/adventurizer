@@ -153,6 +153,33 @@ class Action extends React.Component {
           </div>
         </div>
       )
+    } else if(this.state.action === "changeEmail") {
+      return (
+        <div>
+          <div className="mainTitle">
+            <h1>Email Confirmed</h1>
+          </div>
+          <div className="content contentSmall contentWithTitle">
+            <Paper>
+              <Box p={5}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12}>
+                    <Box>
+                      <p>Your new email address has been confirmed.</p>
+                      <Link to={`/settings`} className="link">
+                        <Button variant="contained" color="primary">
+                          Go Back to Settings
+                        </Button>
+                      </Link>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </Box>
+            </Paper>
+            <LoadingOverlay loading={this.state.status.loading} />
+          </div>
+        </div>
+      )
     } else if(this.state.action === "resetPassword") {
       if(this.state.status.complete) {
         return (

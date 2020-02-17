@@ -13,6 +13,7 @@ import store from './../../store'
 import { connect } from "react-redux";
 import { setConfirmDialog, setQuietAlertDialog } from "./../../action";
 
+import AccountStatus from './../modules/AccountStatus.js';
 import LoadingOverlay from './../modules/LoadingOverlay.js';
 
 class Login extends React.Component {
@@ -20,6 +21,7 @@ class Login extends React.Component {
     super(props);
     this.state = {
       redirectToReferrer: false,
+      accountProblem: false,
       status: {
         loading: false
       },
@@ -50,16 +52,30 @@ class Login extends React.Component {
     let params = {};
     params['email'] = this.state.email.value;
     params['password'] = this.state.password.value;
-    Util.Auth.authenticate(this, params, (succ) => {
-      o.setState({
-        status: {
-          loading: false
+    Util.Auth.authenticate(this, params, (res) => {
+      if(res['data']['status'] == "success") {
+        o.setState({
+          redirectToReferrer: true,
+          status: {
+            loading: false
+          }
+        });
+      } else {
+        let accountProblem = false;
+        if(typeof(res.data.errors) != 'undefined') {
+          for(let i = 0; i < res.data.errors.length; i++) {
+            if(res.data.errors[i]['code'] == "ErrAccountNotConfirmed") {
+              accountProblem = "unconfirmed";
+              break;
+            }
+          }
         }
-      });
-      if(succ) {
-        this.setState(() => ({
-          redirectToReferrer: true
-        }))
+        o.setState({
+          accountProblem: accountProblem,
+          status: {
+            loading: false
+          }
+        });
       }
     })
   }
@@ -86,10 +102,29 @@ class Login extends React.Component {
   }
   render() {
     const { from } = this.props.location.state || { from: { pathname: '/' } }
-    const { redirectToReferrer } = this.state
+    const { email, redirectToReferrer, accountProblem } = this.state
 
     if (redirectToReferrer === true) {
       return <Redirect to={from} />
+    } else if(accountProblem !== false) {
+      return (
+        <div>
+          <div className="mainTitle">
+            <h1>Sign In</h1>
+          </div>
+          <div className="content contentSmall contentWithTitle">
+            <Paper>
+              <Box p={5}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12}>
+                    <AccountStatus type={accountProblem} email={email.value} />
+                  </Grid>
+                </Grid>
+              </Box>
+            </Paper>
+          </div>
+        </div>
+      )
     }
 
     return (

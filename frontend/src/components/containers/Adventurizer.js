@@ -19,6 +19,8 @@ import ForgotPassword from './../containers/ForgotPassword.js';
 import Dashboard from './../containers/Dashboard.js';
 import Progress from './../containers/Progress.js';
 import Settings from './../containers/Settings.js';
+import ChangeEmail from './../containers/ChangeEmail.js';
+import ChangePassword from './../containers/ChangePassword.js';
 import ActionRouter from './../routers/ActionRouter.js';
 import SearchRouter from './../routers/SearchRouter.js';
 import TermsOfUse from './../containers/TermsOfUse.js';
@@ -206,6 +208,8 @@ class Adventurizer extends React.Component {
               <PrivateRoute path="/adventures" component={AdventuresRouter} />
               <PrivateRoute path="/progress" component={Progress} />
               <PrivateRoute path="/settings" component={Settings} />
+              <PrivateRoute path="/changeEmail" component={ChangeEmail} />
+              <PrivateRoute path="/changePassword" component={ChangePassword} />
               <Route path="/" component={Dashboard} />
             </Switch>
             <Drawer open={this.props.menus.main} onClose={this.handleToggleMainMenu(false)}>

@@ -64,6 +64,13 @@ class ForgotPassword extends React.Component {
             }
           }))
         }
+      }).catch(error => {
+        Util.displayError("ErrServerResponse");
+        o.setState({
+          status: {
+            loading: false
+          }
+        });
       });
   }
   render() {
