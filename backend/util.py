@@ -54,6 +54,29 @@ def authorize(accessToken):
   except (jwt.DecodeError, jwt.ExpiredSignatureError):
     return False
 
+def generateActionToken(userId, token, action):
+  payload = {
+    '_id': userId,
+    'token': token,
+    'action': action,
+    'exp': datetime.utcnow() + timedelta(seconds=JWT_EXP_DELTA_SECONDS)
+  }
+  actionToken = jwt.encode(payload, JWT_SECRET, JWT_ALGORITHM).decode('utf-8')
+  print("info: ")
+  print(payload)
+  print(JWT_SECRET)
+  print(JWT_ALGORITHM)
+  return actionToken
+
+def parseActionToken(actionToken):
+  try:
+    payload = jwt.decode(actionToken, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+    if not payload['_id']:
+      return False
+    return payload
+  except (jwt.DecodeError, jwt.ExpiredSignatureError):
+    return False
+
 def jsonifySafe(json):
   return jsonify(json)
 
@@ -70,21 +93,21 @@ def sendEmail(db, recipient, subject, contentText, contentHTML):
 
   bodyText = contentText
 
-  bodyHTML = """<html style="background-color:#eee;">
+  bodyHTML = """<html>
     <head></head>
-    <body style="background-color:#eee;>
-      <div style="background-color:#eee;>
-        <div style="max-width:600px; margin-left:auto; margin-right:auto; background-color:#fff;">
-          <div style="background-color:#673ab7; text-align:center; overflow:hidden; border-radius:5px;">
+    <body style="background-color:#eee;">
+      <div style="background-color:#eee; padding-top:15px; padding-bottom:15px;">
+        <div style="max-width:600px; margin-left:auto; margin-right:auto; background-color:#fff; box-shadow:0px 5px 15px rgba(0, 0, 0, 0.1); border-radius:5px; overflow:hidden;">
+          <div style="background-color:#673ab7; text-align:center; overflow:hidden;">
             <img src="https://s3-us-west-2.amazonaws.com/adventurizer.net/email/logo.png" alt="Adventurizer" />
           </div>
-          <div style="padding-top:15px; padding-bottom:15px; border-bottom:1px solid #ccc;">"""
+          <div style="padding:15px; border-bottom:1px solid #ccc;">"""
   
   bodyHTML += contentHTML
 
   bodyHTML += """
           </div>
-          <div style="padding-top:15px; padding-bottom:15px;">
+          <div style="padding:15px;">
             If you do not want to receive emails from Adventurizer, <a href="https://adventurizer.net/settings">click here to unsubscribe</a>.<br/>
             <a href="https://adventurizer.net/terms">Terms of Use</a> &nbsp; <a href="https://adventurizer.net/privacy">Privacy Policy</a>
           </div>

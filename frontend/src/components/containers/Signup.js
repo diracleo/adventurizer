@@ -119,6 +119,12 @@ class Signup extends React.Component {
                 loading: false
               }
             }))
+          } else {
+            o.setState(() => ({
+              status: {
+                loading: false
+              }
+            }))
           }
         });
     }
@@ -161,113 +167,119 @@ class Signup extends React.Component {
     }
 
     return (
-      <div className="content contentSmall">
-        <Paper>
-          <Box p={5}>
-            <Grid container spacing={3}>
-              {/* 
-              <Grid item xs={12}>
-                <div className="facebookBtnHolder">
-                  <FacebookLogin
-                    appId="187870645609943"
-                    autoLoad={false}
-                    fields="name,email,picture"
-                    callback={(response) => this.responseFacebook(response)} 
-                    render={renderProps => (
-                      <Button variant="contained" color="primary" onClick={renderProps.onClick} className="facebookBtn">
-                        <FacebookIcon />
-                        &nbsp; 
-                        Sign in with Facebook
-                      </Button>
-                    )} />
-                </div>
-                <div className="or">
-                  <span>OR</span>
-                </div>
+      <div>
+        <div className="mainTitle">
+          <h1>Sign Up</h1>
+        </div>
+        <div className="content contentSmall contentWithTitle">
+          <Paper>
+            <Box p={5}>
+              <Grid container spacing={3}>
+                {/* 
+                <Grid item xs={12}>
+                  <div className="facebookBtnHolder">
+                    <FacebookLogin
+                      appId="187870645609943"
+                      autoLoad={false}
+                      fields="name,email,picture"
+                      callback={(response) => this.responseFacebook(response)} 
+                      render={renderProps => (
+                        <Button variant="contained" color="primary" onClick={renderProps.onClick} className="facebookBtn">
+                          <FacebookIcon />
+                          &nbsp; 
+                          Sign in with Facebook
+                        </Button>
+                      )} />
+                  </div>
+                  <div className="or">
+                    <span>OR</span>
+                  </div>
+                </Grid>
+                */}
+                <Grid item xs={12}>
+                  <Box>
+                    <TextField id="fieldSignupPenName" label="Pen Name" required type="text" fullWidth autoFocus
+                      value={this.state.penName.value}
+                      error={this.state.penName.error != null}
+                      helperText={this.state.penName.error}
+                      onChange={e => this.set("penName", e.target.value)} 
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={12}>
+                  <Box>
+                    <TextField id="fieldSignupEmail" label="Email" required type="email" fullWidth 
+                      value={this.state.email.value}
+                      error={this.state.email.error != null}
+                      helperText={this.state.email.error}
+                      onChange={e => this.set("email", e.target.value)} 
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={12}>
+                  <Box>
+                    <TextField id="fieldSignupEmailConfirm" label="Confirm Email" required type="email" fullWidth
+                      value={this.state.emailConfirm.value}
+                      error={this.state.emailConfirm.error != null}
+                      helperText={this.state.emailConfirm.error}
+                      onChange={e => this.set("emailConfirm", e.target.value)}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={12}>
+                  <Box>
+                    <TextField id="fieldSignupPassword" label="Password" required type="password" fullWidth 
+                      value={this.state.password.value}
+                      error={this.state.password.error != null}
+                      helperText={this.state.password.error}
+                      onChange={e => this.set("password", e.target.value)} 
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={12}>
+                  <Box>
+                    <TextField id="fieldSignupPasswordConfirm" label="Confirm Password" required type="password" fullWidth 
+                      value={this.state.passwordConfirm.value}
+                      error={this.state.passwordConfirm.error != null}
+                      helperText={this.state.passwordConfirm.error}
+                      onChange={e => this.set("passwordConfirm", e.target.value)} 
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={12}>
+                  <FormGroup row>
+                    <FormControlLabel
+                      control={
+                        <Checkbox checked={this.state.tos.value} onChange={(event) => this.toggleTos(event)} value="1" />
+                      }
+                      label={
+                        <div>
+                          <span>I accept the </span>
+                          <Link target={"_blank"} to={'/terms'}>terms of use</Link>
+                          <span> and </span>
+                          <Link target={"_blank"} to={'/privacy'}>privacy policy</Link>
+                        </div>
+                      }
+                    />
+                  </FormGroup>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Box>
+                    <Button variant="contained" color="primary" onClick={() => this.signup()}>
+                      Sign Up
+                    </Button>
+                  </Box>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Box className="signupLoginPromo">
+                    Already have an account? <Link to="/login" className="link highlight" key="mainMenuAdventuresLink">Sign In</Link>
+                  </Box>
+                </Grid>
               </Grid>
-              */}
-              <Grid item xs={12}>
-                <Box>
-                  <TextField id="fieldSignupPenName" label="Pen Name" required type="text" fullWidth
-                    value={this.state.penName.value}
-                    error={this.state.penName.error != null}
-                    helperText={this.state.penName.error}
-                    onChange={e => this.set("penName", e.target.value)} 
-                  />
-                </Box>
-              </Grid>
-              <Grid item xs={12}>
-                <Box>
-                  <TextField id="fieldSignupEmail" label="Email" required type="email" fullWidth 
-                    value={this.state.email.value}
-                    error={this.state.email.error != null}
-                    helperText={this.state.email.error}
-                    onChange={e => this.set("email", e.target.value)} 
-                  />
-                </Box>
-              </Grid>
-              <Grid item xs={12}>
-                <Box>
-                  <TextField id="fieldSignupEmailConfirm" label="Confirm Email" required type="email" fullWidth
-                    value={this.state.emailConfirm.value}
-                    error={this.state.emailConfirm.error != null}
-                    helperText={this.state.emailConfirm.error}
-                    onChange={e => this.set("emailConfirm", e.target.value)}
-                  />
-                </Box>
-              </Grid>
-              <Grid item xs={12}>
-                <Box>
-                  <TextField id="fieldSignupPassword" label="Password" required type="password" fullWidth 
-                    value={this.state.password.value}
-                    error={this.state.password.error != null}
-                    helperText={this.state.password.error}
-                    onChange={e => this.set("password", e.target.value)} 
-                  />
-                </Box>
-              </Grid>
-              <Grid item xs={12}>
-                <Box>
-                  <TextField id="fieldSignupPasswordConfirm" label="Confirm Password" required type="password" fullWidth 
-                    value={this.state.passwordConfirm.value}
-                    error={this.state.passwordConfirm.error != null}
-                    helperText={this.state.passwordConfirm.error}
-                    onChange={e => this.set("passwordConfirm", e.target.value)} 
-                  />
-                </Box>
-              </Grid>
-              <Grid item xs={12}>
-                <FormGroup row>
-                  <FormControlLabel
-                    control={
-                      <Checkbox checked={this.state.tos.value} onChange={(event) => this.toggleTos(event)} value="1" />
-                    }
-                    label={
-                      <div>
-                        <span>I accept the </span>
-                        <Link target={"_blank"} to={'/terms'}>terms of use</Link>
-                        <span> and </span>
-                        <Link target={"_blank"} to={'/privacy'}>privacy policy</Link>
-                      </div>
-                    }
-                  />
-                </FormGroup>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Box>
-                  <Button variant="contained" color="primary" onClick={() => this.signup()}>
-                    Sign Up
-                  </Button>
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Box className="signupLoginPromo">
-                  Already have an account? <Link to="/login" className="link highlight" key="mainMenuAdventuresLink">Sign In</Link>
-                </Box>
-              </Grid>
-            </Grid>
-          </Box>
-        </Paper>
+            </Box>
+          </Paper>
+          <LoadingOverlay loading={this.state.status.loading} />
+        </div>
       </div>
     )
   }

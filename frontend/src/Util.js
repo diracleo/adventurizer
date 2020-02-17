@@ -124,6 +124,7 @@ const translation = {
   ErrServerResponse: "An error occurred. Please try again later.",
   ErrUnknown: "An unknown error occurred.",
   ErrUpdateFailed: "Unable to update record.",
+  SuccEmailSent: "Email has been sent.",
   SuccLoggedIn: "Logged in",
   SuccLoggedOut: "Logged out",
   SuccAccountCreated: "Account created",
@@ -251,7 +252,9 @@ const Auth = {
           authRef.isAuthenticated = true;
           authRef.accessToken = res['data']['data']['accessToken'];
           setCookie("accessToken", res['data']['data']['accessToken'], 30);
-          cb();
+          cb(true);
+        } else {
+          cb(false);
         }
       });
   },

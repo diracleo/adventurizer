@@ -15,10 +15,11 @@ import ConfirmDialog from './../modules/ConfirmDialog.js';
 import QuietAlertDialog from './../modules/QuietAlertDialog.js';
 import Signup from './../containers/Signup.js';
 import Login from './../containers/Login.js';
+import ForgotPassword from './../containers/ForgotPassword.js';
 import Dashboard from './../containers/Dashboard.js';
 import Progress from './../containers/Progress.js';
 import Settings from './../containers/Settings.js';
-import ConfirmRouter from './../routers/ConfirmRouter.js';
+import ActionRouter from './../routers/ActionRouter.js';
 import SearchRouter from './../routers/SearchRouter.js';
 import TermsOfUse from './../containers/TermsOfUse.js';
 import PrivacyPolicy from './../containers/PrivacyPolicy.js';
@@ -200,7 +201,8 @@ class Adventurizer extends React.Component {
               <Route path="/privacy" component={PrivacyPolicy} />
               <Route path="/login" component={Login} />
               <Route path="/signup" component={Signup} />
-              <Route path="/confirm/:confirmToken" component={ConfirmRouter} />
+              <Route path="/forgotPassword" component={ForgotPassword} />
+              <Route path="/action/:actionToken" component={ActionRouter} />
               <PrivateRoute path="/adventures" component={AdventuresRouter} />
               <PrivateRoute path="/progress" component={Progress} />
               <PrivateRoute path="/settings" component={Settings} />

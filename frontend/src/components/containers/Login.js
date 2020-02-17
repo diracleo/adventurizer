@@ -50,15 +50,17 @@ class Login extends React.Component {
     let params = {};
     params['email'] = this.state.email.value;
     params['password'] = this.state.password.value;
-    Util.Auth.authenticate(this, params, () => {
+    Util.Auth.authenticate(this, params, (succ) => {
       o.setState({
         status: {
-          loading: true
+          loading: false
         }
       });
-      this.setState(() => ({
-        redirectToReferrer: true
-      }))
+      if(succ) {
+        this.setState(() => ({
+          redirectToReferrer: true
+        }))
+      }
     })
   }
   responseFacebook(response) {
@@ -91,67 +93,75 @@ class Login extends React.Component {
     }
 
     return (
-      <div className="content contentSmall">
-        
-        <Paper>
-          <Box p={5}>
-            <Grid container spacing={3}>
-              {/*
-              <Grid item xs={12}>
-                <div className="facebookBtnHolder">
-                  <FacebookLogin
-                    appId="187870645609943"
-                    autoLoad={false}
-                    fields="name,email,picture"
-                    callback={(response) => this.responseFacebook(response)} 
-                    render={renderProps => (
-                      <Button variant="contained" color="primary" onClick={renderProps.onClick} className="facebookBtn">
-                        <FacebookIcon />
-                        &nbsp; 
-                        Sign in with Facebook
-                      </Button>
-                    )} />
-                </div>
-                <div className="or">
-                  <span>OR</span>
-                </div>
+      <div>
+        <div className="mainTitle">
+          <h1>Sign In</h1>
+        </div>
+        <div className="content contentSmall contentWithTitle">
+          <Paper>
+            <Box p={5}>
+              <Grid container spacing={3}>
+                {/*
+                <Grid item xs={12}>
+                  <div className="facebookBtnHolder">
+                    <FacebookLogin
+                      appId="187870645609943"
+                      autoLoad={false}
+                      fields="name,email,picture"
+                      callback={(response) => this.responseFacebook(response)} 
+                      render={renderProps => (
+                        <Button variant="contained" color="primary" onClick={renderProps.onClick} className="facebookBtn">
+                          <FacebookIcon />
+                          &nbsp; 
+                          Sign in with Facebook
+                        </Button>
+                      )} />
+                  </div>
+                  <div className="or">
+                    <span>OR</span>
+                  </div>
+                </Grid>
+                */}
+                <Grid item xs={12}>
+                  <Box>
+                    <TextField id="fieldLoginEmail" label="Email" required type="email" fullWidth autoFocus
+                      value={this.state.email.value}
+                      error={this.state.email.error != null}
+                      helperText={this.state.email.error}
+                      onChange={e => this.set("email", e.target.value)} 
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={12}>
+                  <Box>
+                    <TextField id="fieldLoginPassword" label="Password" required type="password" fullWidth 
+                      value={this.state.password.value}
+                      error={this.state.password.error != null}
+                      helperText={this.state.password.error}
+                      onChange={e => this.set("password", e.target.value)} 
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Box>
+                    <Button variant="contained" color="primary" onClick={() => this.login()}>
+                      Sign In
+                    </Button>
+                  </Box>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Box className="loginSignupPromo">
+                    Don't have an account? <Link to="/signup" className="link highlight">Sign Up</Link>
+                  </Box>
+                  <Box className="loginForgotPassword">
+                    <Link to="/forgotPassword" className="link highlight">I forgot my password</Link>
+                  </Box>
+                </Grid>
               </Grid>
-              */}
-              <Grid item xs={12}>
-                <Box>
-                  <TextField id="fieldLoginEmail" label="Email" required type="email" fullWidth
-                    value={this.state.email.value}
-                    error={this.state.email.error != null}
-                    helperText={this.state.email.error}
-                    onChange={e => this.set("email", e.target.value)} 
-                  />
-                </Box>
-              </Grid>
-              <Grid item xs={12}>
-                <Box>
-                  <TextField id="fieldLoginPassword" label="Password" required type="password" fullWidth 
-                    value={this.state.password.value}
-                    error={this.state.password.error != null}
-                    helperText={this.state.password.error}
-                    onChange={e => this.set("password", e.target.value)} 
-                  />
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Box>
-                  <Button variant="contained" color="primary" onClick={() => this.login()}>
-                    Sign In
-                  </Button>
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Box className="loginSignupPromo">
-                  Don't have an account? <Link to="/signup" className="link highlight" key="mainMenuAdventuresLink">Sign Up</Link>
-                </Box>
-              </Grid>
-            </Grid>
-          </Box>
-        </Paper>
+            </Box>
+          </Paper>
+          <LoadingOverlay loading={this.state.status.loading} />
+        </div>
       </div>
     )
   }

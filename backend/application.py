@@ -257,40 +257,225 @@ def logout():
   ret["status"] = "success"
   return jsonifySafe(ret)
 
-@application.route("/confirm/<confirmToken>", methods=["POST"])
-def confirmUser(confirmToken):
+@application.route("/forgotPassword", methods=["POST"])
+def forgotPassword():
   ret = {}
   ret["status"] = "error"
   ret["errors"] = []
   users = db['user']
-  user = users.find_one({"confirmToken": confirmToken})
+
+  email = request.json.get("email")
+
+  if not email:
+    ret["errors"].append({
+      "code": "ErrEmptyEmail",
+      "target": "email"
+    })
+
+  if ret["errors"]:
+    return jsonifySafe(ret)
+
+  regPatt = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
+  if not re.search(regPatt, email):
+    ret["errors"].append({
+      "code": "ErrInvalidEmail",
+      "target": "email"
+    })
+
+  if ret["errors"]:
+    return jsonifySafe(ret)
+  
+  user = users.find_one({"email": email})
+  if user:
+    tokens = {}
+    if "tokens" in user:
+      tokens = user["tokens"]
+    
+    newToken = randomString(20)
+    tokens[newToken] = "resetPassword"
+
+    actionToken = generateActionToken(str(user['_id']), newToken, "resetPassword")
+
+    if not actionToken:
+      ret["errors"].append({
+        "code": "ErrUpdateFailed",
+        "target": "email"
+      })
+
+    if ret["errors"]:
+      return jsonifySafe(ret)
+
+    updateRet = users.update_one({'_id': user['_id']},
+    {
+      '$set': {
+        'tokens': tokens
+      }
+    }, upsert=True)
+
+    if not updateRet:
+      ret["errors"].append({
+        "code": "ErrUpdateFailed",
+        "target": "email"
+      })
+
+    if ret["errors"]:
+      return jsonifySafe(ret)
+
+    recipient = email
+    subject = "Reset your password"
+
+    contentText = """
+      To reset your password, please click the following link:\r\n
+      https://adventurizer.net/action/{actionToken}
+      """.format(actionToken = actionToken)
+
+    contentHTML = """
+      <p>
+        To reset your password, please click the following link:
+        <br/><br/>
+        <a href="https://adventurizer.net/action/{actionToken}">https://adventurizer.net/action/{actionToken}</a>
+      </p>
+      """.format(actionToken = actionToken)
+
+    sendRet = sendEmail(db, recipient, subject, contentText, contentHTML)
+
+    if not sendRet:
+      ret["errors"].append({
+        "code": "ErrEmailSending",
+        "target": False
+      })
+
+    if ret["errors"]:
+      return jsonifySafe(ret)
+    
+  ret["status"] = "success"
+
+  return jsonifySafe(ret)
+
+@application.route("/action/<actionToken>", methods=["GET", "POST"])
+def actionUser(actionToken):
+  ret = {}
+  ret["status"] = "error"
+  ret["errors"] = []
+  users = db['user']
+
+  response = parseActionToken(actionToken)
+
+  if not response or not "action" in response or not "token" in response:
+    ret["errors"].append({
+      "code": "ErrServerResponse",
+      "target": False
+    })
+
+  if ret["errors"]:
+    return jsonifySafe(ret)
+  
+  userId = response['_id']
+  user = users.find_one({"_id": ObjectId(userId)})
   if not user:
     ret["errors"].append({
-      "code": "ErrNotFound",
+      "code": "ErrServerResponse",
       "target": False
     })
   
   if ret["errors"]:
     return jsonifySafe(ret)
   
-  userNew = user.copy()
-  del userNew['_id']
-  del userNew['confirmToken']
-  userNew['confirmed'] = True
-  userNew['confirmDate'] = datetime.utcnow()
+  token = response["token"]
+  action = response["action"]
 
-  updateRet = users.replace_one({"_id": user['_id']}, userNew, False)
-
-  if not updateRet:
+  if not "tokens" in user or not token in user['tokens'] or user['tokens'][token] != action:
     ret["errors"].append({
-      "code": "ErrUpdateFailed",
+      "code": "ErrServerResponse",
       "target": False
     })
 
   if ret["errors"]:
     return jsonifySafe(ret)
 
-  ret["status"] = "success"
+  if request.method == "GET":
+    if action == "confirmEmail":
+      # confirming email requires just a quick visit to this endpoint - no need to POST after
+      tokens = user['tokens'].copy()
+      del tokens[token]
+
+      updateRet = users.update_one({'_id': user['_id']},
+      {
+        '$set': {
+          'confirmed': True,
+          'confirmDate': datetime.utcnow(),
+          'tokens': tokens
+        }
+      }, upsert=True)
+
+      if not updateRet:
+        ret["errors"].append({
+          "code": "ErrUpdateFailed",
+          "target": False
+        })
+
+      if ret["errors"]:
+        return jsonifySafe(ret)
+
+    ret["status"] = "success"
+    ret["data"] = {
+      "token": actionToken,
+      "action": response['action']
+    }
+
+  elif request.method == "POST":
+    if action == "resetPassword":
+      password = request.json.get("password")
+      passwordConfirm = request.json.get("passwordConfirm")
+
+      if not password:
+        ret["errors"].append({
+          "code": "ErrEmptyPassword",
+          "target": "password"
+        })
+      elif password != passwordConfirm:
+        ret["errors"].append({
+          "code": "ErrMatchPasswords",
+          "target": "passwordConfirm"
+        })
+
+      if ret["errors"]:
+        return jsonifySafe(ret)
+
+      if len(password) < 6:
+        ret["errors"].append({
+          "code": "ErrInvalidPassword",
+          "target": "password"
+        })
+
+      if ret["errors"]:
+        return jsonifySafe(ret)
+      
+      salt = os.urandom(32)
+      key = encryptPassword(password, salt)
+
+      tokens = user['tokens'].copy()
+      del tokens[token]
+
+      updateRet = users.update_one({'_id': user['_id']},
+      {
+        '$set': {
+          'salt': salt,
+          'key': key,
+          'tokens': tokens
+        }
+      }, upsert=True)
+
+      if not updateRet:
+        ret["errors"].append({
+          "code": "ErrUpdateFailed",
+          "target": False
+        })
+
+      if ret["errors"]:
+        return jsonifySafe(ret)
+
+    ret["status"] = "success"
 
   return jsonifySafe(ret)
 
@@ -474,16 +659,14 @@ def user():
     salt = os.urandom(32)
     key = encryptPassword(password, salt)
 
-    confirmToken = randomString(20)
-
     user = {
       "email": email,
       "penName": penName,
       "salt": salt,
       "key": key,
       "confirmed": False,
-      "confirmToken": confirmToken,
       "subscribed": True,
+      "tokens": {},
       "insertDate": datetime.utcnow()
     }
     userId = users.insert_one(user).inserted_id
@@ -496,22 +679,53 @@ def user():
     if ret["errors"]:
       return jsonifySafe(ret)
 
+    tokens = {}
+    newToken = randomString(20)
+    tokens[newToken] = "confirmEmail"
+
+    actionToken = generateActionToken(str(userId), newToken, "confirmEmail")
+
+    if not actionToken:
+      ret["errors"].append({
+        "code": "ErrUpdateFailed",
+        "target": "email"
+      })
+
+    if ret["errors"]:
+      return jsonifySafe(ret)
+
+    updateRet = users.update_one({'_id': userId},
+    {
+      '$set': {
+        'tokens': tokens
+      }
+    }, upsert=True)
+
+    if not updateRet:
+      ret["errors"].append({
+        "code": "ErrUpdateFailed",
+        "target": "email"
+      })
+
+    if ret["errors"]:
+      return jsonifySafe(ret)
+
     recipient = email
-    subject = "Confirm your Adventurizer account"
+    subject = "Confirm your account"
 
     contentText = """
       To confirm your account, please click the following link:\r\n
-      https://adventurizer.net/confirm/{confirmToken}
-      """
+      https://adventurizer.net/action/{actionToken}
+      """.format(actionToken = actionToken, penName = penName)
 
     contentHTML = """
       <h1>Thank you for signing up with Adventurizer, {penName}!</h1>
       <p>
         To confirm your account, please click the following link:
         <br/><br/>
-        <a href="https://adventurizer.net/confirm/{confirmToken}">https://adventurizer.net/confirm/{confirmToken}</a>
+        <a href="https://adventurizer.net/action/{actionToken}">https://adventurizer.net/action/{actionToken}</a>
       </p>
-      """.format(confirmToken = confirmToken, penName = penName)
+      """.format(actionToken = actionToken, penName = penName)
 
     sendRet = sendEmail(db, recipient, subject, contentText, contentHTML)
 
