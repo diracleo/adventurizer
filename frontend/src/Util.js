@@ -130,7 +130,8 @@ const translation = {
   SuccLoggedOut: "Logged out",
   SuccAccountCreated: "Account created",
   SuccAccountUpdated: "Account updated",
-  SuccAdventureSaved: "Adventure saved"
+  SuccAdventureSaved: "Adventure saved",
+  SuccSubscriptionSaved: "Subscription saved"
 };
 
 function loadFacebookAPI() {

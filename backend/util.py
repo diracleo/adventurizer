@@ -77,14 +77,37 @@ def parseActionToken(actionToken):
   except (jwt.DecodeError, jwt.ExpiredSignatureError):
     return False
 
+def generateUnsubscribeToken(email):
+  payload = {
+    'email': email,
+    'exp': datetime.utcnow() + timedelta(seconds=JWT_EXP_DELTA_SECONDS)
+  }
+
+  actionToken = jwt.encode(payload, JWT_SECRET, JWT_ALGORITHM).decode('utf-8')
+  return actionToken
+
+def parseUnsubscribeToken(actionToken):
+  try:
+    payload = jwt.decode(actionToken, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+    if not payload['email']:
+      return False
+    return payload
+  except (jwt.DecodeError, jwt.ExpiredSignatureError):
+    return False
+
 def jsonifySafe(json):
   return jsonify(json)
 
 def sendEmail(db, recipient, subject, contentText, contentHTML):
   users = db["user"]
+  nosends = db["nosend"]
   user = users.find_one({"email": recipient})
   if user and not user['subscribed']:
     return False
+  else:
+    nosend = nosends.find_one({"email": recipient})
+    if nosend:
+      return False
 
   SENDER = "Adventurizer <dane@adventurizer.net>"
   AWS_REGION = "us-west-2"            
@@ -92,6 +115,11 @@ def sendEmail(db, recipient, subject, contentText, contentHTML):
   client = boto3.client('ses', region_name=AWS_REGION)
 
   bodyText = contentText
+
+  unsubLink = "https://adventurizer.net/settings"
+  if not user or not user['confirmed']:
+    unsubToken = generateUnsubscribeToken(recipient)
+    unsubLink = "https://adventurizer.net/unsub/" + unsubToken
 
   bodyHTML = """<html>
     <head></head>
@@ -101,20 +129,15 @@ def sendEmail(db, recipient, subject, contentText, contentHTML):
           <div style="background-color:#673ab7; text-align:center; overflow:hidden;">
             <img src="https://s3-us-west-2.amazonaws.com/adventurizer.net/email/logo.png" alt="Adventurizer" />
           </div>
-          <div style="padding:15px; border-bottom:1px solid #ccc;">"""
-  
-  bodyHTML += contentHTML
-
-  bodyHTML += """
-          </div>
-          <div style="padding:15px;">
-            If you do not want to receive emails from Adventurizer, <a href="https://adventurizer.net/settings">click here to unsubscribe</a>.<br/>
+          <div style="padding:15px; border-bottom:1px solid #ccc;">{contentHTML}</div>
+          <div style="padding:15px; text-align:center;">
+            If you do not want to receive emails from Adventurizer, <a href="{unsubLink}">click here to unsubscribe</a>.<br/>
             <a href="https://adventurizer.net/terms">Terms of Use</a> &nbsp; <a href="https://adventurizer.net/privacy">Privacy Policy</a>
           </div>
         </div>
       </div>
     </body>
-    </html>"""
+    </html>""".format(contentHTML = contentHTML, unsubLink = unsubLink)
 
   try:
     #Provide the contents of the email.
@@ -148,6 +171,25 @@ def sendEmail(db, recipient, subject, contentText, contentHTML):
     return False
   else:
     return True
+
+def sendWelcomeEmail(db, email, penName):
+  recipient = email
+  subject = "Welcome to Adventurizer!"
+
+  contentText = """
+    Welcome to Adventurizer
+    """.format(penName = penName)
+
+  contentHTML = """
+    <h1>Welcome to Adventurizer, {penName}!</h1>
+    <p>
+      Adventurizer is currently in beta. Please keep checking back for the latest features.
+    </p>
+    """.format(penName = penName)
+
+  sendRet = sendEmail(db, recipient, subject, contentText, contentHTML)
+
+  return sendRet
 
 def sendConfirmAccountEmail(db, email, penName, actionToken):
   recipient = email

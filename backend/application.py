@@ -32,6 +32,13 @@ db = mongo["adventurizer"]
 
 CORS(application, resources={r"/*": {"origins": ACCEPTED_ORIGINS}})
 
+@application.route("/emailReport", methods=["POST"])
+def emailReport():
+  multi_dict = request.args
+    for key in multi_dict:
+      print multi_dict.get(key)
+      print multi_dict.getlist(key)
+
 @application.route("/login", methods=["POST"])
 def login():
   ret = {}
@@ -389,6 +396,65 @@ def forgotPassword():
 
   return jsonifySafe(ret)
 
+@application.route("/unsub/<unsubToken>", methods=["GET", "POST"])
+def unsub(unsubToken):
+  ret = {}
+  ret["status"] = "error"
+  ret["errors"] = []
+  nosends = db['nosend']
+
+  response = parseUnsubscribeToken(unsubToken)
+
+  if not response or not "email" in response:
+    ret["errors"].append({
+      "code": "ErrServerResponse",
+      "target": False
+    })
+
+  if ret["errors"]:
+    return jsonifySafe(ret)
+  
+  email = response['email']
+
+  nosend = nosends.find_one({"email": email})
+
+  subscribed = True
+  if nosend:
+    subscribed = False
+  
+  ret["data"] = {
+    "email": email,
+    "subscribed": subscribed
+  }
+
+  if request.method == "GET":
+    ret["status"] = "success"
+    return jsonifySafe(ret)
+  elif request.method == "POST":
+    newSubscribed = request.json.get("subscribed")
+    if not newSubscribed and subscribed:
+      insertRet = nosends.insert_one({"email": email})
+      if not insertRet:
+        ret["errors"].append({
+          "code": "ErrServerResponse",
+          "target": False
+        })
+        if ret["errors"]:
+          return jsonifySafe(ret)
+    elif newSubscribed and not subscribed:
+      deleteRet = nosends.delete_one({"email": email})
+      if not deleteRet:
+        ret["errors"].append({
+          "code": "ErrServerResponse",
+          "target": False
+        })
+        if ret["errors"]:
+          return jsonifySafe(ret)
+    
+    ret["data"]["subscribed"] = newSubscribed
+    ret["status"] = "success"
+    return jsonifySafe(ret)
+
 @application.route("/action/<actionToken>", methods=["GET", "POST"])
 def actionUser(actionToken):
   ret = {}
@@ -420,6 +486,7 @@ def actionUser(actionToken):
   
   token = response["token"]
   action = response["action"]
+  value = None
   if "value" in response:
     value = response["value"]
 
@@ -452,6 +519,8 @@ def actionUser(actionToken):
           "code": "ErrUpdateFailed",
           "target": False
         })
+      
+      sendRet = sendWelcomeEmail(db, user['email'], user['penName'])
 
       if ret["errors"]:
         return jsonifySafe(ret)
@@ -761,6 +830,7 @@ def user():
   ret["status"] = "error"
   ret["errors"] = []
   users = db['user']
+  nosends = db['nosend']
   if request.method == "GET":
     # getting logged in user
     userId = None
@@ -846,6 +916,9 @@ def user():
 
     if ret["errors"]:
       return jsonifySafe(ret)
+    
+    if subscribed:
+      nosends.delete_one({"email": user['email']})
 
     ret["status"] = "success"
 
@@ -964,7 +1037,7 @@ def user():
     if ret["errors"]:
       return jsonifySafe(ret)
 
-    setRet = sendConfirmAccountEmail(email, penName, actionToken)
+    sendRet = sendConfirmAccountEmail(db, email, penName, actionToken)
 
     if not sendRet:
       ret["errors"].append({

@@ -61,6 +61,13 @@ class Action extends React.Component {
             }
           });
         }
+      }).catch(error => {
+        Util.displayError("ErrServerResponse");
+        o.setState({
+          status: {
+            loading: false
+          }
+        });
       });
   }
 
@@ -101,6 +108,13 @@ class Action extends React.Component {
           }
         }
         o.setState(newState);
+      }).catch(error => {
+        Util.displayError("ErrServerResponse");
+        o.setState({
+          status: {
+            loading: false
+          }
+        });
       });
   }
 

@@ -22,6 +22,7 @@ import Settings from './../containers/Settings.js';
 import ChangeEmail from './../containers/ChangeEmail.js';
 import ChangePassword from './../containers/ChangePassword.js';
 import ActionRouter from './../routers/ActionRouter.js';
+import UnsubRouter from './../routers/UnsubRouter.js';
 import SearchRouter from './../routers/SearchRouter.js';
 import TermsOfUse from './../containers/TermsOfUse.js';
 import PrivacyPolicy from './../containers/PrivacyPolicy.js';
@@ -205,6 +206,7 @@ class Adventurizer extends React.Component {
               <Route path="/signup" component={Signup} />
               <Route path="/forgotPassword" component={ForgotPassword} />
               <Route path="/action/:actionToken" component={ActionRouter} />
+              <Route path="/unsub/:unsubToken" component={UnsubRouter} />
               <PrivateRoute path="/adventures" component={AdventuresRouter} />
               <PrivateRoute path="/progress" component={Progress} />
               <PrivateRoute path="/settings" component={Settings} />
