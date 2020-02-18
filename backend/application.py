@@ -1103,9 +1103,6 @@ def adventureProgress(adventureId, progressId):
       if prog['userId'] == userId:
         validated = True
 
-    print(clientId)
-    print(prog['clientId'])
-
     if not validated:
       ret["errors"].append({
         "code": "ErrNotAuthorized",
@@ -1247,7 +1244,6 @@ def adventureProgressNew(adventureId):
       t['meta'] = a['meta']
       adventuresList.append(t)
 
-    print(adventuresList)
     ret["status"] = "success"
     ret["data"] = {
       "adventures": adventuresList

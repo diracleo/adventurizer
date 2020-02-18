@@ -501,5 +501,25 @@ html, body, #root {
     .mainTitle {
       margin-top:56px;
     }
+    .wrapped {
+      min-height:calc(100vh - 150px);
+      min-height:calc(var(--vh, 1vh) * 100 - 150px);
+      .content {
+        min-height:calc(100vh - 150px);
+        min-height:calc(var(--vh, 1vh) * 100 - 150px);
+        &.contentWithTitle {
+          min-height:calc(100vh - 206px);
+          min-height:calc(var(--vh, 1vh) * 100 - 206px);
+        }
+      }
+    }
+    .decorated {
+      position:relative;
+      background-color:transparent;
+      &:before {
+        background-image:none;
+        background-color:transparent;
+      }
+    }
   }
 }
