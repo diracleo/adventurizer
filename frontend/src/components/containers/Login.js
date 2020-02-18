@@ -162,7 +162,7 @@ class Login extends React.Component {
                 */}
                 <Grid item xs={12}>
                   <Box>
-                    <TextField id="fieldLoginEmail" label="Email" required type="email" fullWidth autoFocus
+                    <TextField id="fieldLoginEmail" label="Email" required type="email" fullWidth 
                       value={this.state.email.value}
                       error={this.state.email.error != null}
                       helperText={this.state.email.error}

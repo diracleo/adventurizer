@@ -109,7 +109,7 @@ class ForgotPassword extends React.Component {
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Box>
-                    <TextField id="fieldLoginEmail" label="Email" required type="email" fullWidth autoFocus
+                    <TextField id="fieldLoginEmail" label="Email" required type="email" fullWidth 
                       value={this.state.email.value}
                       error={this.state.email.error != null}
                       helperText={this.state.email.error}

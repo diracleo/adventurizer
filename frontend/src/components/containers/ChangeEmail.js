@@ -105,7 +105,7 @@ class ChangeEmail extends React.Component {
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Box>
-                    <TextField id="fieldSettingsPassword" label="Enter Current Password" required type="password" fullWidth autoFocus
+                    <TextField id="fieldSettingsPassword" label="Enter Current Password" required type="password" fullWidth
                       value={this.state.password.value}
                       error={this.state.password.error != null}
                       helperText={this.state.password.error}

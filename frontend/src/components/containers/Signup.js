@@ -208,7 +208,7 @@ class Signup extends React.Component {
                 */}
                 <Grid item xs={12}>
                   <Box>
-                    <TextField id="fieldSignupPenName" label="Pen Name" required type="text" fullWidth autoFocus
+                    <TextField id="fieldSignupPenName" label="Pen Name" required type="text" fullWidth
                       value={this.state.penName.value}
                       error={this.state.penName.error != null}
                       helperText={this.state.penName.error}
