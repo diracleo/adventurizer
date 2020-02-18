@@ -22,6 +22,14 @@ import store from './store'
 import { connect } from "react-redux";
 import { setConfirmDialog, setQuietAlertDialog } from "./action";
 
+let vh = window.innerHeight * 0.01;
+document.documentElement.style.setProperty('--vh', `${vh}px`);
+
+window.addEventListener('resize', () => {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+});
+
 CanvasRenderingContext2D.prototype.roundRect = function (x, y, width, height, radius, fill, stroke) {
   var cornerRadius = { upperLeft: 0, upperRight: 0, lowerLeft: 0, lowerRight: 0 };
   if (typeof stroke == "undefined") {

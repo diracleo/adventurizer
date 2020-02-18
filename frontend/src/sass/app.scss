@@ -308,6 +308,7 @@ html, body, #root {
     .questions {
       width:calc(100vw - 30px);
       height:calc(100vh - 97px);
+      height:calc(var(--vh, 1vh) * 100 - 97px);
       .question {
         width:400px;
         position:absolute;
@@ -419,10 +420,13 @@ html, body, #root {
   }
   .wrapped {
     min-height:calc(100vh - 159px);
+    min-height:calc(var(--vh, 1vh) * 100 - 159px);
     .content {
       min-height:calc(100vh - 159px);
+      min-height:calc(var(--vh, 1vh) * 100 - 159px);
       &.contentWithTitle {
         min-height:calc(100vh - 215px);
+        min-height:calc(var(--vh, 1vh) * 100 - 215px);
       }
     }
     &.centered {
