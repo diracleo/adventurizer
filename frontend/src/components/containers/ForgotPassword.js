@@ -92,8 +92,8 @@ class ForgotPassword extends React.Component {
                 </Grid>
               </Box>
             </Paper>
-            <Footer />
           </div>
+          <Footer />
         </div>
       )
     }
