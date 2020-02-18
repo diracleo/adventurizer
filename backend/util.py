@@ -31,9 +31,13 @@ def randomString(stringLength=10):
 def getClientIdentifier():
   parts = []
   if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
-    parts.append(request.environ['REMOTE_ADDR'])
+    clientIp = request.environ['REMOTE_ADDR']
   else:
-    parts.append(request.environ['HTTP_X_FORWARDED_FOR'])
+    clientIp = request.environ['HTTP_X_FORWARDED_FOR']
+
+  clientIp = clientIp.split(", ")[0]
+
+  parts.append(clientIp)
 
   # to-do: add more than just IP
   s = "_"

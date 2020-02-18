@@ -1095,9 +1095,6 @@ def adventureProgress(adventureId, progressId):
     if ret["errors"]:
       return jsonifySafe(ret)
 
-    # validate permission
-    clientId = getClientIdentifier()
-
     validated = False
     if not prog['userId']:
       if prog['clientId'] == clientId:
@@ -1105,6 +1102,9 @@ def adventureProgress(adventureId, progressId):
     else:
       if prog['userId'] == userId:
         validated = True
+
+    print(clientId)
+    print(prog['clientId'])
 
     if not validated:
       ret["errors"].append({
