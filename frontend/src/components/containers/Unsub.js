@@ -12,6 +12,7 @@ import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props
 import Util from './../../Util.js';
 import config from 'react-global-configuration';
 
+import Footer from'./../modules/Footer.js';
 import LoadingOverlay from './../modules/LoadingOverlay.js';
 
 class Unsub extends React.Component {
@@ -103,12 +104,12 @@ class Unsub extends React.Component {
   render() {
     if(typeof(this.state.email) != null) {
       return (
-        <div>
+        <div className="wrapped centered">
           <div className="mainTitle">
             <h1>Receive Emails</h1>
           </div>
           <div className="content contentSmall contentWithTitle">
-            <Paper>
+            <Paper className="contentInner">
               <Box p={3}>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
@@ -127,7 +128,9 @@ class Unsub extends React.Component {
                 </Grid>
               </Box>
             </Paper>
+            <LoadingOverlay loading={this.state.status.loading} />
           </div>
+          <Footer />
         </div>
       );
     } else {

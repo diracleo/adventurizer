@@ -410,19 +410,9 @@ class AdventureView extends React.Component {
             <Grid
               justify="space-between"
               container>
-              <Grid item xs={6}>
-                <Box display="flex" alignItems="left">
-                  { !Util.Auth.isAuthenticated &&
-                    <a className="moreLink" href={`/login`}>
-                      Sign In to Save Your Progress
-                    </a>
-                  }
-                </Box>
-              </Grid>
-              <Grid item xs={6}>
-                <Box display="flex" alignItems="right">
+              <Grid item xs={12}>
+                <Box display="flex" alignItems="center">
                   <div className="poweredBy">
-                    Powered by 
                     <a className="logoLink" href="/">
                       <Typography variant="h1" className="logo">
                         ADVENTURIZER

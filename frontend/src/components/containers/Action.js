@@ -12,6 +12,7 @@ import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props
 import Util from './../../Util.js';
 import config from 'react-global-configuration';
 
+import Footer from './../modules/Footer.js';
 import LoadingOverlay from './../modules/LoadingOverlay.js';
 
 class Action extends React.Component {
@@ -121,13 +122,13 @@ class Action extends React.Component {
   render() {
     if(this.state.error) {
       return (
-        <div>
+        <div className="wrapped centered">
           <div className="mainTitle">
             <h1>Error</h1>
           </div>
           <div className="content contentSmall contentWithTitle">
-            <Paper>
-              <Box p={5}>
+            <Paper className="contentInner">
+              <Box p={3}>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
                     <Box>
@@ -138,17 +139,18 @@ class Action extends React.Component {
               </Box>
             </Paper>
           </div>
+          <Footer />
         </div>
       );
     } else if(this.state.action === "confirmEmail") {
       return (
-        <div>
+        <div className="wrapped centered">
           <div className="mainTitle">
             <h1>Email Confirmed</h1>
           </div>
           <div className="content contentSmall contentWithTitle">
-            <Paper>
-              <Box p={5}>
+            <Paper className="contentInner">
+              <Box p={3}>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
                     <Box>
@@ -165,17 +167,18 @@ class Action extends React.Component {
             </Paper>
             <LoadingOverlay loading={this.state.status.loading} />
           </div>
+          <Footer />
         </div>
       )
     } else if(this.state.action === "changeEmail") {
       return (
-        <div>
+        <div className="wrapped centered">
           <div className="mainTitle">
             <h1>Email Confirmed</h1>
           </div>
           <div className="content contentSmall contentWithTitle">
-            <Paper>
-              <Box p={5}>
+            <Paper className="contentInner">
+              <Box p={3}>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
                     <Box>
@@ -192,18 +195,19 @@ class Action extends React.Component {
             </Paper>
             <LoadingOverlay loading={this.state.status.loading} />
           </div>
+          <Footer />
         </div>
       )
     } else if(this.state.action === "resetPassword") {
       if(this.state.status.complete) {
         return (
-          <div>
+          <div className="wrapped centered">
             <div className="mainTitle">
               <h1>Change Password</h1>
             </div>
             <div className="content contentSmall contentWithTitle">
-              <Paper>
-                <Box p={5}>
+              <Paper className="contentInner">
+                <Box p={3}>
                   <Grid container spacing={3}>
                     <Grid item xs={12}>
                       <Box>
@@ -224,17 +228,18 @@ class Action extends React.Component {
               </Paper>
               <LoadingOverlay loading={this.state.status.loading} />
             </div>
+            <Footer />
           </div>
         )
       } else {
         return (
-          <div>
+          <div className="wrapped centered">
             <div className="mainTitle">
               <h1>Change Password</h1>
             </div>
             <div className="content contentSmall contentWithTitle">
-              <Paper>
-                <Box p={5}>
+              <Paper className="contentInner">
+                <Box p={3}>
                   <Grid container spacing={3}>
                     <Grid item xs={12}>
                       <Box>
@@ -268,23 +273,13 @@ class Action extends React.Component {
               </Paper>
               <LoadingOverlay loading={this.state.status.loading} />
             </div>
+            <Footer />
           </div>
         )
       }
     }
     return (
-      <div className="content contentSmall">
-        <Paper>
-          <Box p={5}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Box>
-                  Please wait...
-                </Box>
-              </Grid>
-            </Grid>
-          </Box>
-        </Paper>
+      <div>
         <LoadingOverlay loading={this.state.status.loading} />
       </div>
     );

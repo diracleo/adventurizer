@@ -2,7 +2,7 @@ import React from 'react';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { Paper, Box, Grid, TextField, Button } from '@material-ui/core';
-import { Facebook as FacebookIcon } from '@material-ui/icons';
+import { Facebook as FacebookIcon, PersonAdd, Lock, Person } from '@material-ui/icons';
 import { Link, Redirect } from "react-router-dom";
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 
@@ -13,6 +13,7 @@ import store from './../../store'
 import { connect } from "react-redux";
 import { setConfirmDialog, setQuietAlertDialog } from "./../../action";
 
+import Footer from './../modules/Footer.js';
 import AccountStatus from './../modules/AccountStatus.js';
 import LoadingOverlay from './../modules/LoadingOverlay.js';
 
@@ -108,13 +109,13 @@ class Login extends React.Component {
       return <Redirect to={from} />
     } else if(accountProblem !== false) {
       return (
-        <div>
+        <div className="wrapped centered">
           <div className="mainTitle">
             <h1>Sign In</h1>
           </div>
           <div className="content contentSmall contentWithTitle">
-            <Paper>
-              <Box p={5}>
+            <Paper className="contentInner">
+              <Box p={3}>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
                     <AccountStatus type={accountProblem} email={email.value} />
@@ -122,19 +123,21 @@ class Login extends React.Component {
                 </Grid>
               </Box>
             </Paper>
+            <LoadingOverlay loading={this.state.status.loading} />
           </div>
+          <Footer />
         </div>
       )
     }
 
     return (
-      <div>
+      <div className="wrapped centered decorated">
         <div className="mainTitle">
           <h1>Sign In</h1>
         </div>
         <div className="content contentSmall contentWithTitle">
-          <Paper>
-            <Box p={5}>
+          <Paper className="contentInner">
+            <Box p={3}>
               <Grid container spacing={3}>
                 {/*
                 <Grid item xs={12}>
@@ -180,16 +183,30 @@ class Login extends React.Component {
                 <Grid item xs={12} sm={6}>
                   <Box>
                     <Button variant="contained" color="primary" onClick={() => this.login()}>
+                      <Person fontSize="small" />
+                      &nbsp;
                       Sign In
                     </Button>
                   </Box>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Box className="loginSignupPromo">
-                    Don't have an account? <Link to="/signup" className="link highlight">Sign Up</Link>
+                    <Link to="/signup" className="link">
+                      <Button color="primary" size="small">
+                        <PersonAdd fontSize="small" />
+                        &nbsp;
+                        I don't have an account
+                      </Button>
+                    </Link>
                   </Box>
                   <Box className="loginForgotPassword">
-                    <Link to="/forgotPassword" className="link highlight">I forgot my password</Link>
+                    <Link to="/forgotPassword" className="link">
+                      <Button color="primary" size="small">
+                        <Lock fontSize="small" />
+                        &nbsp;
+                        I forgot my password
+                      </Button>
+                    </Link>
                   </Box>
                 </Grid>
               </Grid>
@@ -197,6 +214,7 @@ class Login extends React.Component {
           </Paper>
           <LoadingOverlay loading={this.state.status.loading} />
         </div>
+        <Footer />
       </div>
     )
   }

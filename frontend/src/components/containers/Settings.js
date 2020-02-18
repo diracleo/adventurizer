@@ -11,6 +11,7 @@ import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props
 import Util from './../../Util.js';
 import config from 'react-global-configuration';
 
+import Footer from './../modules/Footer.js';
 import LoadingOverlay from './../modules/LoadingOverlay.js';
 
 class Settings extends React.Component {
@@ -137,13 +138,13 @@ class Settings extends React.Component {
   render() {
 
     return (
-      <div>
+      <div className="wrapped centered">
         <div className="mainTitle">
           <h1>Settings</h1>
         </div>
         <div className="content contentSmall contentWithTitle">
-          <Paper>
-            <Box p={5}>
+          <Paper className="contentInner">
+            <Box p={3}>
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Box>
@@ -210,6 +211,7 @@ class Settings extends React.Component {
           </Paper>
           <LoadingOverlay loading={this.state.status.loading} />
         </div>
+        <Footer />
       </div>
     )
   }

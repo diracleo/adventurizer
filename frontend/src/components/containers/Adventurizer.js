@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from "react-helmet";
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import { MuiThemeProvider, CssBaseline, AppBar, Toolbar, Grid, Box, IconButton, Typography, Drawer, List, ListItem, ListItemText, ListItemIcon } from '@material-ui/core';
+import { MuiThemeProvider, CssBaseline, AppBar, Toolbar, Grid, Box, IconButton, Typography, Drawer, List, ListItem, ListItemText, ListItemIcon, Button } from '@material-ui/core';
 import { LockOpen, Home, Search as SearchIcon, Edit, TrendingUp, Settings as SettingsIcon, Lock, MenuSharp, PersonAdd } from '@material-ui/icons';
 import { BrowserRouter as Router, Switch, Route, Link, Redirect, withRouter, useRouteMatch, useParams, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
@@ -75,6 +75,32 @@ class Adventurizer extends React.Component {
       />
     );
     return ret;
+  }
+  renderAuxMenu() {
+    let items = [];
+    if(Util.Auth.isAuthenticated) {
+
+    } else {
+      items.push(
+        <Link to="/login" className="link" key="mainMenuSigninLink">
+          <Button color="inherit" key="auxMenuSigninBtn">
+            <Lock fontSize="small" />
+            &nbsp;
+            Sign In
+          </Button>
+        </Link>
+      );
+      items.push(
+        <Link to="/signup" className="link" key="mainMenuSignupLink">
+          <Button color="inherit" key="auxMenuSignupBtn">
+            <PersonAdd fontSize="small" />
+            &nbsp;
+            Sign Up
+          </Button>
+        </Link>
+      );
+    }
+    return items;
   }
   renderMainMenu() {
     let items = [];
@@ -185,13 +211,15 @@ class Adventurizer extends React.Component {
                         <IconButton edge="start" color="inherit" aria-label="menu" onClick={this.handleToggleMainMenu(true)}>
                           <MenuSharp />
                         </IconButton>
-                        <Typography variant="h1" className="logo">
+                        <Typography variant="h1" className="logo" onClick={this.handleToggleMainMenu(true)}>
                           ADVENTURIZER
                         </Typography>
                       </Box>
                     </Grid>
                     <Grid item xs={6}>
-
+                      <Box className="auxMenu">
+                        {this.renderAuxMenu()}
+                      </Box>
                     </Grid>
                   </Grid>
                 </Toolbar>

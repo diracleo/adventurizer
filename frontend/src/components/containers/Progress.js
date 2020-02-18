@@ -9,6 +9,7 @@ import config from 'react-global-configuration';
 import { connect } from "react-redux";
 import { setConfirmDialog, setViewType } from "./../../action";
 
+import Footer from './../modules/Footer.js';
 import ProgressList from './../modules/ProgressList.js';
 import LoadingOverlay from './../modules/LoadingOverlay.js';
 
@@ -25,14 +26,16 @@ class Progress extends React.Component {
   }
   render() {
     return (
-      <div>
-        <div className="mainTitle">
-          <h1>My Progress</h1>
-          <p>Track the adventures you've taken!</p>
+      <div className="wrappedOuter">
+        <div className="wrapped">
+          <div className="mainTitle">
+            <h1>My Progress</h1>
+          </div>
+          <div className="content contentFilled contentWithTitle">
+            <ProgressList pagination={true} limit={12} />
+          </div>
         </div>
-        <div className="content contentFilled contentWithTitle">
-          <ProgressList pagination={true} limit={12} />
-        </div>
+        <Footer type="padded" />
       </div>
     );
   }

@@ -4,7 +4,7 @@ import { AxiosProvider, Request, Get, Delete, Head, Post, Put, Patch, withAxios 
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { FormGroup, FormControlLabel, Checkbox, Paper, Box, Grid, TextField, Button } from '@material-ui/core';
-import { CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon, CheckBox as CheckBoxIcon, Facebook as FacebookIcon } from '@material-ui/icons';
+import { CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon, CheckBox as CheckBoxIcon, Facebook as FacebookIcon, PersonAdd, Person } from '@material-ui/icons';
 import { Link, Redirect } from "react-router-dom";
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 
@@ -15,6 +15,7 @@ import store from './../../store'
 import { connect } from "react-redux";
 import { setConfirmDialog, setQuietAlertDialog } from "./../../action";
 
+import Footer from './../modules/Footer.js';
 import AccountStatus from './../modules/AccountStatus.js';
 import LoadingOverlay from './../modules/LoadingOverlay.js';
 
@@ -157,28 +158,32 @@ class Signup extends React.Component {
       return <Redirect to={from} />
     } else if(emailSent === true) {
       return (
-        <div className="content contentSmall">
-          <Paper>
-            <Box p={5}>
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <AccountStatus type="unconfirmed" email={email.value} />
+        <div className="wrapped centered decorated">
+          <div className="content contentSmall">
+            <Paper className="contentInner">
+              <Box p={3}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12}>
+                    <AccountStatus type="unconfirmed" email={email.value} />
+                  </Grid>
                 </Grid>
-              </Grid>
-            </Box>
-          </Paper>
+              </Box>
+            </Paper>
+            <LoadingOverlay loading={this.state.status.loading} />
+          </div>
+          <Footer />
         </div>
       )
     }
 
     return (
-      <div>
+      <div className="wrapped centered decorated">
         <div className="mainTitle">
           <h1>Sign Up</h1>
         </div>
         <div className="content contentSmall contentWithTitle">
-          <Paper>
-            <Box p={5}>
+          <Paper className="contentInner">
+            <Box p={3}>
               <Grid container spacing={3}>
                 {/* 
                 <Grid item xs={12}>
@@ -271,13 +276,21 @@ class Signup extends React.Component {
                 <Grid item xs={12} sm={6}>
                   <Box>
                     <Button variant="contained" color="primary" onClick={() => this.signup()}>
+                      <PersonAdd fontSize="small" />
+                      &nbsp;
                       Sign Up
                     </Button>
                   </Box>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Box className="signupLoginPromo">
-                    Already have an account? <Link to="/login" className="link highlight" key="mainMenuAdventuresLink">Sign In</Link>
+                    <Link to="/login" className="link">
+                      <Button color="primary" size="small">
+                        <Person fontSize="small" />
+                        &nbsp;
+                        I already have an account
+                      </Button>
+                    </Link>
                   </Box>
                 </Grid>
               </Grid>
@@ -285,6 +298,7 @@ class Signup extends React.Component {
           </Paper>
           <LoadingOverlay loading={this.state.status.loading} />
         </div>
+        <Footer />
       </div>
     )
   }

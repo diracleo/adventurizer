@@ -3,14 +3,20 @@ import { Link } from "react-router-dom";
 
 import Util from './../../Util.js';
 
-const Footer = () => (
-  <div className="footer">
-    <div>
-      Copyright 2020 Adventurizer
-      <br/>
-      <Link target={"_blank"} to={'/terms'}>Terms of Use</Link> &nbsp; | &nbsp; <Link target={"_blank"} to={'/privacy'}>Privacy Policy</Link>
+function Footer(props) {
+  let cName = "footer"
+  if(typeof(props.type) != 'undefined') {
+    cName += " " + props.type;
+  }
+  return (
+    <div className={cName}>
+      <div>
+        Copyright 2020 Adventurizer
+        <br/>
+        <Link target={"_blank"} to={'/terms'}>Terms of Use</Link> &nbsp; <span>|</span> &nbsp; <Link target={"_blank"} to={'/privacy'}>Privacy Policy</Link>
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 export default Footer;

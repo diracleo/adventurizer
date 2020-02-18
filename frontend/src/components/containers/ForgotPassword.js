@@ -15,6 +15,7 @@ import store from './../../store'
 import { connect } from "react-redux";
 import { setConfirmDialog, setQuietAlertDialog } from "./../../action";
 
+import Footer from './../modules/Footer.js';
 import LoadingOverlay from './../modules/LoadingOverlay.js';
 
 class ForgotPassword extends React.Component {
@@ -78,30 +79,33 @@ class ForgotPassword extends React.Component {
 
     if(emailSent === true) {
       return (
-        <div className="content contentSmall">
-          <Paper>
-            <Box p={5}>
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <Box>
-                    A link to reset your password has been sent to your email
-                  </Box>
+        <div className="wrapped centered">
+          <div className="content contentSmall">
+            <Paper className="contentInner">
+              <Box p={3}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12}>
+                    <Box>
+                      A link to reset your password has been sent to your email
+                    </Box>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </Box>
-          </Paper>
+              </Box>
+            </Paper>
+            <Footer />
+          </div>
         </div>
       )
     }
 
     return (
-      <div>
+      <div className="wrapped centered">
         <div className="mainTitle">
           <h1>Forgot Password</h1>
         </div>
         <div className="content contentSmall contentWithTitle">
-          <Paper>
-            <Box p={5}>
+          <Paper className="contentInner">
+            <Box p={3}>
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Box>
@@ -125,6 +129,7 @@ class ForgotPassword extends React.Component {
           </Paper>
           <LoadingOverlay loading={this.state.status.loading} />
         </div>
+        <Footer />
       </div>
     )
   }

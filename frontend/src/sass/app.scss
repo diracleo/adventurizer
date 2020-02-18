@@ -13,10 +13,10 @@ html, body, #root {
   min-width:300px;
 }
 .link {
-  color:inherit;
+  color:inherit !important;
   text-decoration:none;
   &.highlight {
-    color:$colorPrimary;
+    color:$colorPrimary !important;
     &:hover {
       text-decoration:underline;
     }
@@ -29,12 +29,29 @@ html, body, #root {
   flex-direction: column;
   background-color: $colorBack;
   position:relative;
+  .auxMenu {
+    text-align:right;
+    button {
+      margin-top:7px;
+      margin-left:10px;
+    }
+  }
   .footer {
-    margin-top:50px;
-    margin-bottom:50px;
+    margin-top:0px;
+    margin-bottom:20px;
+    border-top:1px solid #ccc;
+    /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#ffffff+0,ffffff+100&0.24+0,0+100 */
+    background: -moz-linear-gradient(top,  rgba(255,255,255,0.24) 0%, rgba(255,255,255,0) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  rgba(255,255,255,0.24) 0%,rgba(255,255,255,0) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  rgba(255,255,255,0.24) 0%,rgba(255,255,255,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3dffffff', endColorstr='#00ffffff',GradientType=0 ); /* IE6-9 */
     > div {
-      padding:20px;
+      padding:15px;
       font-size:16px;
+      text-align:center;
+      > span {
+        color:#999;
+      }
     }
   }
   a {
@@ -66,9 +83,9 @@ html, body, #root {
   }
   .widget {
     position:relative;
-    margin-top:30px;
+    margin-top:15px;
     border-radius: 8px;
-    box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
     overflow:hidden;
     .header {
       padding:15px;
@@ -83,7 +100,7 @@ html, body, #root {
         margin-top:0px;
         margin-bottom:0px;
         > a {
-          color: #666;
+
           &:hover {
             color: $colorPrimary;
           }
@@ -101,6 +118,7 @@ html, body, #root {
     }
     .area {
       border-top:1px solid #ccc;
+      background-color:#fff;
       padding:15px;
     }
     &:first-of-type {
@@ -113,17 +131,16 @@ html, body, #root {
         background-color:#ffffff;
         &:before {
           content: "";
-          background-image:url("/themes/poseidon/bg.jpg");
-          background-size:cover;
-          background-position:center center;
-          background-repeat:no-repeat;
+          background-image:url("/promo2.png");
+          background-size:2224px 652px;
+          background-position: left -50px;
+          background-repeat:repeat-x;
           position:absolute;
           top:0px;
           left:0px;
           width:100%;
           height:100%;
-          opacity:0.7;
-          filter:hue-rotate(50deg);
+          opacity:0.6;
         }
         > div {
           position:relative;
@@ -181,18 +198,17 @@ html, body, #root {
   .mainTitle {
     background-color:#fff;
     border-bottom:1px solid #ccc;
-    margin-top:65px;
+    margin-top:64px;
     padding-top:10px;
     padding-bottom:10px;
-    padding-left:20px;
+    padding-left:15px;
+    padding-right:15px;
     h1 {
       font-size:24px;
-      color:#666;
       margin-top:0px;
       margin-bottom:0px;
     }
     p {
-      color:#666;
       font-size:16px;
     }
   }
@@ -203,7 +219,7 @@ html, body, #root {
     left:0px;
     width:100%;
     height:100%;
-    background:rgba(#ffffff, 0.7);
+    background:transparent;
     z-index:-2;
     transition:all 0.4s;
     &.loading {
@@ -228,11 +244,12 @@ html, body, #root {
   }
   .content {
     margin-top:64px;
+    padding:15px;
     &.contentPrimary {
       
     }
     &.contentFilled {
-      padding:20px;
+      padding:15px;
     }
     &.contentFullScreen {
       margin-top:0px;
@@ -240,14 +257,19 @@ html, body, #root {
     }
     &.contentSmall {
       max-width:600px;
-      margin-top:180px;
+      margin-top:64px;
       margin-left:auto;
       margin-right:auto;
     }
     &.contentWithTitle {
       margin-top:0px;
       &.contentSmall {
-        margin-top:40px;
+        margin-top:0px;
+      }
+    }
+    .contentInner {
+      h1 {
+        margin-top:0px;
       }
     }
   }
@@ -264,6 +286,7 @@ html, body, #root {
     flex-grow: 1;
     margin-left:10px;
     font-size:24px;
+    cursor:pointer;
     svg {
       position:relative;
       top:4px;
@@ -394,6 +417,52 @@ html, body, #root {
   .hidden {
     display:none !important;
   }
+  .wrapped {
+    min-height:calc(100vh - 159px);
+    .content {
+      min-height:calc(100vh - 159px);
+      &.contentWithTitle {
+        min-height:calc(100vh - 215px);
+      }
+    }
+    &.centered {
+      .content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .contentInner {
+          flex:1;
+        }
+      }
+    }
+  }
+  .decorated {
+    position:relative;
+    background-color:#ffffff;
+    &:before {
+      content: "";
+      background-image:url("/promo2.png");
+      background-size:2224px 652px;
+      background-position: left bottom;
+      background-repeat:repeat-x;
+      position:absolute;
+      top:0px;
+      left:0px;
+      width:100%;
+      height:100%;
+      opacity:0.7;
+      filter:saturate(1);
+      opacity:0.3;
+      background-color:#eee;
+    }
+    > div {
+      position:relative;
+    }
+    .contentInner {
+      background-color:rgba(#ffffff, 1);
+      backdrop-filter:blur(4px);
+    }
+  }
 }
 
 .themeSelector {
@@ -404,6 +473,9 @@ html, body, #root {
 
 @media (max-width: $smBreak) {
   .app {
+    .auxMenu {
+      display:none;
+    }
     .content {
       margin-top:56px;
       &.contentSmall {
