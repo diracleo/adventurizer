@@ -56,8 +56,7 @@ class Question extends React.Component {
       }
     }
   }
-  handleMoveStart(e, data) {
-    e.stopPropagation();
+  handleMoveStart(event, data) {
     let params = Object.assign({}, this.props.params);
     params['position'] = {
       x: data.x,
@@ -65,8 +64,7 @@ class Question extends React.Component {
     };
     this.props.set(this.props.index, params);
   }
-  handleMoveStop(e, data) {
-    e.stopPropagation();
+  handleMoveStop(event, data) {
     let params = Object.assign({}, this.props.params);
     params['position'] = {
       x: data.x,
@@ -193,12 +191,22 @@ class Question extends React.Component {
     this.props.setLink(params);
   }
   componentDidMount() {
+    let handles = this.myRef.current.getElementsByClassName("handle");
+    for(let i = 0; i < handles.length; i++) {
+      //handles[i].ontouchstart = this.handleEvent;
+      //handles[i].onmousedown = this.handleEvent;
+      //handles[i].addEventListener("touchstart", this.handleEvent);
+      //handles[i].addEventListener("mousedown", this.handleEvent);
+    }
     let params = Object.assign({}, this.props.params);
     params['element'] = this.myRef.current;
     this.props.set(this.props.index, params);
   }
   shouldComponentUpdate(nextProps, nextState) {
     return this.props.params.element == null || !isEqual(this.props, nextProps);
+  }
+  handleEvent(event) {
+    return true;
   }
   render() {
     const answers = Object.assign({}, this.props.params.answers);
@@ -238,17 +246,17 @@ class Question extends React.Component {
         defaultPosition={null}
         position={this.props.params.position}
         scale={this.props.scale}
-        onDrag={(e, data) => this.props.renderVisualizations(e, data)}
-        onStart={(e, data) => this.handleMoveStart(e, data)}
-        onStop={(e, data) => this.handleMoveStop(e, data)}>
+        onDrag={(event, data) => this.props.renderVisualizations(event, data)}
+        onStart={(event, data) => this.handleMoveStart(event, data)}
+        onStop={(event, data) => this.handleMoveStop(event, data)}>
         <Card className={classNames} style={questionStyle}>
           <div ref={this.myRef}>
-            <CardActions className="handle">
+            <CardActions>
               <Grid
                 justify="space-between"
                 container>
-                <Grid item>
-                  
+                <Grid item className="handle1Outer">
+                  <div className="handle handle1"></div>
                 </Grid>
                 <Grid item>
                   <PopupState variant="popover" popupId="card-popup-menu">
@@ -293,7 +301,7 @@ class Question extends React.Component {
               />
               <div>
                 {this.renderAnswers(answers)}
-                <div className="handle">
+                <div className="handle handle2">
                   <Button variant="contained" color="primary" size="small" aria-label="add" onClick={() => this.handleAddAnswer()}>
                     <Add /> Add Choice
                   </Button>

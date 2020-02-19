@@ -6,10 +6,9 @@ import { AxiosProvider, Request, Get, Delete, Head, Post, Put, Patch, withAxios 
 import isEqual from "react-fast-compare";
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import { MenuItem, AppBar, Toolbar, Grid, Button, Dialog, DialogContent, DialogContentText, TextField, FormControl, InputLabel, Select, Box, DialogActions } from '@material-ui/core';
+import { Hidden, MenuItem, AppBar, Toolbar, Grid, Button, Dialog, DialogContent, DialogContentText, TextField, FormControl, InputLabel, Select, Box, DialogActions } from '@material-ui/core';
 import { AddBox, Edit, Save, Done } from '@material-ui/icons';
 import { Link, Redirect } from "react-router-dom";
-import Draggable, {DraggableCore} from 'react-draggable';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 import Util from './../../Util.js';
@@ -676,7 +675,6 @@ class AdventureBuilder extends React.Component {
     this.renderVisualizations();
   }
   displayChanged(e, data) {
-
     //console.log(e);
     this.positionX = e.positionX;
     this.positionY = e.positionY;
@@ -686,6 +684,12 @@ class AdventureBuilder extends React.Component {
   }
 
   componentDidMount() {
+    let o = this;
+    let handler = function() {
+      o.renderVisualizations();
+    }; 
+    window.removeEventListener('resize', handler);
+    window.addEventListener('resize', handler);
 
     if(this.state.adventureId != null) {
       let adventureId = this.state.adventureId;
@@ -842,7 +846,8 @@ class AdventureBuilder extends React.Component {
       centerContent: false
     }
     let panOptions = {
-      disabled: false
+      disabled: false,
+      disableOnTarget: ["handle2", "handle1"]
     }
     let zoomInOptions = {
       step: 70
@@ -881,7 +886,7 @@ class AdventureBuilder extends React.Component {
                 <Button color="primary" 
                   key="actionAdd"
                   onClick={() => this.setQuestion(null, null)}>
-                  <AddBox /> &nbsp; Add Dialogue
+                  <AddBox /><Hidden only={['xs', 'sm']}> &nbsp; Add Dialogue</Hidden>
                 </Button>
               </Grid>
               <Grid item className={themeClassName}>
@@ -890,10 +895,13 @@ class AdventureBuilder extends React.Component {
                   key="actionEditMeta"
                   disabled={this.state.metaDialogOpen}
                   onClick={() => this.handleMetaDialogOpen()}>
-                  <Edit /> &nbsp; 
-                  <span className="editMetaBtnLabel">
-                    {this.state.meta.title.value || "Edit Info"}
-                  </span>
+                  <Edit />
+                  <Hidden only={['xs', 'sm']}>
+                    &nbsp; 
+                    <span className="editMetaBtnLabel">
+                      {this.state.meta.title.value || "Edit Info"}
+                    </span>
+                  </Hidden>
                 </Button>
                 &nbsp;
                 &nbsp;
@@ -902,12 +910,12 @@ class AdventureBuilder extends React.Component {
                   key="actionSave"
                   disabled={this.state.status.saved}
                   onClick={() => this.save()}>
-                  <Save /> &nbsp; Save
+                  <Save /><Hidden only={['xs', 'sm']}> &nbsp; Save</Hidden>
                 </Button>
                 <Button color="default" 
                   key="actionCancel"
                   onClick={() => this.save(true)}>
-                  <Done /> &nbsp; Done
+                  <Done /><Hidden only={['xs', 'sm']}> &nbsp; Done</Hidden>
                 </Button>
               </Grid>
             </Grid>
@@ -929,9 +937,7 @@ class AdventureBuilder extends React.Component {
             zoomOut={zoomOutOptions} 
             wheel={wheelOptions}>
             <TransformComponent>
-              <div className="questions">
-                {this.renderQuestions(this.state.questions)}
-              </div>
+              {this.renderQuestions(this.state.questions)}
             </TransformComponent>
           </TransformWrapper>
         </div>
