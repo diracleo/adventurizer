@@ -130,6 +130,7 @@ const translation = {
   ErrMatchPasswords: "Passwords don't match",
   ErrNotAuthorized: "You are not authorized",
   ErrNotFound: "Not found",
+  ErrSameEmail: "This is already your email address. No change required.",
   ErrServerResponse: "An error occurred. Please try again later.",
   ErrUnknown: "An unknown error occurred.",
   ErrUpdateFailed: "Unable to update record.",

@@ -1,0 +1,25 @@
+@import url("https://fonts.googleapis.com/css?family=Oswald&display=swap");
+
+.theme.storm {
+  @include makeTheme(
+    #000000, //themeBackGroundColor
+    #d3a1ff, //themeColor
+    url("/themes/storm/bg.jpg"), //themeBackgroundImage
+    0 3px 5px rgba(0,0,0,0), //themeBoxShadow
+    1px solid rgba(#ffffff, 0.2), //themeAuthorBorderTop
+    blur(16px) opacity(0.8) grayscale(0.4), //themeBackDrop
+    #ffffff, //themeTextColor
+    #ffffff, //themeButtonTextColor
+    rgba(#ffffff, 0.3), //themeButtonBackTextColor
+    rgba(#50425c, 0.5), //themeButtonBackground
+    rgba(#000000, 0.2), //themeButtonBackBackground
+    rgba(#000000, 1), //themeButtonBackBackgroundHover
+    rgba(#50425c, 1), //themeButtonHoverBackground
+    #ffffff, //themeTitleText
+    rgba(#123587, 0.5), //themeTitleBackground
+    rgba(#123587, 0.5), //themeContentBackground
+    rgba(#000000, 0.01), //themeAdventurizerBackground
+    rgba(#000000, 0.3), //themeAdventurizerBackgroundHover
+    "'Oswald', sans-serif" //themeFont
+  );
+}

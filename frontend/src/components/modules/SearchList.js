@@ -152,11 +152,11 @@ class SearchList extends React.Component {
       );
     } else {
       return (
-        <ButtonGroup color="primary" aria-label="outlined primary button group" key="searchActionBar">
-          <Button variant={this.sort == "trending" ? "contained" : "outlined"} onClick={() => this.setSort("trending")}>Trending</Button>
-          <Button variant={this.sort == "popular" ? "contained" : "outlined"} onClick={() => this.setSort("popular")}>Popular</Button>
-          <Button variant={this.sort == "newest" ? "contained" : "outlined"} onClick={() => this.setSort("newest")}>Newest</Button>
-        </ButtonGroup>
+        <div className="searchActionBar" key="searchActionBar">
+          <Button color="primary" variant={this.sort == "trending" ? "contained" : "outlined"} onClick={() => this.setSort("trending")}>Trending</Button>
+          <Button color="primary" variant={this.sort == "popular" ? "contained" : "outlined"} onClick={() => this.setSort("popular")}>Popular</Button>
+          <Button color="primary" variant={this.sort == "newest" ? "contained" : "outlined"} onClick={() => this.setSort("newest")}>Newest</Button>
+        </div>
       );
     }
   }

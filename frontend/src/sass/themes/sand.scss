@@ -1,0 +1,25 @@
+@import url("https://fonts.googleapis.com/css?family=Oswald&display=swap");
+
+.theme.sand {
+  @include makeTheme(
+    #000000, //themeBackGroundColor
+    #ffffff, //themeColor
+    url("/themes/sand/bg.jpg"), //themeBackgroundImage
+    0 3px 5px rgba(0,0,0,0), //themeBoxShadow
+    1px solid rgba(#ffffff, 0.2), //themeAuthorBorderTop
+    blur(4px), //themeBackDrop
+    #ffffff, //themeTextColor
+    #ffffff, //themeButtonTextColor
+    rgba(#ffffff, 0.3), //themeButtonBackTextColor
+    rgba(#c27323, 0.4), //themeButtonBackground
+    rgba(#c27323, 0.2), //themeButtonBackBackground
+    rgba(#c27323, 1), //themeButtonBackBackgroundHover
+    rgba(#c27323, 1), //themeButtonHoverBackground
+    #ffffff, //themeTitleText
+    rgba(#c27323, 0.2), //themeTitleBackground
+    rgba(#c27323, 0.2), //themeContentBackground
+    rgba(#c27323, 0.01), //themeAdventurizerBackground
+    rgba(#c27323, 0.3), //themeAdventurizerBackgroundHover
+    "'Oswald', sans-serif" //themeFont
+  );
+}

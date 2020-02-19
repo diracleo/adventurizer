@@ -80,8 +80,6 @@ class AdventureView extends React.Component {
         };
 
         let progressId = null;
-        
-        console.log(progress);
 
         if(data['progress']) {
           progress = data['progress'];
@@ -109,12 +107,21 @@ class AdventureView extends React.Component {
           }
         });
       });
-    
+
+    let handler = function() {
+      o.setState({
+        answersShow: false
+      })
+    }; 
+    window.removeEventListener('resize', handler);
+    window.addEventListener('resize', handler);
+    /*
     window.addEventListener('resize', () => {
       this.setState({
         answersShow: false
       })
     });
+    */
   }
 
   componentDidUpdate() {
@@ -265,7 +272,8 @@ class AdventureView extends React.Component {
     progress.history = [];
     progress.current = null;
     this.setState({
-      progress: progress
+      progress: progress,
+      answersShow: false
     });
   }
 

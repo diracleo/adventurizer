@@ -538,6 +538,17 @@ def actionUser(actionToken):
       tokens = user['tokens'].copy()
       del tokens[token]
 
+      # check if email already taken
+      exists = users.find_one({"email": value})
+      if exists:
+        ret["errors"].append({
+          "code": "ErrExistsEmail",
+          "target": "email"
+        })
+
+      if ret["errors"]:
+        return jsonifySafe(ret)
+
       updateRet = users.update_one({'_id': user['_id']},
       {
         '$set': {
@@ -779,12 +790,20 @@ def userEmail():
   if not re.search(regPatt, emailNew):
     ret["errors"].append({
       "code": "ErrInvalidEmail",
-      "target": "email"
+      "target": "emailNew"
     })
 
   if ret["errors"]:
     return jsonifySafe(ret)
 
+  if emailNew == user['email']:
+    ret["errors"].append({
+      "code": "ErrSameEmail",
+      "target": "emailNew"
+    })
+
+  if ret["errors"]:
+    return jsonifySafe(ret)
   
   tokens = {}
   if "tokens" in user:
@@ -798,7 +817,18 @@ def userEmail():
   if not actionToken:
     ret["errors"].append({
       "code": "ErrUpdateFailed",
-      "target": "email"
+      "target": "emailNew"
+    })
+
+  if ret["errors"]:
+    return jsonifySafe(ret)
+
+  # check if email already taken
+  exists = users.find_one({"email": emailNew})
+  if exists:
+    ret["errors"].append({
+      "code": "ErrExistsEmail",
+      "target": "emailNew"
     })
 
   if ret["errors"]:
@@ -916,7 +946,13 @@ def user():
     userNew['penName'] = penName
     userNew['subscribed'] = subscribed
 
-    updateRet = users.replace_one({"_id": ObjectId(userId)}, userNew, False)
+    updateRet = users.update_one({'_id': ObjectId(userId)},
+      {
+        '$set': {
+          'penName': penName,
+          'subscribed': subscribed
+        }
+      }, upsert=True)
 
     if not updateRet:
       ret["errors"].append({
@@ -1003,6 +1039,10 @@ def user():
       "key": key,
       "confirmed": False,
       "subscribed": True,
+      "permissions": {
+        "createAdventures": True,
+        "viewAdventures": True
+      },
       "tokens": {},
       "insertDate": datetime.utcnow()
     }

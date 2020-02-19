@@ -70,6 +70,26 @@ class AdventureBuilder extends React.Component {
       {
         "key": "thicket",
         "name": "Thicket"
+      },
+      {
+        "key": "mountain",
+        "name": "Mountain"
+      },
+      {
+        "key": "existence",
+        "name": "Existence"
+      },
+      {
+        "key": "sky",
+        "name": "Sky"
+      },
+      {
+        "key": "storm",
+        "name": "Storm"
+      },
+      {
+        "key": "sand",
+        "name": "Sand"
       }
     ];
 

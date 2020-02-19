@@ -18,17 +18,23 @@ class SnugText extends React.Component {
       done: false
     }
   }
+  initAndCalculate() {
+    this.direction = 0;
+    this.calculate();
+  }
   calculate() {
     if(this.outerElement == null || this.innerElement == null) {
       return;
     }
+
+    this.direction = 0;
 
     this.outerElement.style.display = "block";
     this.outerElement.style.flex = "1";
 
     //perform calculations outside of react because of nested update issue
     let innerElementTester = document.createElement("span");
-    innerElementTester.style.fontSize = ""+this.state.fontSize+"px";
+    innerElementTester.style.fontSize = ""+this.props.fontSize+"px";
     innerElementTester.style.display = "inline-block";
     innerElementTester.style.position = "absolute";
     //innerElementTester.style.zIndex = "0";
@@ -42,7 +48,7 @@ class SnugText extends React.Component {
 
     let keepGoing = true;
     let direction = 0;
-    let fontSize = this.state.fontSize;
+    let fontSize = this.props.fontSize;
     let innerHeight = null;
     let innerWidth = null;
     while(keepGoing) {
@@ -133,7 +139,13 @@ class SnugText extends React.Component {
   }
   componentDidMount() {
     this.calculate();
-    window.addEventListener('resize', () => this.calculate());
+    //window.addEventListener('resize', () => this.initAndCalculate());
+    let o = this;
+    let handler = function() {
+      o.calculate();
+    }; 
+    window.removeEventListener('resize', handler);
+    window.addEventListener('resize', handler);
   }
   componentDidUpdate() {
     this.outerElement.style.display = "inline-block";

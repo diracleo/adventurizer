@@ -1,25 +1,25 @@
-@import url("https://fonts.googleapis.com/css?family=Quattrocento&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Oswald&display=swap");
 
-.theme.autumn {
+.theme.mountain {
   @include makeTheme(
-    #000000, //themeBackGroundColor
-    #f2baac, //themeColor
-    url("/themes/autumn/bg.jpg"), //themeBackgroundImage
-    0 3px 5px rgba(0,0,0,0.4), //themeBoxShadow
+    #094263, //themeBackGroundColor
+    #eeeeee, //themeColor
+    url("/themes/mountain/bg.jpg"), //themeBackgroundImage
+    0 3px 5px rgba(0,0,0,0), //themeBoxShadow
     1px solid rgba(#ffffff, 0.2), //themeAuthorBorderTop
     blur(16px) opacity(0.8) grayscale(0.4), //themeBackDrop
     #ffffff, //themeTextColor
     #ffffff, //themeButtonTextColor
     rgba(#ffffff, 0.3), //themeButtonBackTextColor
-    rgba(#8a270e, 0.5), //themeButtonBackground
+    rgba(#094263, 0.5), //themeButtonBackground
     rgba(#000000, 0.2), //themeButtonBackBackground
     rgba(#000000, 1), //themeButtonBackBackgroundHover
-    rgba(#8a270e, 1), //themeButtonHoverBackground
+    rgba(#094263, 1), //themeButtonHoverBackground
     #ffffff, //themeTitleText
-    rgba(#8a270e, 0.5), //themeTitleBackground
-    rgba(#8a270e, 0.5), //themeContentBackground
+    rgba(#094263, 0.5), //themeTitleBackground
+    rgba(#094263, 0.5), //themeContentBackground
     rgba(#000000, 0.5), //themeAdventurizerBackground
     rgba(#000000, 1), //themeAdventurizerBackgroundHover
-    "'Quattrocento', serif" //themeFont
+    "'Oswald', sans-serif" //themeFont
   );
 }
