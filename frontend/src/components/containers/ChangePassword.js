@@ -53,7 +53,7 @@ class ChangePassword extends React.Component {
         loading: true
       }
     });
-    axios.put(`${config.get("apiHost")}/user/password`, params)
+    axios.put(`${config.get("apiHost")}/me/password`, params)
       .then(res => {
         Util.processRequestReturn(res, o, "SuccAccountUpdated");
         

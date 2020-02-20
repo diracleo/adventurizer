@@ -252,40 +252,9 @@ class Question extends React.Component {
         <Card className={classNames} style={questionStyle}>
           <div ref={this.myRef}>
             <CardActions>
-              <Grid
-                justify="space-between"
-                container>
-                <Grid item className="handle1Outer">
-                  <div className="handle handle1"></div>
-                </Grid>
-                <Grid item>
-                  <PopupState variant="popover" popupId="card-popup-menu">
-                    {popupState => (
-                      <React.Fragment>
-                        <IconButton size="small" {...bindTrigger(popupState)}>
-                          <MoreVert />
-                        </IconButton>
-                        <Menu {...bindMenu(popupState)}>
-                          <MenuItem className={startMenuItemClassNames} onClick={() => {
-                            popupState.close();
-                            this.handleSetAsStart();
-                          }}>
-                            <PlayForWork /> &nbsp; 
-                            Set as Starting Point
-                          </MenuItem>
-                          <MenuItem onClick={() => {
-                            popupState.close();
-                            this.handleDelete();
-                          }}>
-                            <DeleteIcon /> &nbsp; 
-                            Delete
-                          </MenuItem>
-                        </Menu>
-                      </React.Fragment>
-                    )}
-                  </PopupState>
-                </Grid>
-              </Grid>
+              <div className="handle handle1">
+                <DragHandle /> &nbsp; Drag
+              </div>
             </CardActions>
             <CardContent>
               <TextField
@@ -301,10 +270,43 @@ class Question extends React.Component {
               />
               <div>
                 {this.renderAnswers(answers)}
-                <div className="handle handle2">
-                  <Button variant="contained" color="primary" size="small" aria-label="add" onClick={() => this.handleAddAnswer()}>
-                    <Add /> Add Choice
-                  </Button>
+                <div>
+                  <Grid
+                    justify="space-between"
+                    container>
+                      <Grid item>
+                        <Button variant="contained" color="primary" size="small" aria-label="add" onClick={() => this.handleAddAnswer()}>
+                        <Add /> Add Choice
+                      </Button>
+                    </Grid>
+                    <Grid item>
+                      <PopupState variant="popover" popupId="card-popup-menu">
+                        {popupState => (
+                          <React.Fragment>
+                            <IconButton size="small" {...bindTrigger(popupState)}>
+                              <MoreVert />
+                            </IconButton>
+                            <Menu {...bindMenu(popupState)}>
+                              <MenuItem className={startMenuItemClassNames} onClick={() => {
+                                popupState.close();
+                                this.handleSetAsStart();
+                              }}>
+                                <PlayForWork /> &nbsp; 
+                                Set as Starting Point
+                              </MenuItem>
+                              <MenuItem onClick={() => {
+                                popupState.close();
+                                this.handleDelete();
+                              }}>
+                                <DeleteIcon /> &nbsp; 
+                                Delete
+                              </MenuItem>
+                            </Menu>
+                          </React.Fragment>
+                        )}
+                      </PopupState>
+                    </Grid>
+                  </Grid>
                 </div>
               </div>
             </CardContent>

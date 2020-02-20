@@ -72,7 +72,7 @@ class Settings extends React.Component {
         loading: true
       }
     });
-    axios.put(`${config.get("apiHost")}/user`, params)
+    axios.put(`${config.get("apiHost")}/me`, params)
       .then(res => {
         Util.processRequestReturn(res, o, "SuccAccountUpdated");
         
@@ -102,7 +102,7 @@ class Settings extends React.Component {
     let adventureId = this.state.adventureId;
     let params = {};
     let o = this;
-    axios.get(`${config.get("apiHost")}/user`, params)
+    axios.get(`${config.get("apiHost")}/me`, params)
       .then(res => {
         let ret = Util.processRequestReturnSilent(res);
         if(!ret) {

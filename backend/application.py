@@ -630,7 +630,7 @@ def actionUser(actionToken):
 
   return jsonifySafe(ret)
 
-@application.route("/user/password", methods=["PUT"])
+@application.route("/me/password", methods=["PUT"])
 def userPassword():
   ret = {}
   ret["status"] = "error"
@@ -724,7 +724,7 @@ def userPassword():
   ret["status"] = "success"
   return jsonifySafe(ret)
 
-@application.route("/user/email", methods=["PUT"])
+@application.route("/me/email", methods=["PUT"])
 def userEmail():
   ret = {}
   ret["status"] = "error"
@@ -864,7 +864,7 @@ def userEmail():
   ret["status"] = "success"
   return jsonifySafe(ret)
 
-@application.route("/user", methods=["GET", "POST", "PUT"])
+@application.route("/me", methods=["GET", "POST", "PUT"])
 def user():
   ret = {}
   ret["status"] = "error"
@@ -1103,8 +1103,8 @@ def user():
   return jsonifySafe(ret)
 
 
-@application.route("/adventure/<adventureId>/progress/<progressId>", methods=["GET", "PUT"])
-def adventureProgress(adventureId, progressId):
+@application.route("/<who>/adventures/<adventureId>/progress/<progressId>", methods=["GET", "PUT"])
+def adventureProgress(who, adventureId, progressId):
   ret = {}
   ret["status"] = "error"
   ret["errors"] = []
@@ -1176,8 +1176,8 @@ def adventureProgress(adventureId, progressId):
   return jsonifySafe(ret)
 
 
-@application.route("/adventure/<adventureId>/progress", methods=["GET", "POST"])
-def adventureProgressNew(adventureId):
+@application.route("/<who>/adventures/<adventureId>/progress", methods=["GET", "POST"])
+def adventureProgressNew(who, adventureId):
   ret = {}
   ret["status"] = "error"
   ret["errors"] = []
@@ -1197,8 +1197,7 @@ def adventureProgressNew(adventureId):
 
   if request.method == "POST":
     # creating new adventure progress
-    # progress.remove()
-
+    
     adv = adventures.find_one({"_id": ObjectId(adventureId)})
     if not adv:
       ret["errors"].append({
@@ -1292,8 +1291,8 @@ def adventureProgressNew(adventureId):
   return jsonifySafe(ret)
 
 
-@application.route("/adventure/<adventureId>", methods=["GET", "PUT", "DELETE"])
-def adventureKnown(adventureId):
+@application.route("/<who>/adventures/<adventureId>", methods=["GET", "PUT", "DELETE"])
+def adventureKnown(who, adventureId):
   ret = {}
   ret["status"] = "error"
   ret["errors"] = []
@@ -1486,19 +1485,17 @@ def adventureKnown(adventureId):
 
   return jsonifySafe(ret)
 
-
-@application.route("/adventure", methods=["GET", "POST"])
-def adventureNew():
+@application.route("/<who>/adventures", methods=["POST", "GET"])
+def adventursListing(who):
   ret = {}
   ret["status"] = "error"
   ret["errors"] = []
 
   userId = None
-
   if request.headers.get('Authorization'):
     userId = authorize(request.headers.get('Authorization'))
 
-  if not userId:
+  if who == "me" and not userId:
     ret["errors"].append({
       "code": "ErrNotAuthorized",
       "target": False
@@ -1508,9 +1505,21 @@ def adventureNew():
     return jsonifySafe(ret)
 
   adventures = db['adventure']
+  users = db['user']
+  progress = db['progress']
 
   if request.method == "POST":
     # creating new adventure
+    # can only do this if logged in
+    if who != "me":
+      ret["errors"].append({
+        "code": "ErrNotAuthorized",
+        "target": False
+      })
+
+    if ret["errors"]:
+      return jsonifySafe(ret)
+
     data = request.json.get("data")
     view = request.json.get("view")
     meta = request.json.get("meta")
@@ -1553,121 +1562,77 @@ def adventureNew():
     ret["status"] = "success"
 
   elif request.method == "GET":
-    limit = 12
+    searchLimit = 10
     if request.args.get('limit'):
-      limit = request.args.get('limit')
+      searchLimit = request.args.get('limit')
+
+    searchSort = "trending"
+    if request.args.get('sort'):
+      searchSort = request.args.get('sort')
     
     page = 1
     if request.args.get('page'):
       page = request.args.get('page')
     
-    skip = (int(page) - 1) * int(limit)
+    skip = (int(page) - 1) * int(searchLimit)
 
-    tot = adventures.count_documents({"userId": userId})
-    totPages = math.ceil(tot / int(limit))
+    if searchSort == "trending":
+      searchSortField = "analytic.lastTakenDate"
+    elif searchSort == "popular":
+      searchSortField = "analytic.taken"
+    else:
+      searchSortField = "insertDate"
 
-    sortField = "insertDate"
+    if who == "me":
+      tot = adventures.count_documents({"userId": userId})
+      totPages = math.ceil(tot / int(searchLimit))
+      tmp = list(adventures.find({"userId": userId}).sort([(searchSortField, pymongo.DESCENDING)]).skip(skip).limit(int(searchLimit)))
+    elif who == "all":
+      tot = adventures.count_documents({})
+      totPages = math.ceil(tot / int(searchLimit))
+      tmp = list(adventures.find().sort([(searchSortField, pymongo.DESCENDING)]).skip(skip).limit(int(searchLimit)))
 
-    # fetching list of all adventures
-    tmp = list(adventures.find({"userId": userId}).sort([(sortField, pymongo.DESCENDING)]).skip(skip).limit(int(limit)))
-    adventuresList = []
+    userIdMap = {}
     for a in tmp:
-      t = {}
-      t['_id'] = str(ObjectId(a['_id']))
-      t['meta'] = a['meta']
-      adventuresList.append(t)
+      userIdMap[a['userId']] = True
+    
+    tmp2 = userIdMap.keys()
+    userIds = []
+    for a in tmp2:
+      userIds.append(ObjectId(a))
+    
+    userList = list(users.find({
+      "_id": {
+        "$in": userIds
+      }
+    }))
+
+    userMap = {}
+    for a in userList:
+      o = {}
+      o['_id'] = str(a['_id'])
+      o['penName'] = a['penName']
+      userMap[o['_id']] = o
+    
+    finalList = []
+    for a in tmp:
+      a['_id'] = str(a['_id'])
+      del a['data']
+      del a['view']
+      if a['userId'] in userMap:
+        a['user'] = userMap[a['userId']]
+      finalList.append(a)
 
     ret["status"] = "success"
     ret["data"] = {
-      "adventures": adventuresList,
-      "pages": totPages
+      "pages": totPages,
+      "adventures": finalList
     }
 
   return jsonifySafe(ret)
 
-@application.route("/adventure/search", methods=["GET"])
-def adventureSearch():
-  ret = {}
-  ret["status"] = "error"
-  ret["errors"] = []
-
-  userId = None
-
-  if request.headers.get('Authorization'):
-    userId = authorize(request.headers.get('Authorization'))
-
-  adventures = db['adventure']
-  users = db['user']
-  progress = db['progress']
-
-  searchLimit = 10
-  if request.args.get('limit'):
-    searchLimit = request.args.get('limit')
-
-  searchSort = "trending"
-  if request.args.get('sort'):
-    searchSort = request.args.get('sort')
-  
-  page = 1
-  if request.args.get('page'):
-    page = request.args.get('page')
-  
-  skip = (int(page) - 1) * int(searchLimit)
-
-  if searchSort == "trending":
-    searchSortField = "analytic.lastTakenDate"
-  elif searchSort == "popular":
-    searchSortField = "analytic.taken"
-  else:
-    searchSortField = "insertDate"
-
-  tot = adventures.count_documents({})
-  totPages = math.ceil(tot / int(searchLimit))
-  tmp = list(adventures.find().sort([(searchSortField, pymongo.DESCENDING)]).skip(skip).limit(int(searchLimit)))
-
-  userIdMap = {}
-  for a in tmp:
-    userIdMap[a['userId']] = True
-  
-  tmp2 = userIdMap.keys()
-  userIds = []
-  for a in tmp2:
-    userIds.append(ObjectId(a))
-  
-  userList = list(users.find({
-    "_id": {
-      "$in": userIds
-    }
-  }))
-
-  userMap = {}
-  for a in userList:
-    o = {}
-    o['_id'] = str(a['_id'])
-    o['penName'] = a['penName']
-    userMap[o['_id']] = o
-  
-  finalList = []
-  for a in tmp:
-    a['_id'] = str(a['_id'])
-    del a['data']
-    del a['view']
-    if a['userId'] in userMap:
-      a['user'] = userMap[a['userId']]
-    finalList.append(a)
-
-  ret["status"] = "success"
-  ret["data"] = {
-    "pages": totPages,
-    "adventures": finalList
-  }
-
-
-
-  return jsonifySafe(ret)
-
-@application.route("/progress", methods=["GET"])
-def progressRoute():
+@application.route("/<who>/progress", methods=["GET"])
+def progressRoute(who):
   ret = {}
   ret["status"] = "error"
   ret["errors"] = []
@@ -1676,7 +1641,7 @@ def progressRoute():
   if request.headers.get('Authorization'):
     userId = authorize(request.headers.get('Authorization'))
 
-  if not userId:
+  if who == "me" and not userId:
     ret["errors"].append({
       "code": "ErrNotAuthorized",
       "target": False
@@ -1781,42 +1746,6 @@ def progressRoute():
     "pages": totPages
   }
 
-  return jsonifySafe(ret)
-  
-@application.route("/test", methods=["GET"])
-def test():
-  ret = {}
-  ret["status"] = "error"
-  ret["errors"] = []
-
-  recipient = "daneiracleous@gmail.com"
-  subject = "Testing email sending"
-
-  contentText = """
-    Amazon SES Test (Python)\r\n
-    This email was sent with Amazon SES using the
-    AWS SDK for Python (Boto)."""
-
-  contentHTML = """
-    <h1>Amazon SES Test (SDK for Python)</h1>
-    <p>This email was sent with
-      <a href='https://aws.amazon.com/ses/'>Amazon SES</a> using the
-      <a href='https://aws.amazon.com/sdk-for-python/'>AWS SDK for Python (Boto)</a>.
-    </p>
-    """
-
-  sendRet = sendEmail(db, recipient, subject, contentText, contentHTML)
-
-  if not sendRet:
-    ret["errors"].append({
-      "code": "ErrEmailSending",
-      "target": False
-    })
-
-  if ret["errors"]:
-    return jsonifySafe(ret)
-
-  ret["status"] = "success"
   return jsonifySafe(ret)
 
 @application.errorhandler(404) 

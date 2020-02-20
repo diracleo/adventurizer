@@ -54,7 +54,7 @@ class ChangeEmail extends React.Component {
         loading: true
       }
     });
-    axios.put(`${config.get("apiHost")}/user/email`, params)
+    axios.put(`${config.get("apiHost")}/me/email`, params)
       .then(res => {
         Util.processRequestReturn(res, o, "SuccAccountUpdated");
         

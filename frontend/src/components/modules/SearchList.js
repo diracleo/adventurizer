@@ -70,7 +70,7 @@ class SearchList extends React.Component {
     st['status']['loading'] = true;
     o.setState(st);
     let queryString = "?sort=" + params['sort'] + "&limit=" + params['limit'] + "&page=" + params['page'];
-    axios.get(`${config.get("apiHost")}/adventure/search${queryString}`, {})
+    axios.get(`${config.get("apiHost")}/all/adventures${queryString}`, {})
       .then(res => {
         let ret = Util.processRequestReturnSilent(res);
         if(!ret) {

@@ -57,11 +57,15 @@ class AdventureView extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handler);
+  }
+
   componentDidMount() {
     let adventureId = this.state.adventureId;
     let params = {};
     let o = this;
-    axios.get(`${config.get("apiHost")}/adventure/${adventureId}`, params)
+    axios.get(`${config.get("apiHost")}/all/adventures/${adventureId}`, params)
       .then(res => {
         let ret = Util.processRequestReturnSilent(res);
         if(!ret) {
@@ -107,14 +111,14 @@ class AdventureView extends React.Component {
           }
         });
       });
-
-    let handler = function() {
+    
+    o.handler = function() {
       o.setState({
         answersShow: false
       })
     }; 
-    window.removeEventListener('resize', handler);
-    window.addEventListener('resize', handler);
+    window.removeEventListener('resize', o.handler);
+    window.addEventListener('resize', o.handler);
     /*
     window.addEventListener('resize', () => {
       this.setState({
@@ -158,7 +162,7 @@ class AdventureView extends React.Component {
       "progress": progress
     };
     
-    axios.put(`${config.get("apiHost")}/adventure/${adventureId}/progress/${progressId}`, params)
+    axios.put(`${config.get("apiHost")}/me/adventures/${adventureId}/progress/${progressId}`, params)
       .then(res => {
         let ret = Util.processRequestReturnSilent(res);
         if(!ret) {
@@ -201,7 +205,7 @@ class AdventureView extends React.Component {
       "progress": progress
     };
     
-    axios.put(`${config.get("apiHost")}/adventure/${adventureId}/progress/${progressId}`, params)
+    axios.put(`${config.get("apiHost")}/me/adventures/${adventureId}/progress/${progressId}`, params)
       .then(res => {
         let ret = Util.processRequestReturnSilent(res);
         if(!ret) {
@@ -238,7 +242,7 @@ class AdventureView extends React.Component {
     let adventureId = this.state.adventureId;
     let params = {};
     
-    axios.post(`${config.get("apiHost")}/adventure/${adventureId}/progress`, params)
+    axios.post(`${config.get("apiHost")}/me/adventures/${adventureId}/progress`, params)
       .then(res => {
         let ret = Util.processRequestReturnSilent(res);
         if(!ret) {
@@ -247,7 +251,6 @@ class AdventureView extends React.Component {
         let data = res['data']['data'];
         let progress = data['progress'];
         let progressId = data['progressId'];
-        console.log(progressId);
         //this.goTo(current);
         o.setState({
           status: {

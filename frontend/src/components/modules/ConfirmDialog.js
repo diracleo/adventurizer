@@ -34,6 +34,9 @@ class ConfirmDialog extends React.Component {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
+            <Button onClick={() => this.hide()} color="default">
+              Close
+            </Button>
             <Button onClick={() => {
                 this.hide();
                 if(this.props.confirmCallback != null) {
@@ -41,9 +44,6 @@ class ConfirmDialog extends React.Component {
                 }
               }} color="primary" autoFocus>
               Confirm
-            </Button>
-            <Button onClick={() => this.hide()} color="default">
-              Close
             </Button>
           </DialogActions>
         </Dialog>

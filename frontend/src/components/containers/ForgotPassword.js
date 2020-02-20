@@ -113,7 +113,12 @@ class ForgotPassword extends React.Component {
                       value={this.state.email.value}
                       error={this.state.email.error != null}
                       helperText={this.state.email.error}
-                      onChange={e => this.set("email", e.target.value)} 
+                      onChange={e => this.set("email", e.target.value)}
+                      onKeyPress={(e) => {
+                        if(e.key === 'Enter') {
+                          this.forgotPassword();
+                        }
+                      }}
                     />
                   </Box>
                 </Grid>

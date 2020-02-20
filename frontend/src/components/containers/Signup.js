@@ -253,6 +253,11 @@ class Signup extends React.Component {
                       error={this.state.passwordConfirm.error != null}
                       helperText={this.state.passwordConfirm.error}
                       onChange={e => this.set("passwordConfirm", e.target.value)} 
+                      onKeyPress={(e) => {
+                        if(e.key === 'Enter') {
+                          this.signup();
+                        }
+                      }}
                     />
                   </Box>
                 </Grid>

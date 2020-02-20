@@ -188,7 +188,9 @@ class AdventureBuilder extends React.Component {
     let data = cloneDeep(this.state.questions);
     for(let i in data) {
       data[i]['element'] = null;
+      data[i]['focused'] = false;
       for(let j in data[i]['answers']) {
+        data[i]['answers'][j]['focused'] = false;
         data[i]['answers'][j]['element'] = null;
         data[i]['answers'][j]['questionRef'] = null;
       }
@@ -216,7 +218,7 @@ class AdventureBuilder extends React.Component {
     //are we creating a new adventure or updating an existing one?
     let url = `${config.get("apiHost")}/adventure`;
     if(this.state.adventureId == null) {
-      axios.post(`${config.get("apiHost")}/adventure`, params)
+      axios.post(`${config.get("apiHost")}/me/adventures`, params)
         .then(res => {
           let saved = o.processSave(res);
           let adventureId = null;
@@ -244,7 +246,7 @@ class AdventureBuilder extends React.Component {
           });
         });
     } else {
-      axios.put(`${config.get("apiHost")}/adventure/${this.state.adventureId}`, params)
+      axios.put(`${config.get("apiHost")}/me/adventures/${this.state.adventureId}`, params)
         .then(res => {
           let saved = o.processSave(res);
           let redirectRet = false;
@@ -675,27 +677,47 @@ class AdventureBuilder extends React.Component {
     this.renderVisualizations();
   }
   displayChanged(e, data) {
-    //console.log(e);
     this.positionX = e.positionX;
     this.positionY = e.positionY;
-    this.scale = e.scale;
+
+    if(this.scale != e.scale) {
+      this.scale = e.scale;
+      let o = this;
+      if(typeof(o.scaleTimer) != 'undefined') {
+        clearTimeout(o.scaleTimer);
+      }
+      o.scaleTimer = setTimeout(function() {
+        o.setState({
+          view: {
+            scale: o.scale,
+            x: o.positionX,
+            y: o.positionY
+          }
+        });
+      }, 500);
+    }
 
     this.renderVisualizations();
   }
-
+  componentWillUnmount() {
+    if(typeof(this.scaleTimer) != 'undefined') {
+      clearTimeout(this.scaleTimer);
+    }
+    window.removeEventListener('resize', this.handler);
+  }
   componentDidMount() {
     let o = this;
-    let handler = function() {
+    o.handler = function() {
       o.renderVisualizations();
     }; 
-    window.removeEventListener('resize', handler);
-    window.addEventListener('resize', handler);
+    window.removeEventListener('resize', o.handler);
+    window.addEventListener('resize', o.handler);
 
     if(this.state.adventureId != null) {
       let adventureId = this.state.adventureId;
       let params = {};
       let o = this;
-      axios.get(`${config.get("apiHost")}/adventure/${adventureId}`, params)
+      axios.get(`${config.get("apiHost")}/me/adventures/${adventureId}`, params)
         .then(res => {
           let ret = Util.processRequestReturnSilent(res);
           if(!ret) {
@@ -924,7 +946,7 @@ class AdventureBuilder extends React.Component {
         <div className="pane" id="pane" onClick={(event) => this.handlePaneClick(event)}>
           <LoadingOverlay loading={this.state.status.loading} />
           <TransformWrapper 
-            onWheel={(e, data) => this.displayChanged(e, data)}
+            onWheelStop={(e, data) => this.displayChanged(e, data)}
             onPanning={(e, data) => this.displayChanged(e, data)}
             onPinching={(e, data) => this.displayChanged(e, data)}
             onZoomChange={(e, data) => this.displayChanged(e, data)}

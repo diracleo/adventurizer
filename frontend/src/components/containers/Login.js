@@ -176,7 +176,12 @@ class Login extends React.Component {
                       value={this.state.password.value}
                       error={this.state.password.error != null}
                       helperText={this.state.password.error}
-                      onChange={e => this.set("password", e.target.value)} 
+                      onChange={e => this.set("password", e.target.value)}
+                      onKeyPress={(e) => {
+                        if(e.key === 'Enter') {
+                          this.login();
+                        }
+                      }}
                     />
                   </Box>
                 </Grid>
