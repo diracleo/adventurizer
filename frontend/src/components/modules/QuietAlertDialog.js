@@ -11,6 +11,12 @@ import { setQuietAlertDialog } from "./../../action";
 class QuietAlertDialog extends React.Component {
   constructor(props) {
     super(props);
+    this.color = null;
+    if(this.props.severity == "success") {
+      this.autoHideDuration = 1000;
+    } else {
+      this.autoHideDuration = 15000;
+    }
   }
 
   hide() {
@@ -21,7 +27,7 @@ class QuietAlertDialog extends React.Component {
 
   render() {
     return (
-      <Snackbar open={this.props.open} autoHideDuration={6000} onClose={() => this.hide()}>
+      <Snackbar open={this.props.open} autoHideDuration={this.autoHideDuration} onClose={() => this.hide()}>
         <MuiAlert elevation={6} variant="filled" onClose={() => this.hide()} severity={this.props.severity}>
           {this.props.description}
         </MuiAlert>

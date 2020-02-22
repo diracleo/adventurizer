@@ -111,6 +111,8 @@ String.prototype.trunc =
   };
 
 const translation = {
+  Err404: "Method not found.",
+  Err500: "An error occurred. Please try again later.",
   ErrAccountNotConfirmed: "Account has not been confirmed yet.",
   ErrDeleteFailed: "Unable to delete record.",
   ErrEmailFailed: "Unable to send email.",

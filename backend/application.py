@@ -1290,6 +1290,94 @@ def adventureProgressNew(who, adventureId):
 
   return jsonifySafe(ret)
 
+@application.route("/<who>/adventures/<adventureId>/meta", methods=["GET", "PUT"])
+def adventureMeta(who, adventureId):
+  ret = {}
+  ret["status"] = "error"
+  ret["errors"] = []
+
+  userId = False
+
+  if request.headers.get('Authorization'):
+    userId = authorize(request.headers.get('Authorization'))
+
+  if request.method == "PUT" or request.method == "DELETE":
+    if not userId:
+      ret["errors"].append({
+        "code": "ErrNotAuthorized",
+        "target": False
+      })
+
+    if ret["errors"]:
+      return jsonifySafe(ret)
+
+  adventures = db['adventure']
+  users = db['user']
+  progress = db['progress']
+  analytic = db['analytic']
+
+  if request.method == "PUT":
+    adv = adventures.find_one({"_id": ObjectId(adventureId)})
+    if not adv:
+      ret["errors"].append({
+        "code": "ErrNotFound",
+        "target": False
+      })
+
+    if ret["errors"]:
+      return jsonifySafe(ret)
+
+    if adv['userId'] != userId:
+      ret["errors"].append({
+        "code": "ErrNotAuthorized",
+        "target": False
+      })
+
+    if ret["errors"]:
+      return jsonifySafe(ret)
+
+    meta = request.json.get("meta")
+
+    if not meta['title']:
+      ret["errors"].append({
+        "code": "ErrEmptyAdventureTitle",
+        "target": "title"
+      })
+    
+    if not meta['state']:
+      ret["errors"].append({
+        "code": "ErrEmptyAdventureState",
+        "target": "state"
+      })
+
+    if not meta['theme']:
+      ret["errors"].append({
+        "code": "ErrEmptyAdventureTheme",
+        "target": "theme"
+      })
+
+    if ret["errors"]:
+      return jsonifySafe(ret)
+
+    updateRet = adventures.update_one({'_id': ObjectId(adventureId)},
+    {
+      '$set': {
+        'meta': meta
+      }
+    }, upsert=True)
+
+    if not updateRet:
+      ret["errors"].append({
+        "code": "ErrUpdateFailed",
+        "target": False
+      })
+
+    if ret["errors"]:
+      return jsonifySafe(ret)
+
+  ret["status"] = "success"
+
+  return jsonifySafe(ret)
 
 @application.route("/<who>/adventures/<adventureId>", methods=["GET", "PUT", "DELETE"])
 def adventureKnown(who, adventureId):
@@ -1447,6 +1535,12 @@ def adventureKnown(who, adventureId):
         "code": "ErrEmptyAdventureTitle",
         "target": "title"
       })
+    
+    if not meta['state']:
+      ret["errors"].append({
+        "code": "ErrEmptyAdventureState",
+        "target": "state"
+      })
 
     if not meta['theme']:
       ret["errors"].append({
@@ -1529,6 +1623,18 @@ def adventursListing(who):
         "code": "ErrEmptyAdventureTitle",
         "target": "title"
       })
+    
+    if not meta['state']:
+      ret["errors"].append({
+        "code": "ErrEmptyAdventureState",
+        "target": "state"
+      })
+    
+    if not meta['theme']:
+      ret["errors"].append({
+        "code": "ErrEmptyAdventureTheme",
+        "target": "theme"
+      })
 
     if ret["errors"]:
       return jsonifySafe(ret)
@@ -1588,9 +1694,9 @@ def adventursListing(who):
       totPages = math.ceil(tot / int(searchLimit))
       tmp = list(adventures.find({"userId": userId}).sort([(searchSortField, pymongo.DESCENDING)]).skip(skip).limit(int(searchLimit)))
     elif who == "all":
-      tot = adventures.count_documents({})
+      tot = adventures.count_documents({"meta.state": "public"})
       totPages = math.ceil(tot / int(searchLimit))
-      tmp = list(adventures.find().sort([(searchSortField, pymongo.DESCENDING)]).skip(skip).limit(int(searchLimit)))
+      tmp = list(adventures.find({"meta.state": "public"}).sort([(searchSortField, pymongo.DESCENDING)]).skip(skip).limit(int(searchLimit)))
 
     userIdMap = {}
     for a in tmp:

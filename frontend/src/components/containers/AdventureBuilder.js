@@ -30,8 +30,10 @@ class AdventureBuilder extends React.Component {
       adventureId = this.props.adventureId;
     }
 
+    this.saveOnNextUpdate = false;
+
     //set to null to disable auto save
-    this.autoSaveSeconds = null;
+    this.autoSaveSeconds = 5;
 
     this.themes = [
       {
@@ -100,6 +102,10 @@ class AdventureBuilder extends React.Component {
       meta: {
         title: {
           value: "",
+          error: null
+        },
+        state: {
+          value: "draft",
           error: null
         },
         description: {
@@ -180,7 +186,39 @@ class AdventureBuilder extends React.Component {
     }
     return saved;
   }
-
+  shouldSave() {
+    let ret = false;
+    if(typeof(this.state.meta.title) == 'undefined' || this.state.meta.title.value == "") {
+      ret = false;
+    } else if(typeof(this.lastSaveParams) == 'undefined') {
+      ret = true;
+    } else {
+      let tmp1 = cloneDeep(this.state.meta);
+      for(let i in tmp1) {
+        tmp1[i] = tmp1[i]['value'];
+      }
+      if(!isEqual(this.lastSaveParams['meta'], tmp1)) {
+        ret = true;
+      } else {
+        let tmp = cloneDeep(this.state.questions);
+        for(let i in tmp) {
+          tmp[i]['element'] = null;
+          tmp[i]['focused'] = false;
+          for(let j in tmp[i]['answers']) {
+            tmp[i]['answers'][j]['element'] = null;
+            tmp[i]['answers'][j]['questionRef'] = null;
+            tmp[i]['answers'][j]['focused'] = false;
+          }
+        }
+        if(!isEqual(this.lastSaveParams['data'], tmp)) {
+          ret = true;
+        }
+      }
+    }
+    if(ret) {
+      this.save();
+    }
+  }
   save(redirect) {
     if(typeof(redirect) == 'undefined') {
       redirect = false;
@@ -204,17 +242,18 @@ class AdventureBuilder extends React.Component {
     }
     params['meta'] = {
       title: this.state.meta.title.value,
+      state: this.state.meta.state.value,
       description: this.state.meta.description.value,
       theme: this.state.meta.theme.value
     }
     let o = this;
-
+    /*
     o.setState({
       status: {
         loading: true
       }
     });
-
+    */
     //are we creating a new adventure or updating an existing one?
     let url = `${config.get("apiHost")}/adventure`;
     if(this.state.adventureId == null) {
@@ -229,6 +268,8 @@ class AdventureBuilder extends React.Component {
               redirectRet = true;
             }
           }
+          o.saveOnNextUpdate = false;
+          o.lastSaveParams = params;
           o.setState({
             status: {
               saved: saved,
@@ -239,6 +280,7 @@ class AdventureBuilder extends React.Component {
           });
         }).catch(error => {
           Util.displayError("ErrServerResponse");
+          o.saveOnNextUpdate = false;
           o.setState({
             status: {
               loading: false
@@ -253,6 +295,8 @@ class AdventureBuilder extends React.Component {
           if(saved && redirect) {
             redirectRet = true;
           }
+          o.saveOnNextUpdate = false;
+          o.lastSaveParams = params;
           o.setState({
             status: {
               saved: saved,
@@ -262,6 +306,7 @@ class AdventureBuilder extends React.Component {
           });
         }).catch(error => {
           Util.displayError("ErrServerResponse");
+          o.saveOnNextUpdate = false;
           o.setState({
             status: {
               loading: false
@@ -575,6 +620,7 @@ class AdventureBuilder extends React.Component {
       }
       questions[k] = params;
     }
+
     this.setState({
       questions: questions,
       status: {
@@ -703,6 +749,9 @@ class AdventureBuilder extends React.Component {
     if(typeof(this.scaleTimer) != 'undefined') {
       clearTimeout(this.scaleTimer);
     }
+    if(typeof(this.saveInterval) != 'undefined') {
+      clearInterval(this.saveInterval);
+    }
     window.removeEventListener('resize', this.handler);
   }
   componentDidMount() {
@@ -761,6 +810,10 @@ class AdventureBuilder extends React.Component {
                 value: adventure['meta']['title'],
                 error: null
               },
+              state: {
+                value: adventure['meta']['state'],
+                error: null
+              },
               description: {
                 value: adventure['meta']['description'],
                 error: null
@@ -777,7 +830,7 @@ class AdventureBuilder extends React.Component {
             o.saveInterval = setInterval((function(self) {
               return function() {
                 if(!self.state.status.saved) {
-                  self.save();
+                  self.shouldSave();
                 }
               }
             })(o), o.autoSaveSeconds * 1000);
@@ -797,6 +850,16 @@ class AdventureBuilder extends React.Component {
           loading: false
         }
       });
+      if(o.autoSaveSeconds != null) {
+        clearInterval(o.saveInterval);
+        o.saveInterval = setInterval((function(self) {
+          return function() {
+            if(!self.state.status.saved) {
+              self.shouldSave();
+            }
+          }
+        })(o), o.autoSaveSeconds * 1000);
+      }
       this.setQuestion(null, null);
     }
   }
@@ -805,6 +868,7 @@ class AdventureBuilder extends React.Component {
     let st = cloneDeep(this.state.meta);
     st[key]['error'] = null;
     st[key]['value'] = value;
+
     this.setState({
       meta: st,
       status: {
@@ -832,8 +896,12 @@ class AdventureBuilder extends React.Component {
     });
   }
 
-  handleThemeChange = event => {
+  handleThemeChange(event) {
     this.setMeta("theme", event.target.value);
+  };
+
+  handleStateChange(event) {
+    this.setMeta("state", event.target.value);
   };
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -925,16 +993,27 @@ class AdventureBuilder extends React.Component {
                     </span>
                   </Hidden>
                 </Button>
+                <Hidden only={['xs', 'sm']}>
+                  &nbsp;
+                  &nbsp;
+                  <Select
+                    className="stateSelector"
+                    labelId="fieldAdventureStateLabelAlt"
+                    id="fieldAdventureStateAlt"
+                    value={this.state.meta.state.value}
+                    onChange={e => this.handleStateChange(e)}
+                  >
+                    <MenuItem value="draft">
+                      Draft
+                    </MenuItem>
+                    <MenuItem value="public">
+                      Public
+                    </MenuItem>
+                  </Select>
+                </Hidden>
                 &nbsp;
                 &nbsp;
-                &nbsp;
-                <Button color="secondary" 
-                  key="actionSave"
-                  disabled={this.state.status.saved}
-                  onClick={() => this.save()}>
-                  <Save /><Hidden only={['xs', 'sm']}> &nbsp; Save</Hidden>
-                </Button>
-                <Button color="default" 
+                <Button color="primary" 
                   key="actionCancel"
                   onClick={() => this.save(true)}>
                   <Done /><Hidden only={['xs', 'sm']}> &nbsp; Done</Hidden>
@@ -965,20 +1044,36 @@ class AdventureBuilder extends React.Component {
         </div>
         <Dialog open={this.state.metaDialogOpen} onClose={() => this.handleMetaDialogClose()}>
           <DialogContent>
-            { this.state.adventureId == null && 
-              <DialogContentText>
-                Welcome to the adventure builder! Enter a name, theme, and description for your adventure then press the continue button to start building.
-              </DialogContentText>
-            }
             <Grid container>
               <Grid item xs={12}>
-                <Box mb={3} mt={3}>
+                <Box mb={3}>
                   <TextField id="fieldAdventureTitle" label="Name of Adventure" required type="text" fullWidth autoFocus={this.state.adventureId == null}
                     value={this.state.meta.title.value}
                     error={this.state.meta.title.error != null}
                     helperText={this.state.meta.title.error}
-                    onChange={e => this.setMeta("title", e.target.value)} 
+                    onChange={e => this.setMeta("title", e.target.value)}
                   />
+                </Box>
+              </Grid>
+              <Grid item xs={12}>
+                <Box mb={3}>
+                  <FormControl fullWidth>
+                    <InputLabel id="fieldAdventureThemeLabel">State</InputLabel>
+                    <Select
+                      className="stateSelector"
+                      labelId="fieldAdventureStateLabel"
+                      id="fieldAdventureState"
+                      value={this.state.meta.state.value}
+                      onChange={e => this.handleStateChange(e)}
+                    >
+                      <MenuItem value="draft">
+                        Draft
+                      </MenuItem>
+                      <MenuItem value="public">
+                        Public
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
                 </Box>
               </Grid>
               <Grid item xs={12}>
@@ -990,7 +1085,7 @@ class AdventureBuilder extends React.Component {
                       labelId="fieldAdventureThemeLabel"
                       id="fieldAdventureTheme"
                       value={this.state.meta.theme.value}
-                      onChange={this.handleThemeChange}
+                      onChange={e => this.handleThemeChange(e)}
                     >
                       {this.renderThemeMenu()}
                     </Select>
@@ -1003,7 +1098,7 @@ class AdventureBuilder extends React.Component {
                     value={this.state.meta.description.value}
                     error={this.state.meta.description.error != null}
                     helperText={this.state.meta.description.error}
-                    onChange={e => this.setMeta("description", e.target.value)} 
+                    onChange={e => this.setMeta("description", e.target.value)}
                   />
                 </Box>
               </Grid>
@@ -1011,7 +1106,7 @@ class AdventureBuilder extends React.Component {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => this.handleMetaDialogSaveAndClose()} color="primary">
-              Save and Continue
+              Continue
             </Button>
           </DialogActions>
         </Dialog>

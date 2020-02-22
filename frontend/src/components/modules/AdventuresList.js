@@ -5,15 +5,18 @@ import { AxiosProvider, Request, Get, Delete, Head, Post, Put, Patch, withAxios 
 import isEqual from "react-fast-compare";
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import MuiAlert from '@material-ui/lab/Alert';
 import { Pagination } from '@material-ui/lab';
 import PaginationItem from '@material-ui/lab/PaginationItem';
-import { MuiThemeProvider, Snackbar, CircularProgress, Button, ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Box, Drawer, IconButton, TextField, Input, InputAdornment, AppBar, Toolbar, Paper, Card, CardActions, CardContent, Grid, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Fab, FormControlLabel, Menu, MenuItem, Typography, CssBaseline } from '@material-ui/core';
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
+import { FormControl, InputLabel, Select, MuiThemeProvider, Snackbar, CircularProgress, Button, ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Box, Drawer, IconButton, TextField, Input, InputAdornment, AppBar, Toolbar, Paper, Card, CardActions, CardContent, Grid, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Fab, FormControlLabel, Menu, MenuItem, Typography, CssBaseline } from '@material-ui/core';
 import { Share, Visibility, Edit, Delete as DeleteIcon, AddBox } from '@material-ui/icons';
 import { Link } from "react-router-dom";
 
 import Util from './../../Util.js';
 import config from 'react-global-configuration';
 
+import ThemeSelector from './../modules/ThemeSelector.js';
 import LoadingOverlay from './../modules/LoadingOverlay.js';
 
 import { connect } from "react-redux";
@@ -23,6 +26,8 @@ class AdventuresList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      metaDialogOpen: false,
+      meta: null,
       adventures: [],
       status: {
         loading: true
@@ -145,6 +150,101 @@ class AdventuresList extends React.Component {
         });
       });
   }
+  editMeta(adventureId) {
+    let chosenAdventure = null;
+    for(let i = 0; i < this.state.adventures.length; i++) {
+      let adventure = this.state.adventures[i];
+      if(adventure['_id'] == adventureId) {
+        chosenAdventure = adventure;
+        break;
+      }
+    }
+    if(chosenAdventure != null) {
+      this.metaAdventureId = adventureId;
+      let meta = cloneDeep(chosenAdventure['meta']);
+      for(let i in meta) {
+        meta[i] = {
+          value: meta[i],
+          error: null
+        };
+      }
+      this.setState({
+        metaDialogOpen: true,
+        meta: meta
+      });
+    }
+  }
+
+  setMeta(key, value) {
+    let st = cloneDeep(this.state.meta);
+    st[key]['error'] = null;
+    st[key]['value'] = value;
+
+    this.setState({
+      meta: st
+    });
+  }
+
+  saveMeta() {
+    let params = {};
+    params['meta'] = {
+      title: this.state.meta.title.value,
+      state: this.state.meta.state.value,
+      description: this.state.meta.description.value,
+      theme: this.state.meta.theme.value
+    }
+    let o = this;
+    o.setState({
+      status: {
+        loading: true
+      }
+    });
+    axios.put(`${config.get("apiHost")}/me/adventures/${this.metaAdventureId}/meta`, params)
+      .then(res => {
+        Util.processRequestReturn(res, o, "SuccAdventureSaved");
+        if(res['data']['status'] == "success") {
+          o.setState({
+            metaDialogOpen: false
+          });
+          o.fetch({
+            limit: this.limit,
+            page: this.page
+          });
+        }
+      }).catch(error => {
+        Util.displayError("ErrServerResponse");
+        o.setState({
+          status: {
+            loading: false
+          }
+        });
+      });
+  }
+
+  handleMetaDialogOpen() {
+    this.setState({
+      metaDialogOpen: true
+    });
+  }
+
+  handleMetaDialogClose() {
+    this.setState({
+      metaDialogOpen: false
+    });
+  }
+
+  handleMetaDialogSaveAndClose() {
+    this.saveMeta();
+  }
+
+  handleThemeChange(event) {
+    this.setMeta("theme", event.target.value);
+  };
+
+  handleStateChange(event) {
+    this.setMeta("state", event.target.value);
+  };
+
   componentDidMount() {
     let params = {};
     let o = this;
@@ -167,6 +267,10 @@ class AdventuresList extends React.Component {
       if(typeof(layout['mapping'][i]) != 'undefined' && layout['mapping'][i] != null) {
         mp = layout['mapping'][i];
       }
+      let stateButtonColor = "default";
+      if(adventure['meta']['state'] == "public") {
+        stateButtonColor = "primary";
+      }
       items.push(
         <Grid item xs={mp.xs} sm={mp.sm} md={mp.md} lg={mp.lg} xl={mp.xl} key={adventure['_id']}>
           <Box mb={2} className={themeClassName}>
@@ -180,6 +284,11 @@ class AdventuresList extends React.Component {
                 </div>
               </div>
               <div className="actions">
+                <Button color={stateButtonColor} variant="contained" onClick={(adventureId) => {
+                  this.editMeta(adventure['_id'])
+                }}>
+                  {adventure['meta']['state']}
+                </Button>
                 <Link to={`/a/${adventure['_id']}`} className="link">
                   <Button color="primary" variant="contained">
                     <Visibility />
@@ -190,12 +299,29 @@ class AdventuresList extends React.Component {
                 }}>
                   <Share />
                 </Button>
-                <Link to={`/adventures/build/${adventure['_id']}`} className="link">
-                  <Button color="primary" variant="contained">
-                    <Edit />
-                  </Button>
-                </Link>
-                <Button color="default" variant="contained" onClick={(adventureId) => {
+                <PopupState variant="popover" popupId="card-popup-menu">
+                  {popupState => (
+                    <React.Fragment>
+                      <Button color="primary" variant="contained" {...bindTrigger(popupState)}>
+                        <Edit />
+                      </Button>
+                      <Menu {...bindMenu(popupState)} color="primary">
+                        <MenuItem onClick={(adventureId) => {
+                          this.editMeta(adventure['_id']);
+                          popupState.close();
+                        }}>
+                          Edit Meta Data
+                        </MenuItem>
+                        <MenuItem>
+                          <Link to={`/adventures/build/${adventure['_id']}`} className="link">
+                            Enter the Builder
+                          </Link>
+                        </MenuItem>
+                      </Menu>
+                    </React.Fragment>
+                  )}
+                </PopupState>
+                <Button color="primary" variant="contained" onClick={(adventureId) => {
                   this.deleteAdventure(adventure['_id'])
                 }}>
                   <DeleteIcon />
@@ -266,6 +392,68 @@ class AdventuresList extends React.Component {
               )}
             />
           </div>
+        }
+        { this.state.meta != null && 
+          <Dialog open={this.state.metaDialogOpen} onClose={() => this.handleMetaDialogClose()}>
+            <DialogContent>
+              <Grid container>
+                <Grid item xs={12}>
+                  <Box mb={3}>
+                    <TextField id="fieldAdventureTitle" label="Name of Adventure" required type="text" fullWidth
+                      value={this.state.meta.title.value}
+                      error={this.state.meta.title.error != null}
+                      helperText={this.state.meta.title.error}
+                      onChange={e => this.setMeta("title", e.target.value)}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={12}>
+                  <Box mb={3}>
+                    <FormControl fullWidth>
+                      <InputLabel id="fieldAdventureThemeLabel">State</InputLabel>
+                      <Select
+                        className="stateSelector"
+                        labelId="fieldAdventureStateLabel"
+                        id="fieldAdventureState"
+                        value={this.state.meta.state.value}
+                        onChange={e => this.handleStateChange(e)}
+                      >
+                        <MenuItem value="draft">
+                          Draft
+                        </MenuItem>
+                        <MenuItem value="public">
+                          Public
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Box>
+                </Grid>
+                <Grid item xs={12}>
+                  <Box mb={3}>
+                    <ThemeSelector 
+                      value={this.state.meta.theme.value}
+                      onChange={e => this.handleThemeChange(e)}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item xs={12}>
+                  <Box mb={3}>
+                    <TextField id="fieldAdventureDescription" label="Description" type="text" fullWidth multiline
+                      value={this.state.meta.description.value}
+                      error={this.state.meta.description.error != null}
+                      helperText={this.state.meta.description.error}
+                      onChange={e => this.setMeta("description", e.target.value)}
+                    />
+                  </Box>
+                </Grid>
+              </Grid>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => this.handleMetaDialogSaveAndClose()} color="primary">
+                Save
+              </Button>
+            </DialogActions>
+          </Dialog>
         }
         <LoadingOverlay loading={this.state.status.loading} />
       </div>

@@ -106,6 +106,7 @@ class ProgressList extends React.Component {
                 <div>
                   <div>
                     <h2>{adventure['meta']['title']}</h2>
+                    <h3>By {adventure['user']['penName']}</h3>
                     <p>{adventure['meta']['description'].trunc(300)}</p>
                   </div>
                 </div>
