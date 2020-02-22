@@ -33,7 +33,7 @@ class AdventureBuilder extends React.Component {
     this.saveOnNextUpdate = false;
 
     //set to null to disable auto save
-    this.autoSaveSeconds = 5;
+    this.autoSaveSeconds = 10;
 
     this.themes = [
       {
@@ -993,24 +993,6 @@ class AdventureBuilder extends React.Component {
                     </span>
                   </Hidden>
                 </Button>
-                <Hidden only={['xs', 'sm']}>
-                  &nbsp;
-                  &nbsp;
-                  <Select
-                    className="stateSelector"
-                    labelId="fieldAdventureStateLabelAlt"
-                    id="fieldAdventureStateAlt"
-                    value={this.state.meta.state.value}
-                    onChange={e => this.handleStateChange(e)}
-                  >
-                    <MenuItem value="draft">
-                      Draft
-                    </MenuItem>
-                    <MenuItem value="public">
-                      Public
-                    </MenuItem>
-                  </Select>
-                </Hidden>
                 &nbsp;
                 &nbsp;
                 <Button color="primary" 
