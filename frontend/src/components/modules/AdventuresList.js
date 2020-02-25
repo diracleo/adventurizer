@@ -112,7 +112,7 @@ class AdventuresList extends React.Component {
   shareAdventure(adventureId) {
     window.FB.ui({
       method: 'share',
-      href: config.get("webHost") + "/a/" + adventureId,
+      href: config.get("apiHost") + "/all/adventures/" + adventureId + "?mode=share",
     }, function(response){});
   }
   setPage(page) {
