@@ -97,7 +97,7 @@ class AdventureView extends React.Component {
           meta: {
             title: adventure['meta']['title'],
             description: adventure['meta']['description'],
-            theme: adventure['meta']['theme']
+            genre: adventure['meta']['genre']
           },
           questions: questions,
           progress: progress,
@@ -384,8 +384,8 @@ class AdventureView extends React.Component {
     }
 
     let themeClassName = "contentFullScreen theme default";
-    if(this.state.meta != null) {
-      themeClassName = "contentFullScreen theme " + this.state.meta.theme;
+    if(this.state.genre != null) {
+      themeClassName += "genre-" + this.state.meta.genre;
     }
 
     return (

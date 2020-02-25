@@ -1350,10 +1350,10 @@ def adventureMeta(who, adventureId):
         "target": "state"
       })
 
-    if not meta['theme']:
+    if not meta['genre']:
       ret["errors"].append({
-        "code": "ErrEmptyAdventureTheme",
-        "target": "theme"
+        "code": "ErrEmptyAdventureGenre",
+        "target": "genre"
       })
 
     if ret["errors"]:
@@ -1542,10 +1542,10 @@ def adventureKnown(who, adventureId):
         "target": "state"
       })
 
-    if not meta['theme']:
+    if not meta['genre']:
       ret["errors"].append({
-        "code": "ErrEmptyAdventureTheme",
-        "target": "theme"
+        "code": "ErrEmptyAdventureGenre",
+        "target": "genre"
       })
 
     if ret["errors"]:
@@ -1630,10 +1630,10 @@ def adventursListing(who):
         "target": "state"
       })
     
-    if not meta['theme']:
+    if not meta['genre']:
       ret["errors"].append({
-        "code": "ErrEmptyAdventureTheme",
-        "target": "theme"
+        "code": "ErrEmptyAdventureGenre",
+        "target": "genre"
       })
 
     if ret["errors"]:

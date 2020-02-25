@@ -14,6 +14,7 @@ import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Util from './../../Util.js';
 import config from 'react-global-configuration';
 
+import GenreSelector from './../modules/GenreSelector.js';
 import Question from './../modules/AdventureBuilder/Question.js';
 import LoadingOverlay from './../modules/LoadingOverlay.js';
 
@@ -35,65 +36,6 @@ class AdventureBuilder extends React.Component {
     //set to null to disable auto save
     this.autoSaveSeconds = 10;
 
-    this.themes = [
-      {
-        "key": "default",
-        "name": "Default"
-      },
-      {
-        "key": "defaultDark",
-        "name": "Dark"
-      },
-      {
-        "key": "autumn",
-        "name": "Autumn"
-      },
-      {
-        "key": "love",
-        "name": "Love"
-      },
-      {
-        "key": "spring",
-        "name": "Spring"
-      },
-      {
-        "key": "poseidon",
-        "name": "Poseidon"
-      },
-      {
-        "key": "navigator",
-        "name": "Navigator"
-      },
-      {
-        "key": "swashbuckler",
-        "name": "Swashbuckler"
-      },
-      {
-        "key": "thicket",
-        "name": "Thicket"
-      },
-      {
-        "key": "mountain",
-        "name": "Mountain"
-      },
-      {
-        "key": "existence",
-        "name": "Existence"
-      },
-      {
-        "key": "sky",
-        "name": "Sky"
-      },
-      {
-        "key": "storm",
-        "name": "Storm"
-      },
-      {
-        "key": "sand",
-        "name": "Sand"
-      }
-    ];
-
     this.state = {
       adventureId: adventureId,
       questions: {},
@@ -112,8 +54,8 @@ class AdventureBuilder extends React.Component {
           value: "",
           error: null
         },
-        theme: {
-          value: "default",
+        genre: {
+          value: "science_fiction",
           error: null
         }
       },
@@ -244,7 +186,7 @@ class AdventureBuilder extends React.Component {
       title: this.state.meta.title.value,
       state: this.state.meta.state.value,
       description: this.state.meta.description.value,
-      theme: this.state.meta.theme.value
+      genre: this.state.meta.genre.value
     }
     let o = this;
     /*
@@ -818,8 +760,8 @@ class AdventureBuilder extends React.Component {
                 value: adventure['meta']['description'],
                 error: null
               },
-              theme: {
-                value: adventure['meta']['theme'],
+              genre: {
+                value: adventure['meta']['genre'],
                 error: null
               }
             },
@@ -896,8 +838,8 @@ class AdventureBuilder extends React.Component {
     });
   }
 
-  handleThemeChange(event) {
-    this.setMeta("theme", event.target.value);
+  handleGenreChange(event) {
+    this.setMeta("genre", event.target.value);
   };
 
   handleStateChange(event) {
@@ -959,7 +901,7 @@ class AdventureBuilder extends React.Component {
 
     let themeClassName = "theme default";
     if(this.state.meta != null) {
-      themeClassName = "theme " + this.state.meta.theme.value;
+      themeClassName += "genre-" + this.state.meta.genre.value;
     }
 
     return (
@@ -1060,18 +1002,10 @@ class AdventureBuilder extends React.Component {
               </Grid>
               <Grid item xs={12}>
                 <Box mb={3}>
-                  <FormControl fullWidth>
-                    <InputLabel id="fieldAdventureThemeLabel">Theme</InputLabel>
-                    <Select
-                      className="themeSelector"
-                      labelId="fieldAdventureThemeLabel"
-                      id="fieldAdventureTheme"
-                      value={this.state.meta.theme.value}
-                      onChange={e => this.handleThemeChange(e)}
-                    >
-                      {this.renderThemeMenu()}
-                    </Select>
-                  </FormControl>
+                  <GenreSelector 
+                    value={this.state.meta.genre.value}
+                    onChange={e => this.handleGenreChange(e)}
+                  />
                 </Box>
               </Grid>
               <Grid item xs={12}>

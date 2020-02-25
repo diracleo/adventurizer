@@ -7,13 +7,14 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { Pagination } from '@material-ui/lab';
 import PaginationItem from '@material-ui/lab/PaginationItem';
-import { MuiThemeProvider, Snackbar, CircularProgress, Button, ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Box, Drawer, IconButton, TextField, Input, InputAdornment, AppBar, Toolbar, Paper, Card, CardActions, CardContent, Grid, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Fab, FormControlLabel, Menu, MenuItem, Typography, CssBaseline } from '@material-ui/core';
+import { Icon, MuiThemeProvider, Snackbar, CircularProgress, Button, ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Box, Drawer, IconButton, TextField, Input, InputAdornment, AppBar, Toolbar, Paper, Card, CardActions, CardContent, Grid, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Fab, FormControlLabel, Menu, MenuItem, Typography, CssBaseline } from '@material-ui/core';
 import { Visibility, Edit, Delete as DeleteIcon, AddBox } from '@material-ui/icons';
 import { Link, withRouter, BrowserRouter as Router } from "react-router-dom";
 
 import Util from './../../Util.js';
 import config from 'react-global-configuration';
 
+import Filter from './../modules/Filter.js';
 import LoadingOverlay from './../modules/LoadingOverlay.js';
 
 import { connect } from "react-redux";
@@ -105,13 +106,20 @@ class SearchList extends React.Component {
 
     for(let i = 0; i < adventures.length; i++) {
       let adventure = adventures[i];
+
       let themeClassName = "searchItem clickable theme default";
-      themeClassName = "searchItem clickable theme " + adventure['meta']['theme'];
+      if(adventure['meta']['genre'] != null) {
+        themeClassName += " genre-" + adventure['meta']['genre'];
+      }
 
       let mp = layout['default'];
       if(typeof(layout['mapping'][i]) != 'undefined' && layout['mapping'][i] != null) {
         mp = layout['mapping'][i];
       }
+
+      let genreStyle = {
+        color: Util.genres[adventure['meta']['genre']]['color']
+      };
 
       items.push(
         <Grid item xs={mp.xs} sm={mp.sm} md={mp.md} lg={mp.lg} xl={mp.xl} key={adventure['_id']}>
@@ -122,9 +130,15 @@ class SearchList extends React.Component {
                   <div>
                     <h2>{adventure['meta']['title']}</h2>
                     <h3>By {adventure['user']['penName']}</h3>
+                    <h4 style={genreStyle}>
+                      <Icon className={`fa ${Util.genres[adventure['meta']['genre']]['icon']}`} />
+                      &nbsp;
+                      {Util.genres[adventure['meta']['genre']]['name']}
+                    </h4>
                     <p>{adventure['meta']['description'].trunc(300)}</p>
                   </div>
                 </div>
+                <div className="decorator" style={genreStyle}><Icon className={`fa ${Util.genres[adventure['meta']['genre']]['icon']}`} /></div>
               </Paper>
             </Link>
           </Box>
@@ -163,9 +177,16 @@ class SearchList extends React.Component {
   render() {
     return (
       <div>
-        <Box mb={2}>
-          {this.renderActionsBar()}
-        </Box>
+        <Grid container spacing={2} justify="space-between">
+          <Grid item>
+            <Box mb={1}>
+              {this.renderActionsBar()}
+            </Box>
+          </Grid>
+          <Grid item>
+            <Filter />
+          </Grid>
+        </Grid>
         <Grid container spacing={2}>
           {this.renderAdventures()}
         </Grid>

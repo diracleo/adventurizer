@@ -9,14 +9,15 @@ import MuiAlert from '@material-ui/lab/Alert';
 import { Pagination } from '@material-ui/lab';
 import PaginationItem from '@material-ui/lab/PaginationItem';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
-import { FormControl, InputLabel, Select, MuiThemeProvider, Snackbar, CircularProgress, Button, ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Box, Drawer, IconButton, TextField, Input, InputAdornment, AppBar, Toolbar, Paper, Card, CardActions, CardContent, Grid, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Fab, FormControlLabel, Menu, MenuItem, Typography, CssBaseline } from '@material-ui/core';
-import { Share, Visibility, Edit, Delete as DeleteIcon, AddBox } from '@material-ui/icons';
+import { Icon, FormControl, InputLabel, Select, MuiThemeProvider, Snackbar, CircularProgress, Button, ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Box, Drawer, IconButton, TextField, Input, InputAdornment, AppBar, Toolbar, Paper, Card, CardActions, CardContent, Grid, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Fab, FormControlLabel, Menu, MenuItem, Typography, CssBaseline } from '@material-ui/core';
+import { Share, Visibility, Edit, Delete as DeleteIcon, AddBox, FilterList } from '@material-ui/icons';
 import { Link } from "react-router-dom";
 
 import Util from './../../Util.js';
 import config from 'react-global-configuration';
 
-import ThemeSelector from './../modules/ThemeSelector.js';
+import Filter from './../modules/Filter.js';
+import GenreSelector from './../modules/GenreSelector.js';
 import LoadingOverlay from './../modules/LoadingOverlay.js';
 
 import { connect } from "react-redux";
@@ -191,7 +192,7 @@ class AdventuresList extends React.Component {
       title: this.state.meta.title.value,
       state: this.state.meta.state.value,
       description: this.state.meta.description.value,
-      theme: this.state.meta.theme.value
+      genre: this.state.meta.genre.value
     }
     let o = this;
     o.setState({
@@ -237,8 +238,8 @@ class AdventuresList extends React.Component {
     this.saveMeta();
   }
 
-  handleThemeChange(event) {
-    this.setMeta("theme", event.target.value);
+  handleGenreChange(event) {
+    this.setMeta("genre", event.target.value);
   };
 
   handleStateChange(event) {
@@ -260,8 +261,11 @@ class AdventuresList extends React.Component {
 
     for(let i = 0; i < adventures.length; i++) {
       let adventure = adventures[i];
+
       let themeClassName = "searchItem theme default";
-      themeClassName = "searchItem theme " + adventure['meta']['theme'];
+      if(adventure['meta']['genre'] != null) {
+        themeClassName += " genre-" + adventure['meta']['genre'];
+      }
       
       let mp = layout['default'];
       if(typeof(layout['mapping'][i]) != 'undefined' && layout['mapping'][i] != null) {
@@ -271,6 +275,9 @@ class AdventuresList extends React.Component {
       if(adventure['meta']['state'] == "public") {
         stateButtonColor = "primary";
       }
+      let genreStyle = {
+        color: Util.genres[adventure['meta']['genre']]['color']
+      };
       items.push(
         <Grid item xs={mp.xs} sm={mp.sm} md={mp.md} lg={mp.lg} xl={mp.xl} key={adventure['_id']}>
           <Box mb={2} className={themeClassName}>
@@ -279,6 +286,12 @@ class AdventuresList extends React.Component {
                 <div>
                   <Link to={`/a/${adventure['_id']}`} className="link">
                     <h2>{adventure['meta']['title']}</h2>
+                    <h3>By {adventure['user']['penName']}</h3>
+                    <h4 style={genreStyle}>
+                      <Icon className={`fa ${Util.genres[adventure['meta']['genre']]['icon']}`} />
+                      &nbsp;
+                      {Util.genres[adventure['meta']['genre']]['name']}
+                    </h4>
                   </Link>
                   <p>{adventure['meta']['description'].trunc(300)}</p>
                 </div>
@@ -289,6 +302,7 @@ class AdventuresList extends React.Component {
                 }}>
                   {adventure['meta']['state']}
                 </Button>
+                &nbsp;
                 <Link to={`/a/${adventure['_id']}`} className="link">
                   <Button color="primary" variant="contained">
                     <Visibility />
@@ -327,6 +341,7 @@ class AdventuresList extends React.Component {
                   <DeleteIcon />
                 </Button>
               </div>
+              <div className="decorator" style={genreStyle}><Icon className={`fa ${Util.genres[adventure['meta']['genre']]['icon']}`} /></div>
             </Paper>
           </Box>
         </Grid>
@@ -363,13 +378,20 @@ class AdventuresList extends React.Component {
     return (
       <div>
         { this.state.adventures.length != 0 && 
-          <Box mb={2}>
-            <Link to={`/adventures/build`} className="link">
-              <Button color="secondary" variant="contained">
-                <AddBox /> &nbsp; Build An Adventure
-              </Button>
-            </Link>
-          </Box>
+          <Grid container spacing={2} justify="space-between">
+            <Grid item>
+              <Box mb={1}>
+                <Link to={`/adventures/build`} className="link">
+                  <Button color="secondary" variant="contained">
+                    <AddBox /> &nbsp; Build An Adventure
+                  </Button>
+                </Link>
+              </Box>
+            </Grid>
+            <Grid item>
+              <Filter />
+            </Grid>
+          </Grid>
         }
         <Grid container spacing={2}>
           {this.renderAdventures()}
@@ -430,9 +452,9 @@ class AdventuresList extends React.Component {
                 </Grid>
                 <Grid item xs={12}>
                   <Box mb={3}>
-                    <ThemeSelector 
-                      value={this.state.meta.theme.value}
-                      onChange={e => this.handleThemeChange(e)}
+                    <GenreSelector 
+                      value={this.state.meta.genre.value}
+                      onChange={e => this.handleGenreChange(e)}
                     />
                   </Box>
                 </Grid>
