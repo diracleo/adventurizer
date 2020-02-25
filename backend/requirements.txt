@@ -8,3 +8,4 @@ bson
 dnspython
 werkzeug
 boto3
+Pillow

@@ -13,12 +13,16 @@ import math
 import jwt
 import boto3
 import requests
+import io
+import os.path
+from os import path
+from PIL import Image, ImageFont, ImageDraw
 from botocore.exceptions import ClientError
 from flask import Flask
 from facepy import SignedRequest
 from facepy import GraphAPI
 from datetime import datetime, timedelta
-from flask import Flask, json, g, request, jsonify
+from flask import Flask, json, g, request, jsonify, send_file
 from flask_cors import CORS
 from pymongo import MongoClient
 from bson import ObjectId
@@ -1379,6 +1383,91 @@ def adventureMeta(who, adventureId):
 
   return jsonifySafe(ret)
 
+@application.route("/<who>/adventures/<adventureId>/image", methods=["GET"])
+def adventureImage(who, adventureId):
+  adventures = db['adventure']
+  adv = adventures.find_one({"_id": ObjectId(adventureId)})
+  if not adv:
+    abort(404)
+
+  mapping = {
+    "science_fiction": {
+      "name": "Science Fiction",
+      "icon": "fa-rocket",
+      "color": "0d47a1",
+      "code": 0xf135
+    },
+    "romance": {
+      "name": "Romance",
+      "icon": "fa-heart",
+      "color": "880e4f",
+      "code": 0xf004
+    },
+    "comedy": {
+      "name": "Comedy",
+      "icon": "fa-laugh",
+      "color": "1565c0",
+      "code": 0xf599
+    },
+    "horror": {
+      "name": "Horror",
+      "icon": "fa-skull",
+      "color": "b71c1c",
+      "code": 0xf54c
+    },
+    "western": {
+      "name": "Western",
+      "icon": "fa-hat-cowboy",
+      "color": "9e9d24",
+      "code": 0xf8c0
+    },
+    "adventure": {
+      "name": "Adventure",
+      "icon": "fa-mountain",
+      "color": "1b5e20",
+      "code": 0xf6fc
+    },
+    "fantasy": {
+      "name": "Fantasy",
+      "icon": "fa-magic",
+      "color": "3f51b5",
+      "code": 0xf0d0
+    },
+    "thriller": {
+      "name": "Thriller",
+      "icon": "fa-exclamation",
+      "color": "004d40",
+      "code": 0xf12a
+    },
+    "historical": {
+      "name": "Historical",
+      "icon": "fa-monument",
+      "color": "263238",
+      "code": 0xf5a6
+    },
+    "self_help": {
+      "name": "Self Help",
+      "icon": "fa-life-ring",
+      "color": "e65100",
+      "code": 0xf1cd
+    }
+  }
+  genre = adv['meta']['genre']
+  if not genre in mapping:
+    abort(404)
+
+  item = mapping[genre]
+  color = item['color']
+  filename = "media/" + adventureId + ".png"
+  if not path.exists(filename):
+    rgb = tuple(int(color[i:i+2], 16) for i in (0, 2, 4))
+    img = Image.new('RGB', (600, 315), color = 'white')
+    draw = ImageDraw.Draw(img)
+    font = ImageFont.truetype("fontawesome/otfs/Font Awesome 5 Free-Solid-900.otf", 400)
+    draw.text((100, -40), chr(item['code']), font=font, fill=rgb)
+    img.save(filename)
+  return send_file(filename, mimetype='image/png')
+
 @application.route("/<who>/adventures/<adventureId>", methods=["GET", "PUT", "DELETE"])
 def adventureKnown(who, adventureId):
   ret = {}
@@ -1473,6 +1562,16 @@ def adventureKnown(who, adventureId):
 
     adv['_id'] = str(ObjectId(adv['_id']))
     ret["status"] = "success"
+
+    if request.args.get("mode"):
+      metaTags = {
+        "url": "https://adventurizer.net/a/" + adventureId,
+        "title": adv["meta"]["title"],
+        "description": adv["meta"]["description"],
+        "author": author["penName"],
+        "image": THIS_DOMAIN + "/all/adventures/" + adv['_id'] + "/image" 
+      }
+      return renderAndRedirect(metaTags)
 
   elif request.method == "DELETE":
     adv = adventures.find_one({"_id": ObjectId(adventureId)})

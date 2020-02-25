@@ -2,6 +2,7 @@
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 
+media/*
 venv
 venv/*
 __pycache__

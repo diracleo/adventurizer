@@ -1,18 +1,41 @@
 .theme.default {
   .view {
     .item {
+      position:relative;
       .question {
         color:#333333;
         background-color:#ddd;
-        .title {
-          color:#111111;
+        position:relative;
+        > div {
           > span {
             position:relative;
+            display:inline-block;
+            min-width:100%;
+            &::first-letter {
+              font-size:250%;
+              vertical-align: bottom;
+              line-height: .9em;
+            }
+            > span {
+              position:relative;
+            }
+          }
+        }
+        .title {
+          color:#111111;
+          position:relative;
+          > span {
+            position:relative;
+            display:inline-block;
+            min-width:100%;
             &:nth-child(2) {
               border-top:1px solid #999999;
               margin-top:10px;
               padding-top:10px;
               display:block;
+            }
+            > span {
+              position:relative;
             }
           }
         }
@@ -22,6 +45,7 @@
             color:$colorSecondary;
             text-decoration:none;
             background-color:rgba(#ffffff, 0.6);
+            position:relative;
             &:hover {
               background-color:rgba(#ffffff, 1);
             }

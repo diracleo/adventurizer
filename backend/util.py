@@ -12,6 +12,7 @@ import pymongo
 import math
 import jwt
 import boto3
+from io import BytesIO
 from botocore.exceptions import ClientError
 from flask import Flask
 from facepy import SignedRequest
@@ -101,6 +102,37 @@ def parseUnsubscribeToken(actionToken):
 
 def jsonifySafe(json):
   return jsonify(json)
+
+def pil2datauri(img):
+  #converts PIL image to datauri
+  data = BytesIO()
+  img.save(data, "JPEG")
+  data64 = base64.b64encode(data.getvalue())
+  return u'data:img/jpeg;base64,'+data64.decode('utf-8')
+
+def renderAndRedirect(data):
+  bodyHTML = """<html>
+    <head>
+      <meta charset="UTF-8">
+      <title>{title}</title>
+      <meta name="description" content="{description}">
+      <meta name="author" content="{author}">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta property="fb:app_id" content="187870645609943" />
+      <meta property="og:site_name" content="Adventurizer">
+      <meta property="og:title" content="{title}">
+      <meta property="og:description" content="{description}">
+      <meta property="og:image" content="{image}">
+      <meta property="og:url" content="{url}">
+    </head>
+    <body>
+      <script>
+        window.location.href = '{url}';
+      </script>
+    </body>
+    </html>""".format(**data)
+
+  return bodyHTML
 
 def sendEmail(db, recipient, subject, contentText, contentHTML):
   users = db["user"]
