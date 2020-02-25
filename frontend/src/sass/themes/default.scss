@@ -199,6 +199,9 @@
     &.clickable {
       position:relative;
       border-radius:4px;
+      .MuiPaper-root {
+        margin-bottom:0px;
+      }
       &:after {
         content: "Begin";
         position:absolute;
