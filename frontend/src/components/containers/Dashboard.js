@@ -30,6 +30,30 @@ class Dashboard extends React.Component {
 
     Util.Auth.check();
   }
+  renderGenreDecorators() {
+    let genres = Util.genres;
+    let ret = [];
+    let num = Object.keys(genres).length;
+    let minusNum = 400 / num;
+
+    let count = 0;
+    for(let i in genres) {
+      let fs = "calc(" + Math.round(80 / num) + "vw - " + minusNum + "px + " + (count * 20) +"px)";
+      let op = 1 - (count / (num + 2));
+      let genreStyle = {
+        color: "#ffffff",
+        fontSize: fs,
+        opacity: op
+      };
+      ret.push(
+        <div className="genreIcon" key={`genreIcon-${count}`}>
+          <i className={`fa ${genres[i]['icon']}`} style={genreStyle}></i>
+        </div>
+      );
+      count++;
+    }
+    return ret;
+  }
   render() {
     return (
       <div className="wrappedOuter">
@@ -51,6 +75,9 @@ class Dashboard extends React.Component {
                         Create Free Account
                       </Button>
                     </Link>
+                  </div>
+                  <div className="decorator">
+                    {this.renderGenreDecorators()}
                   </div>
                 </div>
               </div>

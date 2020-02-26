@@ -146,55 +146,55 @@ const translation = {
 };
 
 const genres = {
-  "science_fiction": {
-    "name": "Science Fiction",
-    "icon": "fa-rocket",
-    "color": "#0d47a1"
-  },
-  "romance": {
-    "name": "Romance",
-    "icon": "fa-heart",
-    "color": "#880e4f"
+  "adventure": {
+    "name": "Adventure",
+    "icon": "fa-mountain",
+    "color": "#1b5e20"
   },
   "comedy": {
     "name": "Comedy",
     "icon": "fa-laugh",
     "color": "#1565c0"
   },
-  "horror": {
-    "name": "Horror",
-    "icon": "fa-skull",
-    "color": "#b71c1c"
-  },
-  "western": {
-    "name": "Western",
-    "icon": "fa-hat-cowboy",
-    "color": "#9e9d24"
-  },
-  "adventure": {
-    "name": "Adventure",
-    "icon": "fa-mountain",
-    "color": "#1b5e20"
-  },
   "fantasy": {
     "name": "Fantasy",
     "icon": "fa-magic",
     "color": "#3f51b5"
-  },
-  "thriller": {
-    "name": "Thriller",
-    "icon": "fa-exclamation",
-    "color": "#004d40"
   },
   "historical": {
     "name": "Historical",
     "icon": "fa-monument",
     "color": "#263238"
   },
+  "horror": {
+    "name": "Horror",
+    "icon": "fa-skull",
+    "color": "#b71c1c"
+  },
+  "romance": {
+    "name": "Romance",
+    "icon": "fa-heart",
+    "color": "#880e4f"
+  },
+  "science_fiction": {
+    "name": "Science Fiction",
+    "icon": "fa-rocket",
+    "color": "#0d47a1"
+  },
   "self_help": {
     "name": "Self Help",
     "icon": "fa-life-ring",
     "color": "#e65100"
+  },
+  "thriller": {
+    "name": "Thriller",
+    "icon": "fa-bolt",
+    "color": "#004d40"
+  },
+  "western": {
+    "name": "Western",
+    "icon": "fa-hat-cowboy",
+    "color": "#9e9d24"
   }
 };
 
