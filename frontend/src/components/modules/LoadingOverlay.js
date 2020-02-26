@@ -14,9 +14,12 @@ class LoadingOverlay extends React.Component {
     if(this.props.loading) {
       loaderClass += " loading";
     }
+    if(typeof(this.props.circleStyle) != 'undefined') {
+      this.circleStyle = this.props.circleStyle;
+    }
     return (
       <div className={loaderClass}>
-        <CircularProgress color="secondary" disableShrink />
+        <CircularProgress disableShrink style={this.circleStyle} />
       </div>
     );
   }

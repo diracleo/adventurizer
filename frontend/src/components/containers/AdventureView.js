@@ -35,7 +35,7 @@ class AdventureView extends React.Component {
     this.maxFontSize = 40;
 
     this.state = {
-      fontSize: 14,
+      fontSize: this.minFontSize,
       answersShow: false,
       adventureId: adventureId,
       user: {
@@ -285,6 +285,10 @@ class AdventureView extends React.Component {
     let answerStyle = {
       fontSize: ""+this.state.fontSize+"px"
     };
+    let answerStylePlain = Object.assign({}, answerStyle);
+    if(this.state.meta.genre != null) {
+      answerStyle['color'] = Util.genres[this.state.meta.genre]['color'];
+    }
     //console.log(answers);
     for(let i in answers) {
       let k = answers[i]['linkedTo'];
@@ -305,20 +309,20 @@ class AdventureView extends React.Component {
       );
       if(!Util.Auth.isAuthenticated) {
         items.push(
-          <a className="answer todo" key="loginCallBtn" href={`/login`}>
+          <a className="answer todo" key="loginCallBtn" href={`/login`} style={answerStyle}>
             Sign In to Save Your Progress
           </a>
         );
       }
       items.push(
-        <a className="answer todo" key="moreFromCallBtn" href={`/u/${this.state.user._id}`}>
+        <a className="answer todo" key="moreFromCallBtn" href={`/u/${this.state.user._id}`} style={answerStyle}>
           More from {this.state.user.penName}
         </a>
       );
     }
 
     items.push(
-      <div className="answer back" key="answerBack" style={answerStyle} onClick={() => this.back()}>
+      <div className="answer back" key="answerBack" style={answerStylePlain} onClick={() => this.back()}>
         <span><ArrowBack /> &nbsp; Back</span>
       </div>
     );
@@ -339,7 +343,22 @@ class AdventureView extends React.Component {
       meta = this.state.meta;
     }
 
-    let allText = null;
+    let maxHeight = "100%";
+    let height = "100vh";
+    if(this.state.fontSize == this.minFontSize) {
+      maxHeight = null;
+      height = null;
+    }
+
+    let answersStyle = {};
+    if(this.state.answersShow) {
+      answersStyle.display = "block";
+      answersStyle.fontSize = ""+this.state.fontSize+"px";
+    } else {
+      answersStyle.display = "none";
+    }
+
+    let allText = "";
     if(question != null) {
       allText += question.text;
       allText += '<div class="answers">';
@@ -361,32 +380,35 @@ class AdventureView extends React.Component {
         allText += '<div class="answer todo">Back</div>';
       allText += '</div>';
     } else if(meta != null) {
-      allText = '<span class="title"><span>' + meta.title + '</span><span>By ' + this.state.user.penName + '</span></span>';
+      allText += '<span class="title">';
+        allText += '<span>' + meta.title + '</span>';
+        allText += '<span>By ' + this.state.user.penName + '</span>';
+        allText += '<span><i class="fa ' + Util.genres[meta.genre]['icon'] + '"></i> ' + Util.genres[meta.genre]['name'] + '</span>';
+      allText += '</span>';
       allText += '<div class="description">' + meta.description + '</div>';
       allText += '<div class="answers metaAnswers">';
         allText += '<div class="answer"><span>Begin</span></div>';
       allText += '</div>';
     }
 
-    let maxHeight = "100%";
-    let height = "100vh";
-    if(this.state.fontSize == this.minFontSize) {
-      maxHeight = null;
-      height = null;
-    }
-
-    let answersStyle = {};
-    if(this.state.answersShow) {
-      answersStyle.display = "block";
-      answersStyle.fontSize = ""+this.state.fontSize+"px";
-    } else {
-      answersStyle.display = "none";
-    }
-
-    let themeClassName = "contentFullScreen theme default";
-    if(this.state.genre != null) {
+    let themeClassName = "contentFullScreen theme default ";
+    let genreStyle = {
+      color: "#333333"
+    };
+    let genreStyleBackground = {
+      backgroundColor: "#333333"
+    };
+    let visibleItemStyle = {};
+    if(this.state.meta.genre != null) {
       themeClassName += "genre-" + this.state.meta.genre;
-    }
+      genreStyle = {
+        color: Util.genres[this.state.meta.genre]['color']
+      };
+      genreStyleBackground = {
+        backgroundColor: Util.genres[this.state.meta.genre]['color']
+      }
+    } 
+
 
     return (
       <div className={themeClassName}>
@@ -394,14 +416,18 @@ class AdventureView extends React.Component {
           <div>
             { question == null && meta != null &&
               <div className="item">
+                <div className="decorator">
+                  <i className={`fa ${Util.genres[meta.genre]['icon']}`}></i>
+                </div>
                 <div className="question">
                   <span className="title" style={answersStyle}>
                     <span>{meta.title}</span>
                     <span>By {this.state.user.penName}</span>
+                    <span style={genreStyle}><i className={`fa ${Util.genres[meta.genre]['icon']}`}></i>{Util.genres[meta.genre]['name']}</span>
                   </span>
                   <SnugText testText={allText} text={meta.description} fontSize={this.state.fontSize} maxFontSize={this.maxFontSize} minFontSize={this.minFontSize} maxHeight={maxHeight} callback={(fontSize) => this.setFontSize(fontSize)} />
                   <div className="answers metaAnswers" style={answersStyle}>
-                    <div className="answer" onClick={() => this.startAdventure()}><span>Begin &nbsp; <ArrowForward /></span></div>
+                    <div style={genreStyle} className="answer" onClick={() => this.startAdventure()}><span>Begin &nbsp; <ArrowForward /></span></div>
                   </div>
                 </div>
               </div>
@@ -417,7 +443,7 @@ class AdventureView extends React.Component {
               </div>
             }
           </div>
-          <div className="navbar">
+          <div className="navbar" style={genreStyleBackground}>
             <Grid
               justify="space-between"
               container>
@@ -434,7 +460,7 @@ class AdventureView extends React.Component {
               </Grid>
             </Grid>
           </div>
-          <LoadingOverlay loading={this.state.status.loading} />
+          <LoadingOverlay loading={this.state.status.loading} circleStyle={genreStyle} />
         </div>
       </div>
     );

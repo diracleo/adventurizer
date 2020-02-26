@@ -1458,13 +1458,15 @@ def adventureImage(who, adventureId):
 
   item = mapping[genre]
   color = item['color']
-  filename = "media/" + adventureId + ".png"
+  filename = "./media/" + adventureId + ".png"
   if not path.exists(filename):
     rgb = tuple(int(color[i:i+2], 16) for i in (0, 2, 4))
     img = Image.new('RGB', (600, 315), color = 'white')
     draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype("fontawesome/otfs/Font Awesome 5 Free-Solid-900.otf", 400)
+    font = ImageFont.truetype("./fontawesome/otfs/Font Awesome 5 Free-Solid-900.otf", 400)
     draw.text((100, -40), chr(item['code']), font=font, fill=rgb)
+    if not os.path.exists('./media'):
+      os.makedirs('./media')
     img.save(filename)
   return send_file(filename, mimetype='image/png')
 
@@ -1565,7 +1567,8 @@ def adventureKnown(who, adventureId):
 
     if request.args.get("mode"):
       metaTags = {
-        "url": "https://adventurizer.net/a/" + adventureId,
+        "url": THIS_DOMAIN + "/all/adventures/" + adv['_id'] + "?mode=share",
+        "redirect": "https://adventurizer.net/a/" + adventureId,
         "title": adv["meta"]["title"],
         "description": adv["meta"]["description"],
         "author": author["penName"],

@@ -127,7 +127,7 @@ def renderAndRedirect(data):
     </head>
     <body>
       <script>
-        window.location.href = '{url}';
+        window.location.href = '{redirect}';
       </script>
     </body>
     </html>""".format(**data)
