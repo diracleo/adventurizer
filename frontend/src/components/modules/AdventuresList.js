@@ -169,24 +169,28 @@ class AdventuresList extends React.Component {
       return (
         <div className="searchActionBar" key="searchActionBar">
           <Router>
-            <Link to={`/search/trending/1`} className="link">
-              <Button color="primary" variant={this.sort == "trending" ? "contained" : "outlined"} onClick={() => this.setSort("trending")}>Trending</Button>
-            </Link>
-            <Link to={`/search/popular/1`} className="link">
-              <Button color="primary" variant={this.sort == "popular" ? "contained" : "outlined"} onClick={() => this.setSort("popular")}>Popular</Button>
-            </Link>
-            <Link to={`/search/newest/1`} className="link">
-              <Button color="primary" variant={this.sort == "newest" ? "contained" : "outlined"} onClick={() => this.setSort("newest")}>Newest</Button>
-            </Link>
+            <div className="buttonGroup">
+              <Link to={`/search/trending/1`} className="link">
+                <Button variant="contained" color={this.sort == "trending" ? "primary" : "default"} onClick={() => this.setSort("trending")}>Trending</Button>
+              </Link>
+              <Link to={`/search/popular/1`} className="link">
+                <Button variant="contained" color={this.sort == "popular" ? "primary" : "default"} onClick={() => this.setSort("popular")}>Popular</Button>
+              </Link>
+              <Link to={`/search/newest/1`} className="link">
+                <Button variant="contained" color={this.sort == "newest" ? "primary" : "default"} onClick={() => this.setSort("newest")}>Newest</Button>
+              </Link>
+            </div>
           </Router>
         </div>
       );
     } else {
       return (
         <div className="searchActionBar" key="searchActionBar">
-          <Button color="primary" variant={this.sort == "trending" ? "contained" : "outlined"} onClick={() => this.setSort("trending")}>Trending</Button>
-          <Button color="primary" variant={this.sort == "popular" ? "contained" : "outlined"} onClick={() => this.setSort("popular")}>Popular</Button>
-          <Button color="primary" variant={this.sort == "newest" ? "contained" : "outlined"} onClick={() => this.setSort("newest")}>Newest</Button>
+          <div className="buttonGroup">
+            <Button variant="contained" color={this.sort == "trending" ? "primary" : "default"} onClick={() => this.setSort("trending")}>Trending</Button>
+            <Button variant="contained" color={this.sort == "popular" ? "primary" : "default"} onClick={() => this.setSort("popular")}>Popular</Button>
+            <Button variant="contained" color={this.sort == "newest" ? "primary" : "default"} onClick={() => this.setSort("newest")}>Newest</Button>
+          </div>
         </div>
       );
     }

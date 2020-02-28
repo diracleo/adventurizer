@@ -314,49 +314,50 @@ class MyAdventuresList extends React.Component {
                 </div>
               </div>
               <div className="actions">
-                <Button color={stateButtonColor} variant="contained" onClick={(adventureId) => {
-                  this.editMeta(adventure['_id'])
-                }}>
-                  {adventure['meta']['state']}
-                </Button>
-                &nbsp;
-                <Link to={`/a/${adventure['_id']}`} className="link">
-                  <Button color="primary" variant="contained">
-                    <Visibility />
+                <div className="buttonGroup">
+                  <Button color={stateButtonColor} variant="contained" onClick={(adventureId) => {
+                    this.editMeta(adventure['_id'])
+                  }}>
+                    {adventure['meta']['state']}
                   </Button>
-                </Link>
-                <Button color="primary" variant="contained" onClick={(adventureId) => {
-                  this.shareAdventure(adventure['_id'])
-                }}>
-                  <Share />
-                </Button>
-                <PopupState variant="popover" popupId="card-popup-menu">
-                  {popupState => (
-                    <React.Fragment>
-                      <Button color="primary" variant="contained" {...bindTrigger(popupState)}>
-                        <Edit />
-                      </Button>
-                      <Menu {...bindMenu(popupState)} color="primary">
-                        <MenuItem onClick={(adventureId) => {
-                          this.editMeta(adventure['_id']);
-                          popupState.close();
-                        }}>
-                          Edit Meta Data
-                        </MenuItem>
-                        <MenuItem>
-                          <Link to={`/adventures/build/${adventure['_id']}`} className="link">
-                            Enter the Builder
-                          </Link>
-                        </MenuItem>
-                      </Menu>
-                    </React.Fragment>
-                  )}
-                </PopupState>
-                <Button color="primary" variant="contained" onClick={(adventureId) => {
-                  this.deleteAdventure(adventure['_id'])
-                }}>
-                  <DeleteIcon />
-                </Button>
+                  <Link to={`/a/${adventure['_id']}`} className="link">
+                    <Button color="primary" variant="contained">
+                      <Visibility />
+                    </Button>
+                  </Link>
+                  <Button color="primary" variant="contained" onClick={(adventureId) => {
+                    this.shareAdventure(adventure['_id'])
+                  }}>
+                    <Share />
+                  </Button>
+                  <PopupState variant="popover" popupId="card-popup-menu">
+                    {popupState => (
+                      <React.Fragment>
+                        <Button color="primary" variant="contained" {...bindTrigger(popupState)}>
+                          <Edit />
+                        </Button>
+                        <Menu {...bindMenu(popupState)} color="primary">
+                          <MenuItem onClick={(adventureId) => {
+                            this.editMeta(adventure['_id']);
+                            popupState.close();
+                          }}>
+                            Edit Meta Data
+                          </MenuItem>
+                          <MenuItem>
+                            <Link to={`/adventures/build/${adventure['_id']}`} className="link">
+                              Enter the Builder
+                            </Link>
+                          </MenuItem>
+                          <MenuItem onClick={(adventureId) => {
+                            this.deleteAdventure(adventure['_id'])
+                          }}>
+                            Delete
+                          </MenuItem>
+                        </Menu>
+                      </React.Fragment>
+                    )}
+                  </PopupState>
+                </div>
               </div>
               <div className="decorator" style={genreStyle}><Icon className={`fa ${Util.genres[adventure['meta']['genre']]['icon']}`} /></div>
             </Paper>
