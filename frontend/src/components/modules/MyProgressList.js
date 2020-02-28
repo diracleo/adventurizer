@@ -103,10 +103,13 @@ class MyProgressList extends React.Component {
       let genreStyle = {
         color: Util.genres[adventure['meta']['genre']]['color']
       };
+      let genreStyleBackground = {
+        backgroundColor: Util.genres[adventure['meta']['genre']]['color']
+      };
 
       items.push(
         <Grid item xs={mp.xs} sm={mp.sm} md={mp.md} lg={mp.lg} xl={mp.xl} key={adventure['_id']}>
-          <Box mb={2} className={themeClassName}>
+          <Box mb={2} className={themeClassName} style={genreStyleBackground}>
             <Link to={`/a/${adventure['_id']}`} className="link">
               <Paper>
                 <div>
