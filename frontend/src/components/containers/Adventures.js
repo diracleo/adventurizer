@@ -2,6 +2,7 @@ import React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import { withRouter } from "react-router-dom";
 
 import Util from './../../Util.js';
 import config from 'react-global-configuration';
@@ -29,10 +30,10 @@ class Adventures extends React.Component {
       <div className="wrappedOuter">
         <div className="wrapped">
           <div className="mainTitle">
-            <h1>My Adventures</h1>
+            <h1>Explore Adventures</h1>
           </div>
           <div className="content contentFilled contentWithTitle">
-            <AdventuresList pagination={true} limit={12} />
+            <AdventuresList pagination={true} sort={this.props.sort} page={this.props.page} limit={12} />
           </div>
         </div>
         <Footer type="padded" />
@@ -45,4 +46,4 @@ const mapStateToProps = state => {
   const props = cloneDeep(state);
   return props;
 };
-export default connect(mapStateToProps)(Adventures);
+export default withRouter(connect(mapStateToProps)(Adventures));

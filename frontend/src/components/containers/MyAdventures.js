@@ -10,10 +10,10 @@ import { connect } from "react-redux";
 import { setConfirmDialog, setViewType } from "./../../action";
 
 import Footer from './../modules/Footer.js';
-import ProgressList from './../modules/ProgressList.js';
+import MyAdventuresList from './../modules/MyAdventuresList.js';
 import LoadingOverlay from './../modules/LoadingOverlay.js';
 
-class Progress extends React.Component {
+class MyAdventures extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,10 +29,10 @@ class Progress extends React.Component {
       <div className="wrappedOuter">
         <div className="wrapped">
           <div className="mainTitle">
-            <h1>My Progress</h1>
+            <h1>My Adventures</h1>
           </div>
           <div className="content contentFilled contentWithTitle">
-            <ProgressList pagination={true} limit={12} />
+            <MyAdventuresList pagination={true} limit={12} />
           </div>
         </div>
         <Footer type="padded" />
@@ -45,4 +45,4 @@ const mapStateToProps = state => {
   const props = cloneDeep(state);
   return props;
 };
-export default connect(mapStateToProps)(Progress);
+export default connect(mapStateToProps)(MyAdventures);

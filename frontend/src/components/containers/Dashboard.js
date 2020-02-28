@@ -8,9 +8,9 @@ import { Link } from "react-router-dom";
 import Util from './../../Util.js';
 import config from 'react-global-configuration';
 
+import MyAdventuresList from './../modules/MyAdventuresList.js';
+import MyProgressList from './../modules/MyProgressList.js';
 import AdventuresList from './../modules/AdventuresList.js';
-import ProgressList from './../modules/ProgressList.js';
-import SearchList from './../modules/SearchList.js';
 import LoadingOverlay from './../modules/LoadingOverlay.js';
 import Footer from './../modules/Footer.js';
 
@@ -109,7 +109,7 @@ class Dashboard extends React.Component {
                   </Grid>
                 </div>
                 <div className="area">
-                  <AdventuresList pagination={false} limit={4} />
+                  <MyAdventuresList pagination={false} limit={4} />
                 </div>
               </div>
             }
@@ -140,7 +140,7 @@ class Dashboard extends React.Component {
                   </Grid>
                 </div>
                 <div className="area">
-                  <ProgressList pagination={false} limit={4} />
+                  <MyProgressList pagination={false} limit={4} />
                 </div>
               </div>
             }
@@ -171,7 +171,7 @@ class Dashboard extends React.Component {
                   </Grid>
                 </div>
                 <div className="area">
-                  <SearchList sort="trending" page={1} pagination={false} limit={8} />
+                  <AdventuresList sort="trending" page={1} pagination={false} limit={8} />
                 </div>
               </div>
             }

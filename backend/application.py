@@ -15,13 +15,15 @@ import boto3
 import requests
 import io
 import os.path
+import datetime as dt
+from dateutil import parser
 from os import path
 from PIL import Image, ImageFont, ImageDraw
 from botocore.exceptions import ClientError
 from flask import Flask
 from facepy import SignedRequest
 from facepy import GraphAPI
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from flask import Flask, json, g, request, jsonify, send_file
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -1549,6 +1551,7 @@ def adventureKnown(who, adventureId):
       a['_id'] = str(ObjectId(a['_id']))
       progressList.append(a)
 
+
     ret["data"] = {
       "adventure": adv
     }
@@ -1801,8 +1804,10 @@ def adventursListing(who):
       tmp = list(adventures.find({"meta.state": "public"}).sort([(searchSortField, pymongo.DESCENDING)]).skip(skip).limit(int(searchLimit)))
 
     userIdMap = {}
+    adventureIds = []
     for a in tmp:
       userIdMap[a['userId']] = True
+      adventureIds.append(str(a['_id']))
     
     tmp2 = userIdMap.keys()
     userIds = []
@@ -1815,6 +1820,12 @@ def adventursListing(who):
       }
     }))
 
+    progressList = list(progress.find({
+      "adventureId": {
+        "$in": adventureIds
+      }
+    }))
+
     userMap = {}
     for a in userList:
       o = {}
@@ -1822,6 +1833,14 @@ def adventursListing(who):
       o['penName'] = a['penName']
       userMap[o['_id']] = o
     
+    progressMap = {}
+    for a in progressList:
+      if not a['adventureId'] in progressMap:
+        progressMap[a['adventureId']] = []
+      o = a.copy()
+      o['_id'] = str(o['_id'])
+      progressMap[a['adventureId']].append(o)
+
     finalList = []
     for a in tmp:
       a['_id'] = str(a['_id'])
@@ -1829,6 +1848,36 @@ def adventursListing(who):
       del a['view']
       if a['userId'] in userMap:
         a['user'] = userMap[a['userId']]
+      
+      a['progressStats'] = {}
+      progressUserMap = {}
+      progressCount = 0
+      progressUserCount = 0
+      takenDateLatest = date.min
+      takenDateEarliest = date.max
+
+      if a['_id'] in progressMap:
+        a['progress'] = progressMap[a['_id']]
+        for b in a['progress']:
+          if not b['userId'] in progressUserMap:
+            progressUserMap[b['userId']] = []
+            progressUserCount += 1
+          progressUserMap[b['userId']].append(b)
+          progressCount += 1
+          """
+          tsp = b['insertDate']
+          if tsp < takenDateEarliest:
+            takenDateEarliest = tsp
+          if tsp > takenDateLatest:
+            takenDateLatest = tsp
+          """
+        del a['progress']
+      
+      a['progressStats']['takenCount'] = progressCount
+      a['progressStats']['usersTakenCount'] = progressUserCount
+      a['progressStats']['lastTaken'] = takenDateLatest
+      a['progressStats']['firstTaken'] = takenDateEarliest
+
       finalList.append(a)
 
     ret["status"] = "success"

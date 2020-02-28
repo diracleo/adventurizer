@@ -8,8 +8,8 @@ import { initReactI18next } from 'react-i18next';
 import { Pagination } from '@material-ui/lab';
 import PaginationItem from '@material-ui/lab/PaginationItem';
 import { Icon, MuiThemeProvider, Snackbar, CircularProgress, Button, ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Box, Drawer, IconButton, TextField, Input, InputAdornment, AppBar, Toolbar, Paper, Card, CardActions, CardContent, Grid, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Fab, FormControlLabel, Menu, MenuItem, Typography, CssBaseline } from '@material-ui/core';
-import { Visibility, Edit, Delete as DeleteIcon, AddBox } from '@material-ui/icons';
-import { Link, withRouter, BrowserRouter as Router } from "react-router-dom";
+import { Search as SearchIcon, Visibility, Edit, Delete as DeleteIcon, AddBox } from '@material-ui/icons';
+import { Link } from "react-router-dom";
 
 import Util from './../../Util.js';
 import config from 'react-global-configuration';
@@ -20,7 +20,7 @@ import LoadingOverlay from './../modules/LoadingOverlay.js';
 import { connect } from "react-redux";
 import { setConfirmDialog, setViewType } from "./../../action";
 
-class SearchList extends React.Component {
+class MyProgressList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -34,11 +34,6 @@ class SearchList extends React.Component {
     } else {
       this.limit = this.props.limit;
     }
-    if(typeof(this.props.sort) == "undefined" || this.props.sort == null) {
-      this.sort = "trending";
-    } else {
-      this.sort = this.props.sort;
-    }
     if(typeof(this.props.page) == "undefined" || this.props.page == null) {
       this.page = 1;
     } else {
@@ -46,17 +41,8 @@ class SearchList extends React.Component {
     }
     Util.Auth.check();
   }
-  setSort(type) {
-    this.page = 1;
-    let params = {};
-    params['sort'] = type;
-    params['limit'] = this.limit;
-    params['page'] = this.page;
-    this.fetch(params);
-  }
   setPage(page) {
     let params = {};
-    params['sort'] = this.sort;
     params['limit'] = this.limit;
     params['page'] = page;
     this.fetch(params);
@@ -64,14 +50,12 @@ class SearchList extends React.Component {
   fetch(params) {
     let o = this;
     let st = cloneDeep(o.state);
-    this.sort = params['sort'];
     this.page = params['page'];
-    st['sort'] = params['sort'];
     st['page'] = params['page'];
     st['status']['loading'] = true;
     o.setState(st);
-    let queryString = "?sort=" + params['sort'] + "&limit=" + params['limit'] + "&page=" + params['page'];
-    axios.get(`${config.get("apiHost")}/all/adventures${queryString}`, {})
+    let queryString = "?limit=" + params['limit'] + "&page=" + params['page'];
+    axios.get(`${config.get("apiHost")}/me/progress${queryString}`, {})
       .then(res => {
         let ret = Util.processRequestReturnSilent(res);
         if(!ret) {
@@ -97,17 +81,17 @@ class SearchList extends React.Component {
     let params = {};
     let o = this;
     
-    this.setSort(this.sort);
+    this.setPage(1);
   }
   renderAdventures() {
     let items = [];
     let adventures = this.state.adventures;
+
     let layout = Util.generateListBreakpoints(adventures.length, !this.props.pagination);
 
     for(let i = 0; i < adventures.length; i++) {
       let adventure = adventures[i];
-
-      let themeClassName = "searchItem clickable theme default";
+      let themeClassName = "searchItem clickable continue theme default";
       if(adventure['meta']['genre'] != null) {
         themeClassName += " genre-" + adventure['meta']['genre'];
       }
@@ -116,7 +100,6 @@ class SearchList extends React.Component {
       if(typeof(layout['mapping'][i]) != 'undefined' && layout['mapping'][i] != null) {
         mp = layout['mapping'][i];
       }
-
       let genreStyle = {
         color: Util.genres[adventure['meta']['genre']]['color']
       };
@@ -145,48 +128,51 @@ class SearchList extends React.Component {
         </Grid>
       );
     }
-    return items;
-  }
-  renderActionsBar() {
-    if(this.props.pagination) {
-      return (
-        <div className="searchActionBar" key="searchActionBar">
-          <Router>
-            <Link to={`/search/trending/1`} className="link">
-              <Button color="primary" variant={this.sort == "trending" ? "contained" : "outlined"} onClick={() => this.setSort("trending")}>Trending</Button>
-            </Link>
-            <Link to={`/search/popular/1`} className="link">
-              <Button color="primary" variant={this.sort == "popular" ? "contained" : "outlined"} onClick={() => this.setSort("popular")}>Popular</Button>
-            </Link>
-            <Link to={`/search/newest/1`} className="link">
-              <Button color="primary" variant={this.sort == "newest" ? "contained" : "outlined"} onClick={() => this.setSort("newest")}>Newest</Button>
-            </Link>
-          </Router>
-        </div>
-      );
-    } else {
-      return (
-        <div className="searchActionBar" key="searchActionBar">
-          <Button color="primary" variant={this.sort == "trending" ? "contained" : "outlined"} onClick={() => this.setSort("trending")}>Trending</Button>
-          <Button color="primary" variant={this.sort == "popular" ? "contained" : "outlined"} onClick={() => this.setSort("popular")}>Popular</Button>
-          <Button color="primary" variant={this.sort == "newest" ? "contained" : "outlined"} onClick={() => this.setSort("newest")}>Newest</Button>
-        </div>
+
+    if(items.length == 0) {
+      items.push(
+        <Grid item xs={12} sm={12} md={12} lg={6} xl={6} key="nodata">
+          <Box mb={2}>
+            <div className="nodata">
+              <div>
+                <div>
+                  <h2>You have not gone on any adventures yet</h2>
+                </div>
+              </div>
+              <div className="actions">
+                <Link to={`/search/trending/1`} className="link">
+                  <Button color="primary" variant="contained">
+                    <SearchIcon /> &nbsp; Go on My First Adventure
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </Box>
+        </Grid>
       );
     }
+
+    return items;
   }
   render() {
     return (
       <div>
-        <Grid container spacing={2} justify="space-between">
-          <Grid item>
-            <Box mb={1}>
-              {this.renderActionsBar()}
-            </Box>
+        { this.state.adventures.length != 0 &&
+          <Grid container spacing={2} justify="space-between">
+            <Grid item>
+              <Box mb={1}>
+                <Link to={`/search/trending/1`} className="link">
+                  <Button color="secondary" variant="contained">
+                    <SearchIcon /> &nbsp; Find an Adventure
+                  </Button>
+                </Link>
+              </Box>
+            </Grid>
+            <Grid item>
+              <Filter />
+            </Grid>
           </Grid>
-          <Grid item>
-            <Filter />
-          </Grid>
-        </Grid>
+        }
         <Grid container spacing={2}>
           {this.renderAdventures()}
         </Grid>
@@ -202,7 +188,7 @@ class SearchList extends React.Component {
               renderItem={item => (
                 <PaginationItem
                   component={Link}
-                  to={`/search/${this.sort}/${item.page}`}
+                  to={`/progress/${item.page}`}
                   {...item}
                 />
               )}
@@ -219,4 +205,4 @@ const mapStateToProps = state => {
   const props = cloneDeep(state);
   return props;
 };
-export default withRouter(connect(mapStateToProps)(SearchList));
+export default connect(mapStateToProps)(MyProgressList);

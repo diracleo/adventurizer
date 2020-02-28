@@ -55,7 +55,7 @@ class AdventureBuilder extends React.Component {
           error: null
         },
         genre: {
-          value: "science_fiction",
+          value: "adventure",
           error: null
         }
       },

@@ -8,7 +8,7 @@ import { BrowserRouter as Router, Switch, Route, Link, Redirect, withRouter, use
 import { connect } from "react-redux";
 import { toggleMainMenu } from "./../../action";
 
-import AdventuresRouter from './../routers/AdventuresRouter.js';
+import MyAdventuresRouter from './../routers/MyAdventuresRouter.js';
 import AdventureViewRouter from './../routers/AdventureViewRouter.js';
 import PrivateRoute from './../modules/PrivateRoute.js';
 import ConfirmDialog from './../modules/ConfirmDialog.js';
@@ -17,13 +17,13 @@ import Signup from './../containers/Signup.js';
 import Login from './../containers/Login.js';
 import ForgotPassword from './../containers/ForgotPassword.js';
 import Dashboard from './../containers/Dashboard.js';
-import Progress from './../containers/Progress.js';
+import MyProgress from './../containers/MyProgress.js';
 import Settings from './../containers/Settings.js';
 import ChangeEmail from './../containers/ChangeEmail.js';
 import ChangePassword from './../containers/ChangePassword.js';
 import ActionRouter from './../routers/ActionRouter.js';
 import UnsubRouter from './../routers/UnsubRouter.js';
-import SearchRouter from './../routers/SearchRouter.js';
+import AdventuresRouter from './../routers/AdventuresRouter.js';
 import TermsOfUse from './../containers/TermsOfUse.js';
 import PrivacyPolicy from './../containers/PrivacyPolicy.js';
 import SignoutBtn from './../modules/SignoutBtn.js';
@@ -227,7 +227,7 @@ class Adventurizer extends React.Component {
             }
             <Switch>
               <Route path="/a/:adventureId" component={AdventureViewRouter} />
-              <Route path="/search" component={SearchRouter} />
+              <Route path="/search" component={AdventuresRouter} />
               <Route path="/terms" component={TermsOfUse} />
               <Route path="/privacy" component={PrivacyPolicy} />
               <Route path="/login" component={Login} />
@@ -235,8 +235,8 @@ class Adventurizer extends React.Component {
               <Route path="/forgotPassword" component={ForgotPassword} />
               <Route path="/action/:actionToken" component={ActionRouter} />
               <Route path="/unsub/:unsubToken" component={UnsubRouter} />
-              <PrivateRoute path="/adventures" component={AdventuresRouter} />
-              <PrivateRoute path="/progress" component={Progress} />
+              <PrivateRoute path="/adventures" component={MyAdventuresRouter} />
+              <PrivateRoute path="/progress" component={MyProgress} />
               <PrivateRoute path="/settings" component={Settings} />
               <PrivateRoute path="/changeEmail" component={ChangeEmail} />
               <PrivateRoute path="/changePassword" component={ChangePassword} />

@@ -9,3 +9,4 @@ dnspython
 werkzeug
 boto3
 Pillow
+dateutil
