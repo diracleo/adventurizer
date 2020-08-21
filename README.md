@@ -76,7 +76,8 @@ Follow the instructions in this section every time you develop.
 
 1. Go into the directory you created in the previous section if you're not already in there `cd adventurizer`
 1. Pull latest changes from the repo `git pull origin master`
-1. Run the begin development script `begin`
+1. Run the begin development script
+  * Enter and run the command `begin`
   * The React app will start in development mode in a new command window. Leave this open.
   * The Python Flask API server will start in a new command window. Leave this open. You'll be able to observe all HTTP requests here.
   * Your browser will open a new tab with the URL http://localhost:3000/
@@ -94,7 +95,8 @@ Follow the instructions in this section every time you develop.
 Following the instructions in this section will upload the code currently running on your system to the production server at adventurizer.net
 
 1. Go into your working directory if you're not already in there `cd adventurizer`
-1. Run the deployment script `deploy`
+1. Run the deployment script
+  * Enter and run the command `deploy`
   * To deploy only to the React frontend, run `deploy frontend`
   * To deploy only to the API server, run `deploy backend`
   * Some new command windows will pop up. Leave them open.
