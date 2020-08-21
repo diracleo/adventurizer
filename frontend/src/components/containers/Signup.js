@@ -111,7 +111,7 @@ class Signup extends React.Component {
       params['password'] = this.state.password.value;
       params['passwordConfirm'] = this.state.passwordConfirm.value;
 
-      axios.post(`${config.get("apiHost")}/user`, params)
+      axios.post(`${config.get("apiHost")}/me`, params)
         .then(res => {
           Util.processRequestReturn(res, o, "SuccAccountCreated");
           if(res['data']['status'] == "success") {
