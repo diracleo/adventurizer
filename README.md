@@ -64,9 +64,9 @@ The following information will get you set up to develop locally
   1. Go into the new directory `cd adventurizer`
   1. Clone the repo into this directory `git clone https://github.com/diracleo/adventurizer.git .`
   1. Create the API server
-    1. Create the Python virtual environment `py -3 -m venv venv`
-    1. Activate it `venv\Scripts\activate`
-    1. Install Flask `pip install Flask`
+      1. Create the Python virtual environment `py -3 -m venv venv`
+      1. Activate it `venv\Scripts\activate`
+      1. Install Flask `pip install Flask`
 
 Setup is now complete and you can begin development.
 
@@ -77,9 +77,9 @@ Follow the instructions in this section every time you develop.
   1. Go into the directory you created in the previous section if you're not already in there `cd adventurizer`
   1. Pull latest changes from the repo `git pull origin master`
   1. Run the begin development script `begin`
-    * The React app will start in development mode in a new command window. Leave this open.
-    * The Python Flask API server will start in a new command window. Leave this open. You'll be able to observe all HTTP requests here.
-    * Your browser will open a new tab with the URL http://localhost:3000/
+      * The React app will start in development mode in a new command window. Leave this open.
+      * The Python Flask API server will start in a new command window. Leave this open. You'll be able to observe all HTTP requests here.
+      * Your browser will open a new tab with the URL http://localhost:3000/
   1. Start coding! Making changes to files will reflect in real time at http://localhost:3000/
 
 ## Pushing changes to the repository
@@ -95,9 +95,9 @@ Following the instructions in this section will upload the code currently runnin
 
   1. Go into your working directory if you're not already in there `cd adventurizer`
   1. Run the deployment script `deploy`
-    * To deploy only to the React frontend, run `deploy frontend`
-    * To deploy only to the API server, run `deploy backend`
-    * Some new command windows will pop up. Leave them open.
+      * To deploy only to the React frontend, run `deploy frontend`
+      * To deploy only to the API server, run `deploy backend`
+      * Some new command windows will pop up. Leave them open.
 
 
 ## Screenshots
