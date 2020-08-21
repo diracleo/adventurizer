@@ -1859,10 +1859,13 @@ def adventursListing(who):
       if a['_id'] in progressMap:
         a['progress'] = progressMap[a['_id']]
         for b in a['progress']:
-          if not b['userId'] in progressUserMap:
-            progressUserMap[b['userId']] = []
+          indi = b['clientId']
+          if "userId" in b:
+            indi = b['userId']
+          if not indi in progressUserMap:
+            progressUserMap[indi] = []
             progressUserCount += 1
-          progressUserMap[b['userId']].append(b)
+          progressUserMap[indi].append(b)
           progressCount += 1
           """
           tsp = b['insertDate']

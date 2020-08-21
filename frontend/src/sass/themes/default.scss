@@ -251,8 +251,6 @@
     &.clickable {
       position:relative;
       border-radius:4px;
-      overflow:hidden;
-      color:orange;
       .MuiPaper-root {
         margin-bottom:0px;
       }
@@ -272,6 +270,8 @@
         pointer-events:none;
         z-index:100;
         font-size:24px;
+        border-bottom-left-radius:5px;
+        border-bottom-right-radius:5px;
         transition: opacity 0.4s;
         backdrop-filter: blur(2px);
       }
