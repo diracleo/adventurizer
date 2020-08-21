@@ -27,3 +27,6 @@
 /frontend/npm-debug.log*
 /frontend/yarn-debug.log*
 /frontend/yarn-error.log*
+
+# config file with sensitive info
+/backend/config.py
