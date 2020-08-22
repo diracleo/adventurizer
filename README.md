@@ -32,15 +32,17 @@ Adventurizer is a website that allows users to create and publicize their own we
 
 ## Technicals
 
-Adventurizer is a:
+Adventurizer is:
   * Single-page React JS app on the frontend, deployed to AWS S3 as a static website
     * Redux
     * Material UI
     * SASS
   * Python Flask REST API on the backend, deployed to an EC2 instance through Elastic Beanstalk
   * MongoDB database hosted on Atlas
+  * CDN managed by CloudFront
+  * Routing managed by Route53
 
-Each component of Adventurizer exists and is deployed separately through deployment scripts in this repository. 
+Each component of Adventurizer exists and is deployed separately through deployment scripts in this repository.
 
 **Note that you will not be able to actually develop since this is just a demo of a project and the sensitive backend/config.py file containing keys and passwords is excluded from the repo. The rest of this readme ignores this fact.**
 
