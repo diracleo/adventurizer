@@ -44,7 +44,7 @@ Adventurizer is:
 
 Each component of Adventurizer exists and is deployed separately through deployment scripts in this repository.
 
-**Note that you will not be able to actually develop since this is just a demo of a project and the sensitive backend/config.py file containing keys and passwords is excluded from the repo. The rest of this readme ignores this fact.**
+**Note that you will not be able to actually develop since this is just a demo project and the sensitive config.py file containing keys and passwords is excluded from the repo. The rest of this readme ignores this fact.**
 
 ## Setting yourself up for development
 
