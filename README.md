@@ -37,12 +37,14 @@ Adventurizer is:
     * Redux
     * Material UI
     * SASS
-  * Python Flask REST API on the backend, deployed to an EC2 instance through Elastic Beanstalk
+  * [Python Flask REST API on the backend, deployed to an EC2 instance through Elastic Beanstalk](backend)
   * MongoDB database hosted on Atlas
   * CDN managed by CloudFront
   * Routing managed by Route53
 
 Each component of Adventurizer exists and is deployed separately through deployment scripts in this repository.
+
+[Jump to API Documentation](backend)
 
 **Note that you will not be able to actually develop since this is just a demo project and the sensitive config.py file containing keys and passwords is excluded from the repo. The rest of this readme ignores this fact.**
 
