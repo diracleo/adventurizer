@@ -6,43 +6,51 @@ Adventurizer is a website that allows users to create and publicize their own we
 
 ## Features
 
-* User account creation and management
-  * Signup
-  * Login
-  * Email address verification
-  * Forgot/reset password
-  * Email receiving opt in and opt out
-  * Email address updating
-  * Password updating
-* Finding and going on adventures
-  * User can see a list of all adventures that exist on the platform created by other users and sort by trending, popular, or newest. 
-  * User can begin taking an adventure, leave, and them come back to resume where they left off.
-* Creating and editing adventures
-  * User creates adventures using the drag-and-drop builder
-    * Each dialogue has a list of possible choices
-    * Each choice routes to another dialogue
-    * If a dialogue has no choices, then it's a possible end to the adventure
-    * There is no limit to the number of choices for each dialogue
-    * There is no limit to the number of dialogues
-    * There is no limit to the number of choices that can point to a single dialogue
-    * Each adventure also has meta-data: A name, genre, state (public or draft), and description
-  * User can edit their adventures, which takes them back into the builder right where they left off (including drag/zoom positions)
-  * User can see how many other users have gone on their adventures
-  * User can share their adventures to Facebook
+  * User account creation and management
+    * Signup
+    * Login
+    * Email address verification with ability to resend activation link
+    * Forgot/reset password
+    * Email receiving opt in and opt out
+    * Email address updating
+    * Password updating
+  * Finding and going on adventures
+    * User can see a list of all adventures that exist on the platform created by other users and sort by trending, popular, or newest. 
+    * User can begin taking an adventure, leave, and them come back to resume where they left off.
+  * Creating and editing adventures
+    * User creates adventures using the drag-and-drop builder
+      * Each dialogue has a list of possible choices
+      * Each choice routes to another dialogue
+      * If a dialogue has no choices, then it's a possible end to the adventure
+      * There is no limit to the number of choices for each dialogue
+      * There is no limit to the number of dialogues
+      * There is no limit to the number of choices that can point to a single dialogue
+      * Each adventure also has meta-data: A name, genre, state (public or draft), and description
+    * User can edit their adventures, which takes them back into the builder right where they left off (including drag/zoom positions)
+    * User can see how many other users have gone on their adventures
+    * User can share their adventures to Facebook
+
+Try it out! Right now, on a desktop computer, a tablet, or a phone, you can go to [adventurizer.net](https://adventurizer.net), create an account, activate it, log in, and create your own adventures. You may have trouble finding other people's adventures to go on because the only ones that exist right now are samples that I wrote in lorem ipsum, but you'll be able to at least see the functionality.
 
 ## Technicals
 
-Adventurizer is:
-  * Single-page React JS app on the frontend, deployed to AWS S3 as a static website
+  * Single-page React JS app frontend, deployed to AWS S3 as a static website
     * Redux
     * Material UI
     * SASS
-  * [Python Flask REST API on the backend, deployed to an EC2 instance through Elastic Beanstalk](backend)
+  * [Python Flask REST JSON API on the backend, deployed to an EC2 instance through Elastic Beanstalk](backend)
+  * Use of JSON Web Tokens (JWT)
   * MongoDB database hosted on Atlas
   * CDN managed by CloudFront
-  * Routing managed by Route53
+  * DNS routing managed by Route53
+  * Emailing managed by SES and SNS (for bounces and complaints)
+  * Codebase hosted on Github
 
-Each component of Adventurizer exists and is deployed separately through deployment scripts in this repository.
+Each component of Adventurizer exists and is deployed separately through deployment scripts in this repository. Should other developers start contributing to Adventurizer's codebase, they would simply need to be added to the repository and then follow the instructions listed below. Adventurizer could support a team of concurrently-working developers contributing constant code changes.
+
+Adventurizer could easily also become a mobile app by connecting the same [JSON API already created for the web application](backend). Even more, this mobile application could be written in React Native and borrow from the React JS code to save even more resources.
+
+Because of the tiered system provided by AWS, cost scales with use. As of now, I pay less than $5 per month for Adventure to exist as a fully operational platform. Adventurizer is still on the free tier for all applicable services, but it is fully capable of supporting thousands of daily users.
 
 [Jump to API Documentation](backend)
 
