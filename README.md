@@ -4,6 +4,8 @@ Adventurizer is a demo project created by Dane Iracleous.
 
 Adventurizer is a website that allows users to create and publicize their own web-based text-based choose-your-own-adventures. It also allows users to find and go on other users' adventures.
 
+**Try it out! Right now, on a desktop computer, a tablet, or a phone, you can go to [adventurizer.net](https://adventurizer.net), create an account, activate it, log in, and create your own adventures. You may have trouble finding other people's adventures to go on because the only ones that exist right now are samples that I wrote in lorem ipsum, but you'll be able to at least see the functionality.**
+
 ## Features
 
   * User account creation and management
@@ -30,7 +32,6 @@ Adventurizer is a website that allows users to create and publicize their own we
     * User can see how many other users have gone on their adventures
     * User can share their adventures to Facebook
 
-Try it out! Right now, on a desktop computer, a tablet, or a phone, you can go to [adventurizer.net](https://adventurizer.net), create an account, activate it, log in, and create your own adventures. You may have trouble finding other people's adventures to go on because the only ones that exist right now are samples that I wrote in lorem ipsum, but you'll be able to at least see the functionality.
 
 ## Technicals
 
@@ -51,8 +52,6 @@ Each component of Adventurizer exists and is deployed separately through deploym
 Adventurizer could easily also become a mobile app by connecting the same [JSON API already created for the web application](backend). Even more, this mobile application could be written in React Native and borrow from the React JS code to save even more resources.
 
 Because of the tiered system provided by AWS, cost scales with use. As of now, I pay less than $5 per month for Adventure to exist as a fully operational platform. Adventurizer is still on the free tier for all applicable services, but it is fully capable of supporting thousands of daily users.
-
-[Jump to API Documentation](backend)
 
 **Note that you will not be able to actually develop since this is just a demo project and the sensitive config.py file containing keys and passwords is excluded from the repo. The rest of this readme ignores this fact.**
 
