@@ -132,6 +132,7 @@ const translation = {
   ErrMatchPasswords: "Passwords don't match",
   ErrNotAuthorized: "You are not authorized",
   ErrNotFound: "Not found",
+  ErrPlatformDown: "Currently down. Redirecting...",
   ErrSameEmail: "This is already your email address. No change required.",
   ErrServerResponse: "An error occurred. Please try again later.",
   ErrUnknown: "An unknown error occurred.",
@@ -254,6 +255,11 @@ function processRequestReturnSilent(res) {
         removeCookie("accessToken");
         window.location.reload(true);
         return false;
+      } else if(res.data.errors[i]['code'] == "ErrPlatformDown") {
+        //redirect to server down page
+        var url = window.location.protocol + "//" + window.location.host + '/down/';
+        window.location.href = url;
+        return false;
       }
     }
     return false;
@@ -296,6 +302,11 @@ function processRequestReturn(res, o, successCode) {
         //unset cookie and then refresh - token is invalid
         removeCookie("accessToken");
         window.location.reload(true);
+        return false;
+      } else if(res.data.errors[i]['code'] == "ErrPlatformDown") {
+        //redirect to server down page
+        var url = window.location.protocol + "//" + window.location.host + '/down/';
+        window.location.href = url;
         return false;
       }
     }

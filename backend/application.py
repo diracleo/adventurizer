@@ -43,6 +43,19 @@ db = mongo["adventurizer"]
 
 CORS(application, resources={r"/*": {"origins": ACCEPTED_ORIGINS}})
 
+@application.before_request
+def before_request_func():
+  # Check if API is enabled
+  if PLATFORM_STATUS != 'up':
+    ret = {}
+    ret["status"] = "error"
+    ret["errors"] = []
+    ret["errors"].append({
+      "code": "ErrPlatformDown",
+      "target": False
+    })
+    return ret
+
 # Endpoint that AWS calls to report email sending analytics
 @application.route("/emailReport", methods=["GET", "POST"])
 def emailReport():
@@ -390,7 +403,7 @@ def userEmail():
 
   return jsonifySafe(ret)
 
-@application.route("/me", methods=["GET", "POST", "PUT"])
+@application.route("/me", methods=["GET", "POST", "PUT", "DELETE"])
 def user():
   ret = {}
   ret["status"] = "error"
@@ -470,12 +483,35 @@ def user():
     emailConfirm = request.json.get("emailConfirm")
     password = request.json.get("password")
     passwordConfirm = request.json.get("passwordConfirm")
+    testing = request.json.get("testing")
 
     userObj = User(db)
-    ret = userObj.create(penName, email, emailConfirm, password, passwordConfirm)
+    ret = userObj.create(penName, email, emailConfirm, password, passwordConfirm, testing)
+
+  elif request.method == "DELETE":
+    # deleting logged-in user
+    userId = None
+    if request.headers.get('Authorization'):
+      userId = authorize(request.headers.get('Authorization'))
+    
+    if not userId:
+      ret["errors"].append({
+        "code": "ErrNotAuthorized",
+        "target": False
+      })
 
     if ret["errors"]:
       return jsonifySafe(ret)
+
+    userObj = User(db)
+    ret = userObj.fetch(userId)
+
+    if ret["errors"]:
+      return jsonifySafe(ret)
+
+    password = request.json.get("password")
+
+    ret = userObj.delete(password)
 
   return jsonifySafe(ret)
 

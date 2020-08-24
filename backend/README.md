@@ -40,8 +40,8 @@ Logs existing user into platform by obtaining a reusable access token to be pass
 
 Logs user out of platform
 
-**JSON Parameters**
-  * accessToken `string`
+**Headers**
+  * Authorization `string` *accessToken*
 
 **Response**
 ```yaml
@@ -102,10 +102,12 @@ Creates a new user
 
 ### `PUT https://api.adventurizer.net/me`
 
-Changes the currently logged-in user
+Changes the info of the currently logged-in user
+
+**Headers**
+  * Authorization `string` *accessToken*
 
 **JSON Parameters**
-  * accessToken `string`
   * penName `string`
   * subscribed `string` *whether not to receive emails from adventurizer.net*
 
@@ -120,8 +122,8 @@ Changes the currently logged-in user
 
 Gets currently logged-in user
 
-**JSON Parameters**
-  * accessToken `string`
+**Headers**
+  * Authorization `string` *accessToken*
 
 **Response**
 ```yaml
@@ -135,8 +137,10 @@ Gets currently logged-in user
 
 Changes the loggedin-in user's password
 
+**Headers**
+  * Authorization `string` *accessToken*
+
 **JSON Parameters**
-  * accessToken `string`
   * password `string` *the current password*
   * passwordNew `string` *the new password*
   * passwordNewConfirm `string` *confirmation of the new password*
@@ -152,8 +156,10 @@ Changes the loggedin-in user's password
 
 Changes the logged-in user's email
 
+**Headers**
+  * Authorization `string` *accessToken*
+
 **JSON Parameters**
-  * accessToken `string`
   * email `string` *the current email*
   * emailNew `string` *the new email*
   * emailNewConfirm `string` *confirmation of the new email*
@@ -171,8 +177,10 @@ Changes the logged-in user's email
 
 Creates a new adventure by the logged-in user
 
+**Headers**
+  * Authorization `string` *accessToken*
+
 **JSON Parameters**
-  * accessToken `string`
   * data `obj` *dialogue and option data*
   * view `obj` *view data for builder including zoom and position of both browser window and each individual dialogue*
   * meta `obj` *meta information - name, genre, description, and state*
@@ -191,6 +199,9 @@ Creates a new adventure by the logged-in user
 ### `GET https://api.adventurizer.net/me/adventures`
 
 Gets the list of all adventures created and owned by the logged-in user
+
+**Headers**
+  * Authorization `string` *accessToken*
 
 **JSON Parameters**
   * sort `string` *what to sort by (new, trending, popular)*
@@ -212,7 +223,6 @@ Gets the list of all adventures created and owned by the logged-in user
 Gets the list of all adventures created by all users
 
 **JSON Parameters**
-  * accessToken `string`
   * sort `string` *what to sort by (new, trending, popular)*
   * limit `integer` *how many per page*
   * page `integer` *what page*
@@ -231,11 +241,13 @@ Gets the list of all adventures created by all users
 
 Updates the specified adventure (must have been created by the logged-in user)
 
+**Headers**
+  * Authorization `string` *accessToken*
+
 **Parameters**
   * adventureId `string`
 
 **JSON Parameters**
-  * accessToken `string`
   * data `obj` *dialogue and option data*
   * view `obj` *view data for builder including zoom and position of both browser window and each individual dialogue*
   * meta `obj` *meta information - name, genre, description, and state*
@@ -251,11 +263,11 @@ Updates the specified adventure (must have been created by the logged-in user)
 
 Gets the specified adventure (must have been created by the logged-in user)
 
+**Headers**
+  * Authorization `string` *accessToken*
+
 **Parameters**
   * adventureId `string`
-
-**JSON Parameters**
-  * accessToken `string`
 
 **Response**
 ```yaml
@@ -271,11 +283,11 @@ Gets the specified adventure (must have been created by the logged-in user)
 
 Deletes the specified adventure and all associated progress (must have been created by the logged-in user)
 
+**Headers**
+  * Authorization `string` *accessToken*
+
 **Parameters**
   * adventureId `string`
-
-**JSON Parameters**
-  * accessToken `string`
 
 **Response**
 ```yaml
@@ -288,11 +300,13 @@ Deletes the specified adventure and all associated progress (must have been crea
 
 Updates the meta data for the specified adventure (must have been created by the logged-in user)
 
+**Headers**
+  * Authorization `string` *accessToken*
+
 **Parameters**
   * adventureId `string`
 
 **JSON Parameters**
-  * accessToken `string`
   * meta `obj` *meta data*
 
 **Response**
@@ -308,8 +322,8 @@ Updates the meta data for the specified adventure (must have been created by the
 
 Fetches a list of all adventures taken by the logged-in user
 
-**JSON Parameters**
-  * accessToken `string`
+**Headers**
+  * Authorization `string` *accessToken*
 
 **Response**
 ```yaml
@@ -325,11 +339,13 @@ Fetches a list of all adventures taken by the logged-in user
 
 Creates a new progress item for the logged-in user for a specified adventure
 
+**Headers**
+  * Authorization `string` *accessToken*
+
 **Parameters**
   * adventureId `string`
 
 **JSON Parameters**
-  * accessToken `string`
   * progress `obj` *progress data*
 
 **Response**
@@ -347,12 +363,14 @@ Creates a new progress item for the logged-in user for a specified adventure
 
 Updates the logged-in user's progress on a specified adventure
 
+**Headers**
+  * Authorization `string` *accessToken*
+  
 **Parameters**
   * adventureId `string`
   * progressId `string`
 
 **JSON Parameters**
-  * accessToken `string`
   * progress `obj` *progress data*
 
 **Response**

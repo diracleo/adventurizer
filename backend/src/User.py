@@ -77,7 +77,7 @@ class User:
     }
     return ret
 
-  def create(self, penName, email, emailConfirm, password, passwordConfirm):
+  def create(self, penName, email, emailConfirm, password, passwordConfirm, testing):
     users = self.db['user']
 
     ret = {}
@@ -207,6 +207,11 @@ class User:
       return ret
 
     ret["status"] = "success"
+
+    if testing:
+      ret["data"] = {}
+      ret["data"]["actionToken"] = actionToken
+
     return ret
   
   def change(self, penName, subscribed):
@@ -241,6 +246,45 @@ class User:
     
     if subscribed:
       nosends.delete_one({"email": user['email']})
+
+    ret["status"] = "success"
+    return ret
+
+  def delete(self, password):
+    users = self.db['user']
+    progress = self.db['progress']
+    adventures = self.db['adventure']
+    user = self.user
+    ret = {}
+    ret["status"] = "error"
+    ret["errors"] = []
+
+    salt = user['salt']
+    key = user['key']
+    newKey = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+
+    if not safe_str_cmp(key, newKey):
+      ret["errors"].append({
+        "code": "ErrInvalidCredentials",
+        "target": False
+      })
+
+    if ret["errors"]:
+      return ret
+    
+    
+    delRet = users.delete_one({"_id": ObjectId(self.userId)})
+    if not delRet:
+      ret["errors"].append({
+        "code": "ErrDeleteFailed",
+        "target": False
+      })
+    
+    # delete all user progress
+    delRet = progress.delete_many({"userId": self.userId})
+
+    # delete all user adventures
+    delRet = adventures.delete_many({"userId": self.userId})
 
     ret["status"] = "success"
     return ret

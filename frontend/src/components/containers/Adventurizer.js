@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Switch, Route, Link, Redirect, withRouter, use
 import { connect } from "react-redux";
 import { toggleMainMenu } from "./../../action";
 
+import PlatformDown from './../containers/PlatformDown.js';
 import MyAdventuresRouter from './../routers/MyAdventuresRouter.js';
 import AdventureViewRouter from './../routers/AdventureViewRouter.js';
 import PrivateRoute from './../modules/PrivateRoute.js';
@@ -226,6 +227,7 @@ class Adventurizer extends React.Component {
               </AppBar> 
             }
             <Switch>
+              <Route path="/down" component={PlatformDown} />
               <Route path="/a/:adventureId" component={AdventureViewRouter} />
               <Route path="/search" component={AdventuresRouter} />
               <Route path="/terms" component={TermsOfUse} />
