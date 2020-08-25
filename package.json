@@ -1,5 +1,9 @@
 {
   "scripts": {
     "test": "mocha"
+  },
+  "devDependencies": {
+    "chakram": "^1.5.0",
+    "mocha": "^8.1.1"
   }
 }
