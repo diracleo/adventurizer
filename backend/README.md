@@ -133,6 +133,24 @@ Gets currently logged-in user
 }
 ```
 
+### `DELETE https://api.adventurizer.net/me`
+
+Deletes currently logged-in user
+
+**Headers**
+  * Authorization `string` *accessToken*
+
+**JSON Parameters**
+  * password `string`
+
+**Response**
+```yaml
+{
+  "status": "success",
+  "data": obj
+}
+```
+
 ### `PUT https://api.adventurizer.net/me/password`
 
 Changes the loggedin-in user's password
@@ -365,7 +383,7 @@ Updates the logged-in user's progress on a specified adventure
 
 **Headers**
   * Authorization `string` *accessToken*
-  
+
 **Parameters**
   * adventureId `string`
   * progressId `string`

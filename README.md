@@ -93,6 +93,12 @@ Follow the instructions in this section every time you develop.
       * Your browser will open a new tab with the URL http://localhost:3000/
   1. Start coding! Making changes to files will reflect in real time at http://localhost:3000/
 
+## Running tests
+
+  1. Make sure that your development environment is running by following the steps in the previous section "Beginning development"
+  1. Go into your working directory if you're not already in there <br/>`cd adventurizer`
+  1. Run the test script <br/>`npm test`
+
 ## Pushing changes to the repository
 
   1. Go into your working directory if you're not already in there <br/>`cd adventurizer`
@@ -102,7 +108,9 @@ Follow the instructions in this section every time you develop.
 
 ## Deploying changes to the production server
 
-Following the instructions in this section will upload the code in your local repository to the production server at adventurizer.net
+Following the instructions in this section will upload the code in your local repository to the production server at adventurizer.net.
+
+Note that the instructions to configure your system credentials in the AWS and EB CLI's are not included here.
 
   1. Go into your working directory if you're not already in there <br/>`cd adventurizer`
   1. Run the deployment script <br/>`deploy`

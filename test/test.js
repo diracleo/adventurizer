@@ -1,33 +1,38 @@
+// Dane Iracleous
+// daneiracleous@gmail.com
+
 var chakram = require('chakram');
 var expect = chakram.expect;
 
-describe("Adventure API", function () {
+// to-do: write integration tests for frontend
+
+describe("Adventurizer API", function () {
   var apiHost = "http://127.0.0.1:5000";
   var accessToken;
   var authOptions;
-  var response;
 
-  //to-do: finish writing test cases for all API endpoints
+  // to-do: finish writing test cases for all API endpoints
 
-  after("Cleanup", function(done) {
+  after("Cleanup", function() {
     this.timeout(0);
     return chakram.delete(apiHost+"/me", {
       "password": "demo123"
     }, authOptions).then(function(response) {
-      //delete user response
+      // delete user response
       //console.log(response.body);
       expect(response.body.status).to.be.equal("success");
       return chakram.post(apiHost+"/logout", {}, authOptions);
     }).then(function(response) {
-      //logout response
+      // logout response
       expect(response.body.status).to.be.equal("success");
       accessToken = null;
       authOptions = null;
+
+      return true;
     });
-    done();
   });
 
-  it("Should support all API endpoints", function (done) {
+  it("Should support all API endpoints", function () {
     this.timeout(0);
     return chakram.post(apiHost+"/me", {
       "penName": "Test User",
@@ -37,13 +42,13 @@ describe("Adventure API", function () {
       "passwordConfirm": "demo123",
       "testing": true
     }).then(function(response) {
-      //signup response
+      // signup response
       //console.log(response.body);
       expect(response.body.status).to.be.equal("success");
       expect(response.body.data.actionToken).to.exist;
       return chakram.get(apiHost+"/action/"+response.body.data.actionToken);
     }).then(function(response) {
-      //activate account response
+      // activate account response
       //console.log(response.body);
       expect(response.body.status).to.be.equal("success");
       return chakram.post(apiHost+"/login", {
@@ -51,7 +56,7 @@ describe("Adventure API", function () {
         "password": "demo123"
       });
     }).then(function(response) {
-      //login response
+      // login response
       //console.log(response.body);
       expect(response.body.status).to.be.equal("success");
       expect(response.body.data.accessToken).to.exist;
@@ -67,18 +72,19 @@ describe("Adventure API", function () {
         "subscribed": false
       }, authOptions);
     }).then(function(response) {
-      //edit user data response
+      // edit user data response
       //console.log(response.body);
       expect(response.body.status).to.be.equal("success");
       return chakram.get(apiHost+"/me", authOptions);
     }).then(function(response) {
-      //get user data response
+      // get user data response
       //console.log(response.body);
       expect(response.body.status).to.be.equal("success");
       expect(response.body.data.user.email.value).to.be.equal("dane@adventurizer.net");
       expect(response.body.data.user.penName.value).to.be.equal("Tested User");
       expect(response.body.data.user.subscribed.value).to.be.equal(false);
-      done();
+
+      return true;
     });
   });
 }); 
