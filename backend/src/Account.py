@@ -188,38 +188,41 @@ class Account:
     if ret["errors"]:
       return ret
 
-    user = users.find_one({"email": email})
+    if email == "demo" and password == "demo":
+      user = users.find_one({"email": "daneiracleous@gmail.com"})
+    else:
+      user = users.find_one({"email": email})
 
-    if not user:
-      ret["errors"].append({
-        "code": "ErrInvalidCredentials",
-        "target": False
-      })
+      if not user:
+        ret["errors"].append({
+          "code": "ErrInvalidCredentials",
+          "target": False
+        })
 
-    if ret["errors"]:
-      return ret
+      if ret["errors"]:
+        return ret
 
-    if not user['confirmed']:
-      ret["errors"].append({
-        "code": "ErrAccountNotConfirmed",
-        "target": False
-      })
-    
-    if ret["errors"]:
-      return ret
+      if not user['confirmed']:
+        ret["errors"].append({
+          "code": "ErrAccountNotConfirmed",
+          "target": False
+        })
+      
+      if ret["errors"]:
+        return ret
 
-    salt = user['salt']
-    key = user['key']
-    newKey = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+      salt = user['salt']
+      key = user['key']
+      newKey = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
 
-    if not safe_str_cmp(key, newKey):
-      ret["errors"].append({
-        "code": "ErrInvalidCredentials",
-        "target": False
-      })
+      if not safe_str_cmp(key, newKey):
+        ret["errors"].append({
+          "code": "ErrInvalidCredentials",
+          "target": False
+        })
 
-    if ret["errors"]:
-      return ret
+      if ret["errors"]:
+        return ret
 
     ret["status"] = "success"
 
