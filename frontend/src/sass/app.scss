@@ -349,7 +349,7 @@ html, body, #root {
       height:calc(100vh - 97px);
       height:calc(var(--vh, 1vh) * 100 - 82px);
       .question {
-        width:400px;
+        width:500px;
         position:absolute;
         background-color:rgba(#ffffff, 0.3);
         .questionPoint {

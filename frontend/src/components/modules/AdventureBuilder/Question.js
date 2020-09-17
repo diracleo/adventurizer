@@ -223,23 +223,7 @@ class Question extends React.Component {
       classNames += " start";
       startMenuItemClassNames += " hidden";
     }
-
-    var l = this.props.params.text.length;
-    let w = 400;
-    if(l > 4000) {
-      w = 1500;
-    } else if(l > 2000) {
-      w = 1000;
-    } else if(l > 500) {
-      w = 500;
-    }
-
-    this.width = w;
-
-    let questionStyle = {
-      width: ""+w+"px"
-    }
-
+    
     return (
       <Draggable
         handle=".handle"
@@ -249,7 +233,7 @@ class Question extends React.Component {
         onDrag={(event, data) => this.props.renderVisualizations(event, data)}
         onStart={(event, data) => this.handleMoveStart(event, data)}
         onStop={(event, data) => this.handleMoveStop(event, data)}>
-        <Card className={classNames} style={questionStyle}>
+        <Card className={classNames}>
           <div ref={this.myRef}>
             <CardActions>
               <div className="handle handle1">
